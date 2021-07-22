@@ -1,0 +1,17 @@
+{
+  "name": "batalha-naval",
+  "version": "1.0.0",
+  "description": "Jogo batalha naval multiplayer",
+  "main": "game.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "Alexsander Gutierrez Gonçalves",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1",
+    "helmet": "^4.4.1",
+    "socket.io": "^4.0.1"
+  }
+}
