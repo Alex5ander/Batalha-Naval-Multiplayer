@@ -35,5 +35,5 @@ jobs:
         # uses: leozusa/Glitch-Merge-To-Main@6acc394235acaf0d2203d833eb8781c10cecf4ac
         uses:  kanadgupta/glitch-sync@main
         with:
-          project-id: '${{ BatalhaNaval.projectId }}'
-          auth-token: '${{ BatalhaNaval.authToken }}'
+          project-id: cf5b754a-54b3-4eef-8bf9-9ad0306de816
+          auth-token: anvshhu9kuVlSna31dJkas1twMzHjfgPYj5ho8jYCRg%3D
