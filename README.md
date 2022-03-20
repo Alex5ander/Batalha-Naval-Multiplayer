@@ -38,3 +38,4 @@ cd Batalha-Naval-Multiplayer
  ```bash
  npm start 
  ```
+### [Execute agora mesmo](https://alex5ander.itch.io/batalha-naval-multiplayer)
