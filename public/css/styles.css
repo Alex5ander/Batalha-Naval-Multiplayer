@@ -1,0 +1,157 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    font-family: monospace;
+    font-weight: 500;
+}
+
+#gameArea {
+    position: absolute;
+    text-align: center;
+    width: 100%;
+    background-color: black;
+}
+
+#formcontrols,
+#awaitcontainer {
+    position: absolute;
+    width: 75%;
+    height: 0;
+    margin: auto;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+#spinner {
+    width: 100px;
+    height: 100px;
+    border: 24px solid transparent;
+    border-top-color: orange;
+    border-radius: 50%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    animation: spinner 1s infinite linear;
+}
+
+.btn {
+    width: 100px;
+    height: 40px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    border: none;
+}
+
+#btnRotatePiece {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: yellow;
+    font-size: 2em;
+    line-height: .5em;
+    margin: auto 0;
+    left: 80%;
+}
+
+#btnJogar {
+    color: white;
+    background-color: green;
+
+    border:none;
+    cursor:pointer;
+    border-radius: 1rem;
+    transition: .2s ease-in-out;
+}
+
+#btnJogar:hover {
+    background-color: rgb(12, 111, 12);
+}
+
+#btnCancelar {
+    background-color: red;
+    color: white;
+
+    border:none;
+    cursor:pointer;
+    border-radius: 1rem;
+    transition: .2s ease-in-out;
+}
+
+#btnCancelar:hover {
+    background-color: rgb(196, 7, 7);
+}
+
+#btnBatalhar {
+    position: relative;
+    color: white;
+    background-color: orange;
+    display: block;
+
+    border:none;
+    cursor:pointer;
+    border-radius: 1rem;
+    transition: .2s ease-in-out;
+}
+
+#btnBatalhar:hover {
+    background-color: rgb(214, 145, 17);
+}
+
+@-ms-keyframes spinner {
+    0% {
+        -ms-transform: rotate(0deg);
+    }
+
+    100% {
+        -ms-transform: rotate(360deg);
+    }
+}
+
+@-o-keyframes spinner {
+    0% {
+        -o-transform: rotate(0deg);
+    }
+
+    100% {
+        -o-transform: rotate(360deg);
+    }
+}
+
+@-webkit-keyframes spinner {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@-moz-keyframes spinner {
+    0% {
+        -moz-transform: rotate(0deg);
+    }
+
+    100% {
+        -moz-transform: rotate(360deg);
+    }
+}
+
+@keyframes spinner {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
