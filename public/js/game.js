@@ -47,6 +47,10 @@ function fillRect(x, y, w, h, color) {
     ctx.fillRect(x, y, w, h);
 }
 
+function drawTileSprite(img, x, y, size) {
+    ctx.drawImage(img, x, y, size, size);
+}
+
 function strokeRect(x, y, w, h, color) {
     ctx.save();
     ctx.lineWidth = 0.5;

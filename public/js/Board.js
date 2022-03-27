@@ -1,3 +1,6 @@
+var watertile = new Image();
+watertile.src = "../assets/watertile.png";
+
 class Board {
     constructor(x, y, grid) {
         this.x = x;
@@ -38,30 +41,29 @@ class Board {
     }
     draw(ctx) {
         var letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
-        fillRect(this.x * tileSize, this.y * tileSize, this.width * tileSize, this.height * tileSize, "aqua");
-        for (var i in this.pieces) {
-            if (this.pieces[i]) {
-                var p = this.pieces[i];
-                fillRect((this.x + p.lx) * tileSize, (this.y + p.ly) * tileSize, p.width * tileSize, p.height * tileSize, p.color);
-            }
-        }
+
         ctx.save();
         for (var i = 0; i < this.grid.length; i++) {
             fillText((i + 1), (this.x * tileSize) - tileSize * .3, (this.y * tileSize) + i * tileSize + tileSize * .1, 16, "black", "right");
             fillText(letters[i], (this.x + i) * tileSize + tileSize / 2, (this.y * tileSize) - 16, 16, "black");
             for (var j = 0; j < this.grid[i].length; j++) {
                 var g = this.grid[i][j];
+                drawTileSprite(watertile, (this.x + j) * tileSize, (this.y + i) * tileSize, tileSize);
                 strokeRect((this.x + j) * tileSize, (this.y + i) * tileSize, tileSize, tileSize, "black");
-
-                if (g === 3) {
-                    fillRect((this.x + j) * tileSize, (this.y + i) * tileSize, tileSize, tileSize, "rgb(0, 128, 255)");
-                }
 
                 if (g === 2) {
                     fillText("X", (this.x + .5 + j) * tileSize, (this.y + .1 + i) * tileSize, tileSize, "red");
                 }
             }
         }
+
+        for (var i in this.pieces) {
+            if (this.pieces[i]) {
+                var p = this.pieces[i];
+                fillRect((this.x + p.lx) * tileSize, (this.y + p.ly) * tileSize, p.width * tileSize, p.height * tileSize, p.color);
+            }
+        }
+
         ctx.restore();
     }
 }
