@@ -14,18 +14,20 @@
 <body>
     <div id="gameArea">
         <canvas id="canvas" width="640" height="480"></canvas>
-        <button class="btn" id="btnJogar">JOGAR</button>
+        <button class="btn" id="btnPlay">JOGAR</button>
         <button class="btn" id="btnRotatePiece" hidden>&#8635;</button>
         <div id="awaitcontainer" hidden>
             <span id="spinner"></span>
-            <button class="btn" id="btnCancelar">CANCELAR</button>
+            <button class="btn" id="btnCancel">CANCELAR</button>
         </div>
         <div id="formcontrols" hidden>
             <input id="inputPlayerName" type="text" maxlength="45" placeholder="Nome" value="">
-            <button class="btn" id="btnBatalhar">BATALHAR</button>
+            <button class="btn" id="btnBattle">BATALHAR</button>
         </div>
     </div>
     <script src="js/socket.io.js"></script>
+    <script src="js/network.js"></script>
+    <script src="js/canvas.js"></script>
     <script src="js/Board.js"></script>
     <script src="js/BoardEditor.js"></script>
     <script src="js/Piece.js"></script>

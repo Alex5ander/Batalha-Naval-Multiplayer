@@ -76,11 +76,6 @@ class Piece {
         fillRect(this.x * tileSize, this.y * tileSize, this.width * tileSize, this.height * tileSize, this.color);
         if (this.selected === true) {
             strokeRect(this.x * tileSize, this.y * tileSize, this.width * tileSize, this.height * tileSize, "black");
-        } else if (this.inBoard) {
-            ctx.save();
-            ctx.lineWidth = 2.5;
-            strokeRect(this.x * tileSize, this.y * tileSize, this.width * tileSize, this.height * tileSize, "lightgreen");
-            ctx.restore();
         }
     }
 }
