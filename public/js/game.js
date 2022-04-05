@@ -14,10 +14,6 @@ var cols = 32;
 var rows = 32;
 var gameAspectRatio = cols / rows;
 
-window.addEventListener("resize", resize);
-window.addEventListener("orientationchange", resize);
-resize();
-
 const resize = e => {
     var newWidth = window.innerWidth;
     var newHeight = window.innerHeight;
@@ -37,11 +33,15 @@ const resize = e => {
     ctx.imageSmoothingEnabled = false;
 }
 
+window.addEventListener("resize", resize);
+window.addEventListener("orientationchange", resize);
+resize();
+
 let objects = [];
-let socket = false;
 let data = false;
 let myboard = false;
 let editor = null;
+let event = null;
 
 const cancel = () => {
     disconnect();
@@ -177,7 +177,7 @@ const mouseevents = e => {
         mx: Math.floor(((e.clientX - rect.x) / rect.width) * canvas.width),
         my: Math.floor(((e.clientY - rect.y) / rect.height) * canvas.height)
     };
-    var data = Object.assign(e, coords);
+    event = Object.assign(e, coords);
 }
 
 const touchevents = e => {
@@ -190,7 +190,7 @@ const touchevents = e => {
         coords.mx = Math.floor(((e.targetTouches[0].clientX - rect.x) / rect.width) * canvas.width);
         coords.my = Math.floor(((e.targetTouches[0].clientY - rect.y) / rect.height) * canvas.height);
     }
-    var data = Object.assign(e, coords);
+    event = Object.assign(e, coords);
 }
 
 canvas.addEventListener("mousedown", mouseevents);
