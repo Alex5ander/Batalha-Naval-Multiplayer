@@ -30,19 +30,14 @@ class Board {
         }
     }
     mouseup(e) {
-        var nc = { x: Math.floor(e.mx / tileSize) - this.x, y: Math.floor(e.my / tileSize) - this.y };
+        var normalizedCoords = { x: Math.floor(e.mx / tileSize) - this.x, y: Math.floor(e.my / tileSize) - this.y };
         if (this.click(e.mx, e.my) === true && this.selected === true) {
-            e.subject.notify({
-                type: "firing",
-                nc: nc
-            });
+            firing(normalizedCoords);
         }
         this.selected = false;
     }
-    draw(ctx) {
+    draw() {
         var letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
-
-        ctx.save();
         for (var i = 0; i < this.grid.length; i++) {
             fillText((i + 1), (this.x * tileSize) - tileSize * .3, (this.y * tileSize) + i * tileSize + tileSize * .1, 16, "black", "right");
             fillText(letters[i], (this.x + i) * tileSize + tileSize / 2, (this.y * tileSize) - 16, 16, "black");
@@ -63,7 +58,5 @@ class Board {
                 fillRect((this.x + p.lx) * tileSize, (this.y + p.ly) * tileSize, p.width * tileSize, p.height * tileSize, p.color);
             }
         }
-
-        ctx.restore();
     }
 }

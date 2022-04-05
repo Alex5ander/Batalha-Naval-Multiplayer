@@ -73,8 +73,9 @@ class BoardEditor extends Board {
         }
         piece.inBoard = false;
     }
-    rotatePieceInBoard(e) {
+    rotatePieceInBoard() {
         if (this.lastSelectedPiece) {
+
             var piece = this.lastSelectedPiece;
             var w = piece.width;
             var h = piece.height;
@@ -83,11 +84,11 @@ class BoardEditor extends Board {
             piece.height = w;
             piece.x = this.x + piece.lx;
             piece.y = this.y + piece.ly;
-            this.drop({ subject: e.subject, piece: piece });
+
+            this.drop(piece);
         }
     }
-    drop(e) {
-        var piece = e.piece;
+    drop(piece) {
         var nc = {
             x: Math.floor(piece.x + .5 - this.x),
             y: Math.floor(piece.y + .5 - this.y)
@@ -114,10 +115,5 @@ class BoardEditor extends Board {
             this.remove(piece);
             piece.resete();
         }
-        var allInBoard = e.subject.objects.every(o => o.inBoard === true || o.inBoard === undefined)
-        e.subject.notify({
-            type: "allInBoard",
-            allInBoard: allInBoard
-        });
     }
 }

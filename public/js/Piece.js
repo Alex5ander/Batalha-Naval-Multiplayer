@@ -72,7 +72,7 @@ class Piece {
             this.y = (e.my - this.height * tileSize / 2) / tileSize;
         }
     }
-    draw(ctx) {
+    draw() {
         fillRect(this.x * tileSize, this.y * tileSize, this.width * tileSize, this.height * tileSize, this.color);
         if (this.selected === true) {
             strokeRect(this.x * tileSize, this.y * tileSize, this.width * tileSize, this.height * tileSize, "black");

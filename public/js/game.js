@@ -13,22 +13,22 @@ var gameArea = document.getElementById("gameArea");
 var tileSize = 32;
 var cols = 32;
 var rows = 32;
-var gameAP = cols / rows;
+var gameAspectRatio = cols / rows;
 
 window.addEventListener("resize", resize);
 window.addEventListener("orientationchange", resize);
 resize();
 
-function resize(e) {
+const resize = e => {
     var newWidth = window.innerWidth;
     var newHeight = window.innerHeight;
     gameArea.style.width = newWidth + "px";
     gameArea.style.height = newHeight + "px";
     var asp = window.innerWidth / window.innerHeight;
-    if (asp > gameAP) {
-        newWidth = (window.innerHeight * gameAP);
+    if (asp > gameAspectRatio) {
+        newWidth = (window.innerHeight * gameAspectRatio);
     } else {
-        newHeight = (window.innerWidth / gameAP);
+        newHeight = (window.innerWidth / gameAspectRatio);
     }
 
     canvas.width = newWidth;
@@ -38,58 +38,41 @@ function resize(e) {
     ctx.imageSmoothingEnabled = false;
 }
 
-btnPlay.onclick = function () {
+btnPlay.onclick = () => {
     btnPlay.hidden = true;
-    game.init();
+    init();
 }
 
-function mouseevents(e) {
-    var rect = canvas.getBoundingClientRect();
-    var coords = {
-        subject: game,
-        mx: Math.floor(((e.clientX - rect.x) / rect.width) * canvas.width),
-        my: Math.floor(((e.clientY - rect.y) / rect.height) * canvas.height)
-    };
-    var data = Object.assign(e, coords);
-    events.push(data);
-}
 
-function touchevents(e) {
-    var rect = canvas.getBoundingClientRect();
-    var coords = { subject: game };
-    if (e.type === "touchend") {
-        coords.mx = Math.floor(((e.changedTouches[0].clientX - rect.x) / rect.width) * canvas.width);
-        coords.my = Math.floor(((e.changedTouches[0].clientY - rect.y) / rect.height) * canvas.height);
-    } else {
-        coords.mx = Math.floor(((e.targetTouches[0].clientX - rect.x) / rect.width) * canvas.width);
-        coords.my = Math.floor(((e.targetTouches[0].clientY - rect.y) / rect.height) * canvas.height);
-    }
-    var data = Object.assign(e, coords);
-    events.push(data);
-}
 
 
 let objects = [];
-let events = [];
 let socket = false;
 let data = false;
 let myboard = false;
+let editor = null;
+
+const cancel = () => {
+    disconnect();
+    awaitcontainer.hidden = true;
+    formControls.hidden = false;
+    btnRotatePiece.hidden = false;
+}
+
+const battle = (e) => {
+    e.preventDefault();
+    network(editor);
+}
 
 const init = () => {
     if (objects.length === 0) {
-        var Editor = new BoardEditor(10, 6);
+        editor = new BoardEditor(10, 6);
         btnRotatePiece.hidden = false;
-        btnBattle.onclick = function (e) {
-            network(Editor);
-            e.preventDefault();
-        }
-        btnCancel.onclick = function (e) {
-            disconnect();
-            awaitcontainer.hidden = true;
-            formControls.hidden = false;
-            btnRotatePiece.hidden = false;
-        }
-        objects.push(Editor);
+
+        btnBattle.onclick = battle;
+        btnCancel.onclick = cancel;
+
+        objects.push(editor);
         objects.push(new Piece(1, 1, 5, "#ff5722"));
 
         objects.push(new Piece(1, 3, 3, "#8bc34a"));
@@ -119,11 +102,11 @@ const  resete = () => {
 
 const network = (Editor) => {
     connect();
-    connect_error(game.resete);
+    connect_error(resete);
 
     init_config(data => {
         myboard = new Board(2, 6);
-        myboard.pieces = Editor.pieces;
+        myboard.pieces = editor.pieces;
 
         if (data.awaitPlayer2) {
             formControls.hidden = true;
@@ -136,8 +119,8 @@ const network = (Editor) => {
     }, 
     {
         name: inputPlayerName.value.trim() || 'Player ' + Math.floor(Math.random() * 100),
-        grid: Editor.grid,
-        pieces: Editor.pieces
+        grid: editor.grid,
+        pieces: editor.pieces
     });
 
 
@@ -150,57 +133,36 @@ const network = (Editor) => {
         }
         if (data.winner) {
             setTimeout(function () {
-                game.resete();
+                resete();
             }, 5000);
         }
         data = data;
         myboard.grid = data.mygrid;
         var myhits = new Board(16, 6, data.myhits);
         myhits.pieces = data.pieces;
-        game.objects = [myhits];
+        objects = [myhits];
     });
 };
 
-const notify = e => {
-    if (e.type == "allInBoard") {
-        if (e.allInBoard === true && formControls.hidden === true) {
-            formControls.hidden = false;
-        } else if (e.allInBoard === false && formControls.hidden === false) {
-            formControls.hidden = true;
-        }
-    } else if (e.type === "firing") {
-        firing(e);
-    } else {
-        var s = { subject: game };
-        events.push(Object.assign(s, e));
-    }
-};
-
-const  firing = e => {
-    if (socket && data.myturno === true) {
-        socket.emit("firing", e.nc);
-    }
-};
-
-
 const renderLoop = () => {
-    for (var i = 0; i < events.length; i++) {
-        var e = events[i];
-        for (var j = 0; j < objects.length; j++) {
-            if (objects[j][e.type] && awaitcontainer.hidden === true && btnPlay.hidden === true) {
-                objects[j][e.type](e);
-            }
-        }
-        events.splice(i, 1);
-        i--;
+
+    var allInBoard = objects.every(o => o.inBoard === true || o.inBoard === undefined);
+    if (allInBoard === true && formControls.hidden === true) {
+        formControls.hidden = false;
+    } else if (allInBoard === false && formControls.hidden === false) {
+        formControls.hidden = true;
+    }
+    
+    if(awaitcontainer.hidden === true && btnPlay.hidden === true) {
+        //
     }
 
     fillRect(0, 0, canvas.width, canvas.height, "lightgray");
     for (var i = 0; i < objects.length; i++) {
-        objects[i].draw(ctx);
+        objects[i].draw();
     }
     if (data) {
-        myboard.draw(ctx);
+        myboard.draw();
         var turno = data.myturno === true ? data.myname : data.othername;
         var fontSize = tileSize - (tileSize / 4);
         fillText(data.myname, 6 * tileSize, 2 * tileSize, fontSize * 1.2, "green", "center");
@@ -214,7 +176,30 @@ const renderLoop = () => {
             fillText("Turno: " + turno, 15 * tileSize, 1 * tileSize, fontSize * 1.5, color);
         }
     }
+
     window.requestAnimationFrame(renderLoop);
+}
+
+const mouseevents = e => {
+    var rect = canvas.getBoundingClientRect();
+    var coords = {
+        mx: Math.floor(((e.clientX - rect.x) / rect.width) * canvas.width),
+        my: Math.floor(((e.clientY - rect.y) / rect.height) * canvas.height)
+    };
+    var data = Object.assign(e, coords);
+}
+
+const touchevents = e => {
+    var rect = canvas.getBoundingClientRect();
+    var coords = { mx: 0, my: 0 };
+    if (e.type === "touchend") {
+        coords.mx = Math.floor(((e.changedTouches[0].clientX - rect.x) / rect.width) * canvas.width);
+        coords.my = Math.floor(((e.changedTouches[0].clientY - rect.y) / rect.height) * canvas.height);
+    } else {
+        coords.mx = Math.floor(((e.targetTouches[0].clientX - rect.x) / rect.width) * canvas.width);
+        coords.my = Math.floor(((e.targetTouches[0].clientY - rect.y) / rect.height) * canvas.height);
+    }
+    var data = Object.assign(e, coords);
 }
 
 canvas.addEventListener("mousedown", mouseevents);
@@ -225,9 +210,6 @@ canvas.addEventListener("touchstart", touchevents);
 canvas.addEventListener("touchmove", touchevents);
 canvas.addEventListener("touchend", touchevents);
 
-btnRotatePiece.onclick = function (e) {
-    events.push({
-        type: "rotatePieceInBoard",
-        subject: game
-    })
+btnRotatePiece.onclick = e => {
+    editor.rotatePieceInBoard();
 }

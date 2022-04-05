@@ -17,7 +17,11 @@ const init_config = (action, config) => {
     });
 }
 
-
+const firing = (normalizedCoords) => {
+    if (socket && data.myturno === true) {
+        socket.emit("firing", normalizedCoords);
+    }
+}
 
 const update_game = (action) => {
     socket.on("update-game", (data) => {
@@ -36,8 +40,6 @@ const connect_error = (action) => {
         disconnect();
     });
 }
-
-
 
 const disconnect = () => {
     if(socket) {
