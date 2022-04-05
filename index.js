@@ -1,10 +1,9 @@
 var http = require("http");
-//var helmet = require("helmet");
+var helmet = require("helmet");
 var express = require("express");
-const { createBrotliCompress } = require("zlib");
 var app = express();
 app.disable("x-powered-by");
-//app.use(helmet());
+app.use(helmet());
 app.use(express.static("public"));
 var server = http.createServer(app);
 server.listen(3000, function () {
