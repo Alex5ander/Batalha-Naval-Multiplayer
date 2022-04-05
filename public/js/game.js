@@ -1,5 +1,4 @@
 var awaitcontainer = document.getElementById("awaitcontainer");
-
 var inputPlayerName = document.getElementById("inputPlayerName");
 var formControls = document.getElementById("formcontrols");
 
@@ -37,14 +36,6 @@ const resize = e => {
     tileSize = 2 + (newWidth / cols);
     ctx.imageSmoothingEnabled = false;
 }
-
-btnPlay.onclick = () => {
-    btnPlay.hidden = true;
-    init();
-}
-
-
-
 
 let objects = [];
 let socket = false;
@@ -90,7 +81,43 @@ const init = () => {
     }
 };
 
-const  resete = () => {
+const renderLoop = () => {
+
+    var allInBoard = objects.every(o => o.inBoard === true || o.inBoard === undefined);
+    if (allInBoard === true && formControls.hidden === true) {
+        formControls.hidden = false;
+    } else if (allInBoard === false && formControls.hidden === false) {
+        formControls.hidden = true;
+    }
+    
+    if(awaitcontainer.hidden === true && btnPlay.hidden === true) {
+        //
+    }
+
+    fillRect(0, 0, canvas.width, canvas.height, "lightgray");
+    for (var i = 0; i < objects.length; i++) {
+        objects[i].draw();
+    }
+    if (data) {
+        myboard.draw();
+        var turno = data.myturno === true ? data.myname : data.othername;
+        var fontSize = tileSize - (tileSize / 4);
+        fillText(data.myname, 6 * tileSize, 2 * tileSize, fontSize * 1.2, "green", "center");
+        fillText(data.othername, 24 * tileSize, 2 * tileSize, fontSize * 1.2, "red", "center");
+
+        if (data.winner) {
+            fillRect(0, 11 * tileSize, 32 * tileSize, 3 * tileSize, "white");
+            fillText("Jogador: " + data.winner + " Venceu!", 16 * tileSize, 12 * tileSize, fontSize * 2, "orange");
+        } else {
+            var color = turno === data.myname ? "green" : "red";
+            fillText("Turno: " + turno, 15 * tileSize, 1 * tileSize, fontSize * 1.5, color);
+        }
+    }
+
+    window.requestAnimationFrame(renderLoop);
+}
+
+const resete = () => {
     objects = [];
     btnPlay.hidden = false;
     formControls.hidden = true;
@@ -100,7 +127,7 @@ const  resete = () => {
     btnRotatePiece.hidden = true;
 };
 
-const network = (Editor) => {
+const network = (editor) => {
     connect();
     connect_error(resete);
 
@@ -144,42 +171,6 @@ const network = (Editor) => {
     });
 };
 
-const renderLoop = () => {
-
-    var allInBoard = objects.every(o => o.inBoard === true || o.inBoard === undefined);
-    if (allInBoard === true && formControls.hidden === true) {
-        formControls.hidden = false;
-    } else if (allInBoard === false && formControls.hidden === false) {
-        formControls.hidden = true;
-    }
-    
-    if(awaitcontainer.hidden === true && btnPlay.hidden === true) {
-        //
-    }
-
-    fillRect(0, 0, canvas.width, canvas.height, "lightgray");
-    for (var i = 0; i < objects.length; i++) {
-        objects[i].draw();
-    }
-    if (data) {
-        myboard.draw();
-        var turno = data.myturno === true ? data.myname : data.othername;
-        var fontSize = tileSize - (tileSize / 4);
-        fillText(data.myname, 6 * tileSize, 2 * tileSize, fontSize * 1.2, "green", "center");
-        fillText(data.othername, 24 * tileSize, 2 * tileSize, fontSize * 1.2, "red", "center");
-
-        if (data.winner) {
-            fillRect(0, 11 * tileSize, 32 * tileSize, 3 * tileSize, "white");
-            fillText("Jogador: " + data.winner + " Venceu!", 16 * tileSize, 12 * tileSize, fontSize * 2, "orange");
-        } else {
-            var color = turno === data.myname ? "green" : "red";
-            fillText("Turno: " + turno, 15 * tileSize, 1 * tileSize, fontSize * 1.5, color);
-        }
-    }
-
-    window.requestAnimationFrame(renderLoop);
-}
-
 const mouseevents = e => {
     var rect = canvas.getBoundingClientRect();
     var coords = {
@@ -212,4 +203,9 @@ canvas.addEventListener("touchend", touchevents);
 
 btnRotatePiece.onclick = e => {
     editor.rotatePieceInBoard();
+}
+
+btnPlay.onclick = () => {
+    btnPlay.hidden = true;
+    init();
 }

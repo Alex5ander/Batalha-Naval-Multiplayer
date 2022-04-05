@@ -2,10 +2,10 @@
   "name": "batalha-naval",
   "version": "1.0.0",
   "description": "Jogo batalha naval multiplayer",
-  "main": "game.js",
+  "main": "public/index.html",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Alexsander Gutierrez Gonçalves",
   "license": "MIT",
