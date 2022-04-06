@@ -83,6 +83,12 @@ const init = () => {
 
 const renderLoop = () => {
 
+    for(let i = 0; i < objects.length; i++) {
+        if(event && objects[i][event.type]) {
+            objects[i][event.type](event);
+        }
+    }
+
     var allInBoard = objects.every(o => o.inBoard === true || o.inBoard === undefined);
     if (allInBoard === true && formControls.hidden === true) {
         formControls.hidden = false;
