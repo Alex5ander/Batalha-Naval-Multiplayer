@@ -207,9 +207,7 @@ canvas.addEventListener("touchstart", touchevents);
 canvas.addEventListener("touchmove", touchevents);
 canvas.addEventListener("touchend", touchevents);
 
-btnRotatePiece.onclick = e => {
-    editor.rotatePieceInBoard();
-}
+btnRotatePiece.onclick = editor.rotatePieceInBoard;
 
 btnPlay.onclick = () => {
     btnPlay.hidden = true;
