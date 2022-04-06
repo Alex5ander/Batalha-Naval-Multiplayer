@@ -125,7 +125,7 @@ sockets.on("connection", socket => {
 				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 			];
-		if (game[roomid]["p1"].grid.length !== 0 && game[roomid]["p2"].grid.length !== 0) {
+		if (game[roomid].p1.grid.length !== 0 && game[roomid].p2.grid.length !== 0) {
 			updateGame(roomid);
 		}
 	});
