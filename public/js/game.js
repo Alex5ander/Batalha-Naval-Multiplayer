@@ -57,7 +57,7 @@ const battle = (e) => {
 
 const init = () => {
     if (objects.length === 0) {
-        editor = new BoardEditor(10, 6);
+        editor = new Board(10, 6);
         btnRotatePiece.hidden = false;
 
         btnBattle.onclick = battle;
@@ -207,7 +207,9 @@ canvas.addEventListener("touchstart", touchevents);
 canvas.addEventListener("touchmove", touchevents);
 canvas.addEventListener("touchend", touchevents);
 
-btnRotatePiece.onclick = editor.rotatePieceInBoard;
+btnRotatePiece.onclick = () => {
+    
+}
 
 btnPlay.onclick = () => {
     btnPlay.hidden = true;

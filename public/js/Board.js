@@ -1,6 +1,3 @@
-var watertile = new Image();
-watertile.src = "../assets/watertile.png";
-
 class Board {
     constructor(x, y, grid) {
         this.x = x;
@@ -8,15 +5,22 @@ class Board {
         this.width = 10;
         this.height = 10;
         this.pieces = {};
+        this.selected = false;
+        this.grid = [
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        ]
         if (grid && grid.length === 10) {
             this.grid = grid;
-        } else {
-            this.grid = [];
-            for (var i = 0; i < 10; i++) {
-                this.grid.push([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
-            }
         }
-        this.selected = false;
     }
     click(x, y) {
         if (x > this.x * tileSize && x < (this.x * tileSize) + this.width * tileSize && y > this.y * tileSize && y < (this.y * tileSize) + this.height * tileSize) {
@@ -43,7 +47,6 @@ class Board {
             fillText(letters[i], (this.x + i) * tileSize + tileSize / 2, (this.y * tileSize) - 16, 16, "black");
             for (var j = 0; j < this.grid[i].length; j++) {
                 var g = this.grid[i][j];
-                drawTileSprite(watertile, (this.x + j) * tileSize, (this.y + i) * tileSize, tileSize);
                 strokeRect((this.x + j) * tileSize, (this.y + i) * tileSize, tileSize, tileSize, "black");
 
                 if (g === 2) {

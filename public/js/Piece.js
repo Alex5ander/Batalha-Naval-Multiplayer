@@ -39,10 +39,7 @@ class Piece {
     }
     mouseup(e) {
         if (this.click(e)) {
-            e.subject.notify({
-                type: "drop",
-                piece: this
-            })
+            
         }
         this.selected = false;
     }
@@ -59,10 +56,7 @@ class Piece {
     }
     touchend(e) {
         if (this.click(e)) {
-            e.subject.notify({
-                type: "drop",
-                piece: this
-            });
+           
         }
         this.selected = false;
     }
