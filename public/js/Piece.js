@@ -1,6 +1,5 @@
 class Piece {
-    constructor(x, y, len, color) {
-        this.id = (x + y * 10) + "color";
+    constructor(x, y, len) {
         this.x = x;
         this.y = y;
         this.count = 0;
@@ -12,13 +11,12 @@ class Piece {
         this.width = len;
         this.height = 1;
         this.len = len;
-        this.color = color;
         this.selected = false;
     }
-    click(e) {
+    click(x, y) {
         var path = new Path2D();
         path.rect(this.x * tileSize, this.y * tileSize, this.width * tileSize, this.height * tileSize);
-        if (ctx.isPointInPath(path, e.mx, e.my)) {
+        if (ctx.isPointInPath(path, x, y)) {
             return true;
         }
         return false;
@@ -32,42 +30,42 @@ class Piece {
         this.lx = false;
         this.ly = false;
     }
-    mousedown(e) {
-        if (this.click(e)) {
+    mousedown({ x, y }) {
+        if (this.click(x, y)) {
             this.selected = true;
         }
     }
-    mouseup(e) {
-        if (this.click(e)) {
-            
+    mouseup({ x, y }) {
+        if (this.click(x, y)) {
+            events.push({ type: 'drop', data: { piece: this } });
         }
         this.selected = false;
     }
-    mousemove(e) {
+    mousemove({ x, y }) {
         if (this.selected) {
-            this.x = (e.mx - this.width * tileSize / 2) / tileSize;
-            this.y = (e.my - this.height * tileSize / 2) / tileSize;
+            this.x = (x - this.width * tileSize / 2) / tileSize;
+            this.y = (y - this.height * tileSize / 2) / tileSize;
         }
     }
-    touchstart(e) {
-        if (this.click(e)) {
+    touchstart({ x, y }) {
+        if (this.click(x, y)) {
             this.selected = true;
         }
     }
-    touchend(e) {
-        if (this.click(e)) {
-           
+    touchend({ x, y }) {
+        if (this.click(x, y)) {
+            events.push({ type: 'drop', data: { piece: this } });
         }
         this.selected = false;
     }
-    touchmove(e) {
+    touchmove({ x, y }) {
         if (this.selected) {
-            this.x = (e.mx - this.width * tileSize / 2) / tileSize;
-            this.y = (e.my - this.height * tileSize / 2) / tileSize;
+            this.x = (x - this.width * tileSize / 2) / tileSize;
+            this.y = (y - this.height * tileSize / 2) / tileSize;
         }
     }
     draw() {
-        fillRect(this.x * tileSize, this.y * tileSize, this.width * tileSize, this.height * tileSize, this.color);
+        fillRect(this.x * tileSize, this.y * tileSize, this.width * tileSize, this.height * tileSize, "blue");
         if (this.selected === true) {
             strokeRect(this.x * tileSize, this.y * tileSize, this.width * tileSize, this.height * tileSize, "black");
         }

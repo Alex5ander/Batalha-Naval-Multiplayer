@@ -41,7 +41,7 @@ let objects = [];
 let data = false;
 let myboard = false;
 let editor = null;
-let event = null;
+let events = [];
 
 const cancel = () => {
     disconnect();
@@ -57,50 +57,43 @@ const battle = (e) => {
 
 const init = () => {
     if (objects.length === 0) {
-        editor = new Board(10, 6);
+        editor = new BoardEditor(10, 10);
         btnRotatePiece.hidden = false;
 
         btnBattle.onclick = battle;
         btnCancel.onclick = cancel;
 
         objects.push(editor);
-        objects.push(new Piece(1, 1, 5, "#ff5722"));
+        objects.push(new Piece(1, 1, 5));
 
-        objects.push(new Piece(1, 3, 3, "#8bc34a"));
-        objects.push(new Piece(1, 5, 3, "#8bc34a"));
+        objects.push(new Piece(1, 3, 3));
+        objects.push(new Piece(1, 5, 3));
 
-        objects.push(new Piece(1, 7, 2, "#ffeb3b"));
-        objects.push(new Piece(1, 9, 2, "#ffeb3b"));
-        objects.push(new Piece(1, 11, 2, "#ffeb3b"));
+        objects.push(new Piece(1, 7, 2));
+        objects.push(new Piece(1, 9, 2));
+        objects.push(new Piece(1, 11, 2));
 
-        objects.push(new Piece(1, 13, 1, "#9c27b0"));
-        objects.push(new Piece(1, 15, 1, "#9c27b0"));
-        objects.push(new Piece(1, 17, 1, "#9c27b0"));
-        objects.push(new Piece(1, 19, 1, "#9c27b0"));
+        objects.push(new Piece(1, 13, 1));
+        objects.push(new Piece(1, 15, 1));
+        objects.push(new Piece(1, 17, 1));
+        objects.push(new Piece(1, 19, 1));
         renderLoop();
     }
 };
 
 const renderLoop = () => {
-
-    for(let i = 0; i < objects.length; i++) {
-        if(event && objects[i][event.type]) {
-            objects[i][event.type](event);
+    for(let i = 0; i < events.length; i++) {
+        let event = events[i];
+        for(let object of objects) {
+            if(object[event.type]) {
+                object[event.type](event.data);
+            }
         }
-    }
-
-    var allInBoard = objects.every(o => o.inBoard === true || o.inBoard === undefined);
-    if (allInBoard === true && formControls.hidden === true) {
-        formControls.hidden = false;
-    } else if (allInBoard === false && formControls.hidden === false) {
-        formControls.hidden = true;
-    }
-    
-    if(awaitcontainer.hidden === true && btnPlay.hidden === true) {
-        //
+        events.splice(i, 1);
     }
 
     fillRect(0, 0, canvas.width, canvas.height, "lightgray");
+
     for (var i = 0; i < objects.length; i++) {
         objects[i].draw();
     }
@@ -108,6 +101,7 @@ const renderLoop = () => {
         myboard.draw();
         var turno = data.myturno === true ? data.myname : data.othername;
         var fontSize = tileSize - (tileSize / 4);
+        
         fillText(data.myname, 6 * tileSize, 2 * tileSize, fontSize * 1.2, "green", "center");
         fillText(data.othername, 24 * tileSize, 2 * tileSize, fontSize * 1.2, "red", "center");
 
@@ -179,24 +173,25 @@ const network = (editor) => {
 
 const mouseevents = e => {
     var rect = canvas.getBoundingClientRect();
-    var coords = {
-        mx: Math.floor(((e.clientX - rect.x) / rect.width) * canvas.width),
-        my: Math.floor(((e.clientY - rect.y) / rect.height) * canvas.height)
-    };
-    event = Object.assign(e, coords);
+    let x = Math.floor(((e.clientX - rect.x) / rect.width) * canvas.width);
+    let y = Math.floor(((e.clientY - rect.y) / rect.height) * canvas.height);
+
+    events.push({type: e.type, data: { x, y } })
 }
 
 const touchevents = e => {
     var rect = canvas.getBoundingClientRect();
-    var coords = { mx: 0, my: 0 };
+    let x = 0;
+    let y = 0;
     if (e.type === "touchend") {
-        coords.mx = Math.floor(((e.changedTouches[0].clientX - rect.x) / rect.width) * canvas.width);
-        coords.my = Math.floor(((e.changedTouches[0].clientY - rect.y) / rect.height) * canvas.height);
+        x = Math.floor(((e.changedTouches[0].clientX - rect.x) / rect.width) * canvas.width);
+        y = Math.floor(((e.changedTouches[0].clientY - rect.y) / rect.height) * canvas.height);
     } else {
-        coords.mx = Math.floor(((e.targetTouches[0].clientX - rect.x) / rect.width) * canvas.width);
-        coords.my = Math.floor(((e.targetTouches[0].clientY - rect.y) / rect.height) * canvas.height);
+        x = Math.floor(((e.targetTouches[0].clientX - rect.x) / rect.width) * canvas.width);
+        y = Math.floor(((e.targetTouches[0].clientY - rect.y) / rect.height) * canvas.height);
     }
-    event = Object.assign(e, coords);
+
+    events.push({type: e.type, data: { x, y } })
 }
 
 canvas.addEventListener("mousedown", mouseevents);

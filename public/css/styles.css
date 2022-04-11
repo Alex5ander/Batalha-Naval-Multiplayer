@@ -60,6 +60,7 @@ body {
     line-height: .5em;
     margin: auto 0;
     left: 80%;
+    cursor: pointer;
 }
 
 #btnPlay {
