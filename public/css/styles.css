@@ -60,10 +60,9 @@ body {
     line-height: .5em;
     margin: auto 0;
     left: 80%;
-    cursor: pointer;
 }
 
-#btnPlay {
+#btnJogar {
     color: white;
     background-color: green;
 
@@ -73,11 +72,11 @@ body {
     transition: .2s ease-in-out;
 }
 
-#btnPlay:hover {
+#btnJogar:hover {
     background-color: rgb(12, 111, 12);
 }
 
-#btnCancel {
+#btnCancelar {
     background-color: red;
     color: white;
 
@@ -87,11 +86,11 @@ body {
     transition: .2s ease-in-out;
 }
 
-#btnCancel:hover {
+#btnCancelar:hover {
     background-color: rgb(196, 7, 7);
 }
 
-#btnBattle {
+#btnBatalhar {
     position: relative;
     color: white;
     background-color: orange;
@@ -103,7 +102,7 @@ body {
     transition: .2s ease-in-out;
 }
 
-#btnBattle:hover {
+#btnBatalhar:hover {
     background-color: rgb(214, 145, 17);
 }
 

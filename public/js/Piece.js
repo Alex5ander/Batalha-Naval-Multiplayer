@@ -1,5 +1,6 @@
 class Piece {
-    constructor(x, y, len) {
+    constructor(x, y, len, color) {
+        this.id = (x + y * 10) + "color";
         this.x = x;
         this.y = y;
         this.count = 0;
@@ -11,12 +12,13 @@ class Piece {
         this.width = len;
         this.height = 1;
         this.len = len;
+        this.color = color;
         this.selected = false;
     }
-    click(x, y) {
+    click(e) {
         var path = new Path2D();
         path.rect(this.x * tileSize, this.y * tileSize, this.width * tileSize, this.height * tileSize);
-        if (ctx.isPointInPath(path, x, y)) {
+        if (ctx.isPointInPath(path, e.mx, e.my)) {
             return true;
         }
         return false;
@@ -30,44 +32,55 @@ class Piece {
         this.lx = false;
         this.ly = false;
     }
-    mousedown({ x, y }) {
-        if (this.click(x, y)) {
+    mousedown(e) {
+        if (this.click(e)) {
             this.selected = true;
         }
     }
-    mouseup({ x, y }) {
-        if (this.click(x, y)) {
-            events.push({ type: 'drop', data: { piece: this } });
+    mouseup(e) {
+        if (this.click(e)) {
+            e.subject.notify({
+                type: "drop",
+                piece: this
+            })
         }
         this.selected = false;
     }
-    mousemove({ x, y }) {
+    mousemove(e) {
         if (this.selected) {
-            this.x = (x - this.width * tileSize / 2) / tileSize;
-            this.y = (y - this.height * tileSize / 2) / tileSize;
+            this.x = (e.mx - this.width * tileSize / 2) / tileSize;
+            this.y = (e.my - this.height * tileSize / 2) / tileSize;
         }
     }
-    touchstart({ x, y }) {
-        if (this.click(x, y)) {
+    touchstart(e) {
+        if (this.click(e)) {
             this.selected = true;
         }
     }
-    touchend({ x, y }) {
-        if (this.click(x, y)) {
-            events.push({ type: 'drop', data: { piece: this } });
+    touchend(e) {
+        if (this.click(e)) {
+            e.subject.notify({
+                type: "drop",
+                piece: this
+            });
         }
         this.selected = false;
     }
-    touchmove({ x, y }) {
+    touchmove(e) {
         if (this.selected) {
-            this.x = (x - this.width * tileSize / 2) / tileSize;
-            this.y = (y - this.height * tileSize / 2) / tileSize;
+            this.x = (e.mx - this.width * tileSize / 2) / tileSize;
+            this.y = (e.my - this.height * tileSize / 2) / tileSize;
         }
     }
-    draw() {
-        fillRect(this.x * tileSize, this.y * tileSize, this.width * tileSize, this.height * tileSize, "blue");
+    draw(ctx) {
+        fillRect(this.x * tileSize, this.y * tileSize, this.width * tileSize, this.height * tileSize, this.color);
         if (this.selected === true) {
             strokeRect(this.x * tileSize, this.y * tileSize, this.width * tileSize, this.height * tileSize, "black");
+        } else if (this.inBoard) {
+            ctx.save();
+            ctx.lineWidth = 2.5;
+            strokeRect(this.x * tileSize, this.y * tileSize, this.width * tileSize, this.height * tileSize, "lightgreen");
+            ctx.restore();
         }
     }
 }

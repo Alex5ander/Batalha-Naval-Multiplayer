@@ -5,22 +5,15 @@ class Board {
         this.width = 10;
         this.height = 10;
         this.pieces = {};
-        this.selected = false;
-        this.grid = [
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        ]
         if (grid && grid.length === 10) {
             this.grid = grid;
+        } else {
+            this.grid = [];
+            for (var i = 0; i < 10; i++) {
+                this.grid.push([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+            }
         }
+        this.selected = false;
     }
     click(x, y) {
         if (x > this.x * tileSize && x < (this.x * tileSize) + this.width * tileSize && y > this.y * tileSize && y < (this.y * tileSize) + this.height * tileSize) {
@@ -28,30 +21,45 @@ class Board {
         }
         return false;
     }
-    mousedown({ x, y }) {
-        if (this.click(x, y) === true) {
+    mousedown(e) {
+        if (this.click(e.mx, e.my) === true) {
             this.selected = true;
         }
     }
-    mouseup({ x, y }) {
-        var normalizedCoords = { x: Math.floor(x / tileSize) - this.x, y: Math.floor(y / tileSize) - this.y };
-        if (this.click(x, y) === true && this.selected === true) {
-            firing(normalizedCoords);
+    mouseup(e) {
+        var nc = { x: Math.floor(e.mx / tileSize) - this.x, y: Math.floor(e.my / tileSize) - this.y };
+        if (this.click(e.mx, e.my) === true && this.selected === true) {
+            e.subject.notify({
+                type: "firing",
+                nc: nc
+            });
         }
         this.selected = false;
     }
-    draw() {
+    draw(ctx) {
         var letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
+
+        ctx.save();
         for (var i = 0; i < this.grid.length; i++) {
             fillText((i + 1), (this.x * tileSize) - tileSize * .3, (this.y * tileSize) + i * tileSize + tileSize * .1, 16, "black", "right");
             fillText(letters[i], (this.x + i) * tileSize + tileSize / 2, (this.y * tileSize) - 16, 16, "black");
             for (var j = 0; j < this.grid[i].length; j++) {
                 var g = this.grid[i][j];
                 strokeRect((this.x + j) * tileSize, (this.y + i) * tileSize, tileSize, tileSize, "black");
+
                 if (g === 2) {
                     fillText("X", (this.x + .5 + j) * tileSize, (this.y + .1 + i) * tileSize, tileSize, "red");
                 }
             }
         }
+
+        for (var i in this.pieces) {
+            if (this.pieces[i]) {
+                var p = this.pieces[i];
+                fillRect((this.x + p.lx) * tileSize, (this.y + p.ly) * tileSize, p.width * tileSize, p.height * tileSize, p.color);
+            }
+        }
+
+        ctx.restore();
     }
 }
