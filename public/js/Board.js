@@ -46,6 +46,10 @@ class Board {
             for (var j = 0; j < this.grid[i].length; j++) {
                 var g = this.grid[i][j];
                 strokeRect((this.x + j) * tileSize, (this.y + i) * tileSize, tileSize, tileSize, "black");
+               
+                if (g === 3) {
+                    fillRect((this.x + j) * tileSize, (this.y + i) * tileSize, tileSize, tileSize, "rgb(0, 128, 255)");
+                }
 
                 if (g === 2) {
                     fillText("X", (this.x + .5 + j) * tileSize, (this.y + .1 + i) * tileSize, tileSize, "red");
