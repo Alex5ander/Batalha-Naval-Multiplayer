@@ -39,7 +39,13 @@ class Board {
     draw(ctx) {
         var letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
 
-        ctx.save();
+        for (var i in this.pieces) {
+            if (this.pieces[i]) {
+                var p = this.pieces[i];
+                fillRect((this.x + p.lx) * tileSize, (this.y + p.ly) * tileSize, p.width * tileSize, p.height * tileSize, p.color);
+            }
+        }
+
         for (var i = 0; i < this.grid.length; i++) {
             fillText((i + 1), (this.x * tileSize) - tileSize * .3, (this.y * tileSize) + i * tileSize + tileSize * .1, 16, "black", "right");
             fillText(letters[i], (this.x + i) * tileSize + tileSize / 2, (this.y * tileSize) - 16, 16, "black");
@@ -57,13 +63,5 @@ class Board {
             }
         }
 
-        for (var i in this.pieces) {
-            if (this.pieces[i]) {
-                var p = this.pieces[i];
-                fillRect((this.x + p.lx) * tileSize, (this.y + p.ly) * tileSize, p.width * tileSize, p.height * tileSize, p.color);
-            }
-        }
-
-        ctx.restore();
     }
 }
