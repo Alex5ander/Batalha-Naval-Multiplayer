@@ -2,8 +2,17 @@ var http = require("http");
 var helmet = require("helmet");
 var express = require("express");
 var app = express();
-app.disable("x-powered-by");
-app.use(helmet());
+
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      frameSrc: ["'none'"],
+      frameAncestors: ["https://www.alex5ander.itch.io/"]
+    }
+  }
+}));
+
 app.use(express.static("public"));
 var server = http.createServer(app);
 server.listen(3000, function () {
