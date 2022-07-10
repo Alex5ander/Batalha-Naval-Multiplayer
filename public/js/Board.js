@@ -57,8 +57,8 @@ class Board {
         }
 
         for (var i = 0; i < this.grid.length; i++) {
-            fillText((i + 1), (this.x * tileSize) - tileSize * .3, (this.y * tileSize) + i * tileSize + tileSize * .1, 16, "#080808", "right");
-            fillText(letters[i], (this.x + i) * tileSize + tileSize / 2, (this.y * tileSize) - 16, 16, "#080808");
+            fillText((i + 1), (this.x * tileSize) - 8, (this.y * tileSize) + i * tileSize + 8, 16, "#080808", "right");
+            fillText(letters[i], (this.x + i) * tileSize + tileSize / 2, (this.y * tileSize) - 24, 16, "#080808");
             for (var j = 0; j < this.grid[i].length; j++) {
                 var g = this.grid[i][j];
                
@@ -70,7 +70,7 @@ class Board {
                     fillText("X", (this.x + .5 + j) * tileSize, (this.y + .1 + i) * tileSize, tileSize, "#f83800");
                 }
 
-                strokeRect((this.x + j) * tileSize, (this.y + i) * tileSize, tileSize, tileSize, "#004058ff");
+                strokeRect((this.x + j) * tileSize, (this.y + i) * tileSize, tileSize, tileSize, "#3cbcfcff");
             }
         }
 

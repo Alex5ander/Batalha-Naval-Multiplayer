@@ -79,7 +79,7 @@ class Piece {
         } else if (this.inBoard) {
             ctx.save();
             ctx.lineWidth = 2.5;
-            strokeRect(this.x * tileSize, this.y * tileSize, this.width * tileSize, this.height * tileSize, "#b8f8d8ff", 2);
+            strokeRect(this.x * tileSize, this.y * tileSize, this.width * tileSize, this.height * tileSize, "#080808", 2);
             ctx.restore();
         }
     }
