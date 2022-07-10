@@ -11,9 +11,9 @@ function drawTileSprite(img, x, y, size) {
     ctx.drawImage(img, x, y, size, size);
 }
 
-function strokeRect(x, y, w, h, color) {
+function strokeRect(x, y, w, h, color, strokeWidth) {
     ctx.save();
-    ctx.lineWidth = 0.5;
+    ctx.lineWidth = strokeWidth || 0.5;
     ctx.strokeStyle = color;
     ctx.strokeRect(x, y, w, h);
     ctx.restore();
@@ -23,7 +23,7 @@ function fillText(text, x, y, fontSize, color, align) {
     ctx.save();
     ctx.textBaseline = "top";
     ctx.textAlign = align || "center";
-    ctx.font = fontSize + "px Verdana";
+    ctx.font = fontSize + "px 'Press Start 2P'";
     ctx.fillStyle = color;
     ctx.fillText(text, x, y);
     ctx.restore();

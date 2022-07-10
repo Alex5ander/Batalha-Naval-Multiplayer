@@ -1,157 +1,220 @@
+:root {
+  --color-white: #f8f8f8;
+  --color-black: #080808;
+  --color-red: #f83800;
+  --color-green: #00b800;
+  --color-yellow: #d8f878;
+  --color-orange: #fca044;
+  --color-gray: #d8d8d8ff;
+}
+
+* {
+  font-family: "Press Start 2P";
+}
+.hidden {
+  display: none !important;
+}
 body {
-    margin: 0;
-    overflow: hidden;
-    font-family: monospace;
-    font-weight: 500;
+  margin: 0;
+  overflow: hidden;
 }
 
-#gameArea {
-    position: absolute;
-    text-align: center;
-    width: 100%;
-    background-color: black;
+#game-area {
+  position: absolute;
+  text-align: center;
+  width: 100%;
+  background-color: var(--color-black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-#formcontrols,
+canvas {
+  image-rendering: pixelated;
+  background-color: var(--color-white);
+}
+
+#play-game-screen {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#btn-rotate-piece {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: var(--color-yellow);
+  font-size: 2em;
+  line-height: 0.5em;
+  margin: auto;
+  left: 0;
+  right: 0;
+  top: 16px;
+  position: absolute;
+  border: none;
+  padding: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#btn-jogar {
+  color: var(--color-white);
+  background-color: var(--color-green);
+
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+
+  border: none;
+  padding: 16px;
+  border-radius: 0.5rem;
+}
+
+#btn-jogar:hover {
+  background-color: #58d854;
+}
+
 #awaitcontainer {
-    position: absolute;
-    width: 75%;
-    height: 0;
-    margin: auto;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
+  position: absolute;
+  height: 0;
+  margin: auto;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 #spinner {
-    width: 100px;
-    height: 100px;
-    border: 24px solid transparent;
-    border-top-color: orange;
-    border-radius: 50%;
-    position: absolute;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    margin: auto;
-    animation: spinner 1s infinite linear;
+  width: 200px;
+  height: 200px;
+  border: 24px solid transparent;
+  border-top-color: var(--color-orange);
+  border-radius: 50%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  animation: spinner 1s infinite linear;
 }
 
-.btn {
-    width: 100px;
-    height: 40px;
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    margin: auto;
-    border: none;
+#btn-cancelar {
+  background-color: var(--color-red);
+  color: var(--color-white);
+
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+
+  border: none;
+  padding: 16px;
+  border-radius: 0.5rem;
+  z-index: 2;
+  position: relative;
 }
 
-#btnRotatePiece {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background-color: yellow;
-    font-size: 2em;
-    line-height: .5em;
-    margin: auto 0;
-    left: 80%;
+#btn-cancelar:hover {
+  background-color: #f87858;
 }
 
-#btnJogar {
-    color: white;
-    background-color: green;
+#form {
+  position: absolute;
+  margin: auto;
+  left: 0;
+  right: 0;
+  bottom: 16px;
 
-    border:none;
-    cursor:pointer;
-    border-radius: 1rem;
-    transition: .2s ease-in-out;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-#btnJogar:hover {
-    background-color: rgb(12, 111, 12);
+#form-controls {
+  text-align: center;
 }
 
-#btnCancelar {
-    background-color: red;
-    color: white;
-
-    border:none;
-    cursor:pointer;
-    border-radius: 1rem;
-    transition: .2s ease-in-out;
+#input-player-name {
+  padding: 16px;
+  outline: none;
+  border: none;
+  background-color: var(--color-gray);
+  border-radius: 0.5rem;
 }
 
-#btnCancelar:hover {
-    background-color: rgb(196, 7, 7);
+#btn-batalhar {
+  margin-top: 16px;
+  color: var(--color-white);
+  background-color: var(--color-orange);
+  display: inline-block;
+
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+
+  border: none;
+  padding: 16px;
+  border-radius: 0.5rem;
 }
 
-#btnBatalhar {
-    position: relative;
-    color: white;
-    background-color: orange;
-    display: block;
-
-    border:none;
-    cursor:pointer;
-    border-radius: 1rem;
-    transition: .2s ease-in-out;
-}
-
-#btnBatalhar:hover {
-    background-color: rgb(214, 145, 17);
+#btn-batalhar:hover {
+  background-color: var(--color-yellow);
 }
 
 @-ms-keyframes spinner {
-    0% {
-        -ms-transform: rotate(0deg);
-    }
+  0% {
+    -ms-transform: rotate(0deg);
+  }
 
-    100% {
-        -ms-transform: rotate(360deg);
-    }
+  100% {
+    -ms-transform: rotate(360deg);
+  }
 }
 
 @-o-keyframes spinner {
-    0% {
-        -o-transform: rotate(0deg);
-    }
+  0% {
+    -o-transform: rotate(0deg);
+  }
 
-    100% {
-        -o-transform: rotate(360deg);
-    }
+  100% {
+    -o-transform: rotate(360deg);
+  }
 }
 
 @-webkit-keyframes spinner {
-    0% {
-        -webkit-transform: rotate(0deg);
-    }
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
 
-    100% {
-        -webkit-transform: rotate(360deg);
-    }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
 }
 
 @-moz-keyframes spinner {
-    0% {
-        -moz-transform: rotate(0deg);
-    }
+  0% {
+    -moz-transform: rotate(0deg);
+  }
 
-    100% {
-        -moz-transform: rotate(360deg);
-    }
+  100% {
+    -moz-transform: rotate(360deg);
+  }
 }
 
 @keyframes spinner {
-    0% {
-        transform: rotate(0deg);
-    }
+  0% {
+    transform: rotate(0deg);
+  }
 
-    100% {
-        transform: rotate(360deg);
-    }
+  100% {
+    transform: rotate(360deg);
+  }
 }

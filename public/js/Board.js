@@ -1,3 +1,6 @@
+var waterTile = new Image();
+waterTile.src = "../images/watertile.png";
+
 class Board {
     constructor(x, y, grid) {
         this.x = x;
@@ -39,6 +42,13 @@ class Board {
     draw(ctx) {
         var letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
 
+        for (var i = 0; i < this.grid.length; i++) {
+            for (var j = 0; j < this.grid[i].length; j++) {
+                var g = this.grid[i][j];
+                drawTileSprite(waterTile, (this.x + j) * tileSize, (this.y + i) * tileSize, tileSize);
+            }
+        }
+
         for (var i in this.pieces) {
             if (this.pieces[i]) {
                 var p = this.pieces[i];
@@ -47,19 +57,20 @@ class Board {
         }
 
         for (var i = 0; i < this.grid.length; i++) {
-            fillText((i + 1), (this.x * tileSize) - tileSize * .3, (this.y * tileSize) + i * tileSize + tileSize * .1, 16, "black", "right");
-            fillText(letters[i], (this.x + i) * tileSize + tileSize / 2, (this.y * tileSize) - 16, 16, "black");
+            fillText((i + 1), (this.x * tileSize) - tileSize * .3, (this.y * tileSize) + i * tileSize + tileSize * .1, 16, "#080808", "right");
+            fillText(letters[i], (this.x + i) * tileSize + tileSize / 2, (this.y * tileSize) - 16, 16, "#080808");
             for (var j = 0; j < this.grid[i].length; j++) {
                 var g = this.grid[i][j];
-                strokeRect((this.x + j) * tileSize, (this.y + i) * tileSize, tileSize, tileSize, "black");
                
                 if (g === 3) {
-                    fillRect((this.x + j) * tileSize, (this.y + i) * tileSize, tileSize, tileSize, "rgb(0, 128, 255)");
+                    fillRect((this.x + j) * tileSize, (this.y + i) * tileSize, tileSize, tileSize, "#0000bc");
                 }
 
                 if (g === 2) {
-                    fillText("X", (this.x + .5 + j) * tileSize, (this.y + .1 + i) * tileSize, tileSize, "red");
+                    fillText("X", (this.x + .5 + j) * tileSize, (this.y + .1 + i) * tileSize, tileSize, "#f83800");
                 }
+
+                strokeRect((this.x + j) * tileSize, (this.y + i) * tileSize, tileSize, tileSize, "#004058ff");
             }
         }
 

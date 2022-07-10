@@ -75,11 +75,11 @@ class Piece {
     draw(ctx) {
         fillRect(this.x * tileSize, this.y * tileSize, this.width * tileSize, this.height * tileSize, this.color);
         if (this.selected === true) {
-            strokeRect(this.x * tileSize, this.y * tileSize, this.width * tileSize, this.height * tileSize, "black");
+            strokeRect(this.x * tileSize, this.y * tileSize, this.width * tileSize, this.height * tileSize, "#080808", 2);
         } else if (this.inBoard) {
             ctx.save();
             ctx.lineWidth = 2.5;
-            strokeRect(this.x * tileSize, this.y * tileSize, this.width * tileSize, this.height * tileSize, "lightgreen");
+            strokeRect(this.x * tileSize, this.y * tileSize, this.width * tileSize, this.height * tileSize, "#b8f8d8ff", 2);
             ctx.restore();
         }
     }

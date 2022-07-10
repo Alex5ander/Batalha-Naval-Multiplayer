@@ -1,15 +1,16 @@
 var canvas = document.getElementById("canvas");
 /** @type CanvasRenderingContext2D **/
 var ctx = canvas.getContext("2d");
-var tileSize = 20;
-var btnBatalhar = document.getElementById("btnBatalhar");
+var tileSize = 32;
+var btnBatalhar = document.getElementById("btn-batalhar");
 var awaitcontainer = document.getElementById("awaitcontainer");
-var btnJogar = document.getElementById("btnJogar");
-var btnCancelar = document.getElementById("btnCancelar");
-var inputPlayerName = document.getElementById("inputPlayerName");
-var formControls = document.getElementById("formcontrols");
-var btnRotatePiece = document.getElementById("btnRotatePiece");
-var gameArea = document.getElementById("gameArea");
+var playGameScreen = document.getElementById("play-game-screen");
+var btnJogar = document.getElementById("btn-jogar");
+var btnCancelar = document.getElementById("btn-cancelar");
+var inputPlayerName = document.getElementById("input-player-name");
+var form = document.getElementById("form");
+var btnRotatePiece = document.getElementById("btn-rotate-piece");
+var gameArea = document.getElementById("game-area");
 
 var cols = 32;
 var rows = 24;
@@ -35,34 +36,12 @@ function resize(e) {
     canvas.height = newHeight;
 
     tileSize = 2 + (newWidth / cols);
+
     ctx.imageSmoothingEnabled = false;
 }
 
 btnJogar.onclick = function () {
     game.init(ctx);
-}
-
-function fillRect(x, y, w, h, color) {
-    ctx.fillStyle = color;
-    ctx.fillRect(x, y, w, h);
-}
-
-function strokeRect(x, y, w, h, color) {
-    ctx.save();
-    ctx.lineWidth = 0.5;
-    ctx.strokeStyle = color;
-    ctx.strokeRect(x, y, w, h);
-    ctx.restore();
-}
-
-function fillText(text, x, y, fontSize, color, align) {
-    ctx.save();
-    ctx.textBaseline = "top";
-    ctx.textAlign = align || "center";
-    ctx.font = fontSize + "px Verdana";
-    ctx.fillStyle = color;
-    ctx.fillText(text, x, y);
-    ctx.restore();
 }
 
 function mouseevents(e) {
@@ -101,7 +80,7 @@ var game = {
         this.ctx = ctx;
         if (this.objects.length === 0) {
             var Editor = new BoardEditor(10, 6);
-            btnRotatePiece.hidden = false;
+            btnRotatePiece.classList.remove("hidden");
             btnBatalhar.onclick = function (e) {
                 game.network(Editor);
                 e.preventDefault();
@@ -111,36 +90,36 @@ var game = {
                     game.socket.close();
                     game.socket = false;
                 }
-                awaitcontainer.hidden = true;
-                formControls.hidden = false;
-                btnRotatePiece.hidden = false;
+                awaitcontainer.classList.add("hidden");
+                form.classList.add("hidden");
+                btnRotatePiece.classList.remove("hidden");
             }
             this.objects.push(Editor);
-            this.objects.push(new Piece(1, 1, 5, "#ff5722"));
+            this.objects.push(new Piece(1, 1, 5, "#f83800"));
 
-            this.objects.push(new Piece(1, 3, 3, "#8bc34a"));
-            this.objects.push(new Piece(1, 5, 3, "#8bc34a"));
+            this.objects.push(new Piece(1, 3, 3, "#00b800"));
+            this.objects.push(new Piece(1, 5, 3, "#00b800"));
 
-            this.objects.push(new Piece(1, 7, 2, "#ffeb3b"));
-            this.objects.push(new Piece(1, 9, 2, "#ffeb3b"));
-            this.objects.push(new Piece(1, 11, 2, "#ffeb3b"));
+            this.objects.push(new Piece(1, 7, 2, "#d8f878"));
+            this.objects.push(new Piece(1, 9, 2, "#d8f878"));
+            this.objects.push(new Piece(1, 11, 2, "#d8f878"));
 
-            this.objects.push(new Piece(1, 13, 1, "#9c27b0"));
-            this.objects.push(new Piece(1, 15, 1, "#9c27b0"));
-            this.objects.push(new Piece(1, 17, 1, "#9c27b0"));
-            this.objects.push(new Piece(1, 19, 1, "#9c27b0"));
-            btnJogar.hidden = true;
+            this.objects.push(new Piece(1, 13, 1, "#d800cc"));
+            this.objects.push(new Piece(1, 15, 1, "#d800cc"));
+            this.objects.push(new Piece(1, 17, 1, "#d800cc"));
+            this.objects.push(new Piece(1, 19, 1, "#d800cc"));
+            playGameScreen.classList.add('hidden');
             this.renderLoop();
         }
     },
     resete: function () {
         this.objects = [];
-        btnJogar.hidden = false;
-        formControls.hidden = true;
-        awaitcontainer.hidden = true;
+        playGameScreen.classList.add('hidden');
+        form.classList.add("hidden");
+        awaitcontainer.classList.add("hidden");
+        btnRotatePiece.classList.add("hidden");
         this.data = false;
         this.myboard = false;
-        btnRotatePiece.hidden = true;
         if (game.socket) {
             game.socket.close();
             game.socket = false;
@@ -159,14 +138,15 @@ var game = {
         this.socket.on("init-config", (data) => {
             this.myboard = new Board(2, 6);
             this.myboard.pieces = Editor.pieces;
+            form.classList.add("hidden");
+            btnRotatePiece.classList.add("hidden");
+
             if (data.awaitPlayer2) {
-                formControls.hidden = true;
-                btnRotatePiece.hidden = true;
-                awaitcontainer.hidden = false;
+                awaitcontainer.classList.remove("hidden");
+            }else {
+                awaitcontainer.classList.add("hidden");
             }
-            if (btnRotatePiece.hidden === false) {
-                btnRotatePiece.hidden = true;
-            }
+
             game.socket.emit("load-grid", {
                 name: inputPlayerName.value.trim() || 'Player ' + Math.floor(Math.random() * 100),
                 grid: Editor.grid,
@@ -174,12 +154,6 @@ var game = {
             });
         });
         this.socket.on("update-game", data => {
-            if (formControls.hidden === false) {
-                formControls.hidden = true;
-            }
-            if (awaitcontainer.hidden === false) {
-                awaitcontainer.hidden = true;
-            }
             if (data.winner) {
                 setTimeout(function () {
                     game.resete();
@@ -190,14 +164,17 @@ var game = {
             var myhits = new Board(16, 6, data.myhits);
             myhits.pieces = data.pieces;
             game.objects = [myhits];
+            if(data.othername) {
+                awaitcontainer.classList.add("hidden");
+            }
         });
     },
     notify: function (e) {
         if (e.type == "allInBoard") {
-            if (e.allInBoard === true && formControls.hidden === true) {
-                formControls.hidden = false;
-            } else if (e.allInBoard === false && formControls.hidden === false) {
-                formControls.hidden = true;
+            if (e.allInBoard === true) {
+                form.classList.remove("hidden");
+            } else if (e.allInBoard === false) {
+                form.classList.add("hidden");
             }
         } else if (e.type === "firing") {
             this.firing(e);
@@ -212,11 +189,11 @@ var game = {
         }
     },
     renderLoop: function () {
-        fillRect(0, 0, canvas.width, canvas.height, "lightgray");
+        fillRect(0, 0, canvas.width, canvas.height, "#f8f8f8");
         for (var i = 0; i < this.events.length; i++) {
             var e = this.events[i];
             for (var j = 0; j < this.objects.length; j++) {
-                if (this.objects[j][e.type] && awaitcontainer.hidden === true && btnJogar.hidden === true) {
+                if (this.objects[j][e.type]) {
                     this.objects[j][e.type](e);
                 }
             }
@@ -229,16 +206,21 @@ var game = {
         if (this.data) {
             this.myboard.draw(this.ctx);
             var turno = this.data.myturno === true ? this.data.myname : this.data.othername;
-            var fontSize = tileSize - (tileSize / 4);
-            fillText(this.data.myname, 6 * tileSize, 2 * tileSize, fontSize * 1.2, "green", "center");
-            fillText(this.data.othername, 24 * tileSize, 2 * tileSize, fontSize * 1.2, "red", "center");
+      
+            fillText(this.data.myname, 6 * tileSize, 2 * tileSize, 12, "#00b800", "center");
+            fillText(this.data.othername, 24 * tileSize, 2 * tileSize, 12, "#f83800", "center");
 
-            if (this.data.winner) {
-                fillRect(0, 11 * tileSize, 32 * tileSize, 3 * tileSize, "white");
-                fillText("Jogador: " + this.data.winner + " Venceu!", 16 * tileSize, 12 * tileSize, fontSize * 2, "orange");
+            if(this.data.winner) {
+                if (this.data.winner === this.data.myname) {
+                    fillRect(0, 0, canvas.width, canvas.height, "#00b8007f");
+                    fillText("Você venceu!", 16 * tileSize, 12 * tileSize, 32, "#f8f8f8");
+                } else {
+                    fillRect(0, 0, canvas.width, canvas.height, "#f838007f");
+                    fillText("Você perdeu!", 16 * tileSize, 12 * tileSize, 32, "#f8f8f8");
+                }
             } else {
-                var color = turno === this.data.myname ? "green" : "red";
-                fillText("Turno: " + turno, 15 * tileSize, 1 * tileSize, fontSize * 1.5, color);
+                var color = turno === this.data.myname ? "#00b800" : "#f83800";
+                fillText("Turno: " + turno, 15 * tileSize, 1 * tileSize, 12, color);
             }
         }
         window.requestAnimationFrame(this.renderLoop.bind(this));
