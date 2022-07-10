@@ -114,7 +114,7 @@ var game = {
     },
     resete: function () {
         this.objects = [];
-        playGameScreen.classList.add('hidden');
+        playGameScreen.classList.remove('hidden');
         form.classList.add("hidden");
         awaitcontainer.classList.add("hidden");
         btnRotatePiece.classList.add("hidden");
