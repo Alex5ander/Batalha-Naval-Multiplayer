@@ -19,10 +19,10 @@ function strokeRect(x, y, w, h, color, strokeWidth) {
     ctx.restore();
 }
 
-function fillText(text, x, y, fontSize, color, align) {
+function fillText(text, x, y, fontSize, color) {
     ctx.save();
-    ctx.textBaseline = "top";
-    ctx.textAlign = align || "center";
+    ctx.textBaseline = "middle";
+    ctx.textAlign = "center";
     ctx.font = fontSize + "px 'Press Start 2P'";
     ctx.fillStyle = color;
     ctx.fillText(text, x, y);

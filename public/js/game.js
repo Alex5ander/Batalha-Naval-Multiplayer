@@ -35,7 +35,7 @@ function resize(e) {
     canvas.width = newWidth;
     canvas.height = newHeight;
 
-    tileSize = Math.max(newWidth, newHeight) / 32;
+    tileSize = Math.trunc(Math.max(newWidth, newHeight) / 32);
 
     ctx.imageSmoothingEnabled = false;
 }
@@ -79,7 +79,7 @@ var game = {
     init: function (ctx) {
         this.ctx = ctx;
         if (this.objects.length === 0) {
-            var Editor = new BoardEditor(12, 8);
+            var Editor = new BoardEditor(11, 7);
             btnRotatePiece.classList.remove("hidden");
             btnBatalhar.onclick = function (e) {
                 game.network(Editor);
@@ -161,7 +161,7 @@ var game = {
             }
             this.data = data;
             this.myboard.grid = this.data.mygrid;
-            var myhits = new Board(16, 6, data.myhits);
+            var myhits = new Board(21, 6, data.myhits);
             myhits.pieces = data.pieces;
             game.objects = [myhits];
             if(data.othername) {
@@ -207,20 +207,22 @@ var game = {
             this.myboard.draw(this.ctx);
             var turno = this.data.myturno === true ? this.data.myname : this.data.othername;
       
-            fillText(this.data.myname, 6 * tileSize, 2 * tileSize, 12, "#00b800", "center");
-            fillText(this.data.othername, 24 * tileSize, 2 * tileSize, 12, "#f83800", "center");
+            var tileCenterY = tileSize / 2;
+
+            fillText(this.data.myname, 6 * tileSize, 2 * tileSize + tileCenterY, tileSize, "#00b800");
+            fillText(this.data.othername, 25 * tileSize, 2 * tileSize + tileCenterY, tileSize, "#f83800");
 
             if(this.data.winner) {
                 if (this.data.winner === this.data.myname) {
                     fillRect(0, 0, canvas.width, canvas.height, "#00b8007f");
-                    fillText("Você venceu!", 16 * tileSize, 12 * tileSize, 32, "#f8f8f8");
+                    fillText("Você venceu!", 16 * tileSize, 12 * tileSize, tileSize, "#f8f8f8");
                 } else {
                     fillRect(0, 0, canvas.width, canvas.height, "#f838007f");
-                    fillText("Você perdeu!", 16 * tileSize, 12 * tileSize, 32, "#f8f8f8");
+                    fillText("Você perdeu!", 16 * tileSize, 12 * tileSize, tileSize, "#f8f8f8");
                 }
             } else {
                 var color = turno === this.data.myname ? "#00b800" : "#f83800";
-                fillText("Turno: " + turno, 15 * tileSize, 1 * tileSize, 12, color);
+                fillText("Turno: " + turno, 16 * tileSize, 1 * tileSize + tileCenterY, tileSize / 2, color);
             }
         }
         window.requestAnimationFrame(this.renderLoop.bind(this));

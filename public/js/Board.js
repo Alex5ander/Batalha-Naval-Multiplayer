@@ -1,5 +1,8 @@
-var waterTile = new Image();
+const waterTile = new Image();
 waterTile.src = "../images/watertile.png";
+
+const markerTile = new Image();
+markerTile.src = "../images/markertile.png";
 
 class Board {
     constructor(x, y, grid) {
@@ -62,13 +65,15 @@ class Board {
         }
 
         for (var i = 0; i < this.grid.length; i++) {
-            let nx =  (this.x * tileSize) - (tileSize / 2);
-            let ny = (this.y * tileSize) + i * tileSize + tileSize / 4;
             let fontSize = tileSize / 2;
+
+            let nx =  (this.x * tileSize) - (tileSize / 2);
+            let ny = (this.y * tileSize) + (i * tileSize) + fontSize;
+           
 
 
             let lx = (this.x + i) * tileSize + tileSize / 2;
-            let ly = (this.y * tileSize) - tileSize / 1.5;
+            let ly = (this.y * tileSize) - fontSize;
 
             fillText((i + 1), nx, ny, fontSize, "#080808");
             fillText(letters[i], lx, ly, fontSize, "#080808");
@@ -81,7 +86,7 @@ class Board {
                 }
 
                 if (g === 2) {
-                    fillText("X", (this.x + .5 + j) * tileSize, (this.y + .1 + i) * tileSize, tileSize, "#f83800");
+                    drawTileSprite(markerTile, (this.x + j) * tileSize, (this.y + i) * tileSize, tileSize);
                 }
 
                 strokeRect((this.x + j) * tileSize, (this.y + i) * tileSize, tileSize, tileSize, "#3cbcfcff");
