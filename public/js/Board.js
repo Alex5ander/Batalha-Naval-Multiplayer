@@ -41,6 +41,11 @@ class Board {
     }
     draw(ctx) {
         var letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
+        for(let i = 0; i <32; i++) {
+            for(let j = 0; j <  24; j++) {
+                strokeRect(i * tileSize, j * tileSize, tileSize, tileSize, "#080808");
+            }
+        }
 
         for (var i = 0; i < this.grid.length; i++) {
             for (var j = 0; j < this.grid[i].length; j++) {
@@ -57,8 +62,17 @@ class Board {
         }
 
         for (var i = 0; i < this.grid.length; i++) {
-            fillText((i + 1), (this.x * tileSize) - 8, (this.y * tileSize) + i * tileSize + 8, 16, "#080808", "right");
-            fillText(letters[i], (this.x + i) * tileSize + tileSize / 2, (this.y * tileSize) - 24, 16, "#080808");
+            let nx =  (this.x * tileSize) - (tileSize / 2);
+            let ny = (this.y * tileSize) + i * tileSize + tileSize / 4;
+            let fontSize = tileSize / 2;
+
+
+            let lx = (this.x + i) * tileSize + tileSize / 2;
+            let ly = (this.y * tileSize) - tileSize / 1.5;
+
+            fillText((i + 1), nx, ny, fontSize, "#080808");
+            fillText(letters[i], lx, ly, fontSize, "#080808");
+
             for (var j = 0; j < this.grid[i].length; j++) {
                 var g = this.grid[i][j];
                
@@ -73,6 +87,5 @@ class Board {
                 strokeRect((this.x + j) * tileSize, (this.y + i) * tileSize, tileSize, tileSize, "#3cbcfcff");
             }
         }
-
     }
 }

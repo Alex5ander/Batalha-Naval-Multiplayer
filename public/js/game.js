@@ -35,7 +35,7 @@ function resize(e) {
     canvas.width = newWidth;
     canvas.height = newHeight;
 
-    tileSize = 2 + (newWidth / cols);
+    tileSize = Math.max(newWidth, newHeight) / 32;
 
     ctx.imageSmoothingEnabled = false;
 }
@@ -79,7 +79,7 @@ var game = {
     init: function (ctx) {
         this.ctx = ctx;
         if (this.objects.length === 0) {
-            var Editor = new BoardEditor(10, 6);
+            var Editor = new BoardEditor(12, 8);
             btnRotatePiece.classList.remove("hidden");
             btnBatalhar.onclick = function (e) {
                 game.network(Editor);

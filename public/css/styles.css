@@ -47,16 +47,16 @@ canvas {
 }
 
 #btn-rotate-piece {
-  width: 50px;
-  height: 50px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   background-color: var(--color-yellow);
-  font-size: 2em;
+  font-size: 1em;
   line-height: 0.5em;
   margin: auto;
   left: 0;
   right: 0;
-  top: 16px;
+  top: 8px;
   position: absolute;
   border: none;
   padding: 16px;
