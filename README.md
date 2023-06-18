@@ -2,11 +2,11 @@
 
 ## Tecnologias
 
- - HTML5
- - Javascript
- - CSS3
- - Node JS
- - Socket IO
+- HTML5
+- Javascript
+- CSS3
+- Node JS
+- Socket IO
 
 ## Capturas de tela
 
@@ -14,28 +14,29 @@
 
 ![screenshot](./screenshot_2.png)
 
-![screenshot](./screenshot_3.png)
-
-
 ## Rodando localmente
- 
- ```bash
+
+```bash
 git clone https://github.com/Alex5ander/Batalha-Naval-Multiplayer.git
- ```
+```
 
 ### Entre no diretório do projeto
- ```bash
+
+```bash
 cd Batalha-Naval-Multiplayer
- ```
+```
 
- ### Instale as dependências
- ```bash
- npm i
+### Instale as dependências
 
- ```
+```bash
+npm i
 
- ### Inicie o servidor
- ```bash
- npm start 
- ```
+```
+
+### Inicie o servidor
+
+```bash
+npm start
+```
+
 ### [Execute agora mesmo](https://alex5ander.itch.io/batalha-naval-multiplayer)
