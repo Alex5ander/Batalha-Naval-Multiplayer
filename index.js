@@ -1,198 +1,186 @@
-var http = require("http");
-var express = require("express");
-var app = express();
-app.use(express.static("public"));
-var server = http.createServer(app);
+const http = require('http');
+const express = require('express');
+const app = express();
+app.use(express.static('public'));
+const server = http.createServer(app);
 server.listen(3000, function () {
-	console.log("** Server is listening on localhost:3000, open your browser on http://localhost:3000/ **");
+  console.log(
+    '** Server is listening on localhost:3000, open your browser on http://localhost:3000/ **'
+  );
 });
-var sockets = require("socket.io")(server);
+const sockets = require('socket.io')(server);
 
-var roomsNo = 0;
-var game = {};
-var maxScore = 21;
+let roomsNo = 0;
+const game = {};
+const maxScore = 21;
 
-sockets.on("connection", socket => {
-	roomsNo += 1;
-	var roomid = Math.round(roomsNo / 2);
-	socket.join(roomid);
-	socket.on("disconnect", () => {
-		delete game[roomid];
-		roomsNo -= 1;
-		sockets.to(roomid).emit("another_player_disconnected", {
-			another_playerid: socket.id
-		});
-	});
+class Player {
+  constructor(id, name, grid, opponent) {
+    this.id = id;
+    this.name = name;
+    this.grid = grid;
+    this.hits = [
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    ];
+    this.pieces = {};
+    this.drawpieces = [];
+    this.score = 0;
+    this.opponent = opponent;
+  }
+}
 
-	function updateGame(roomid) {
-		var room = game[roomid];
-		var p1 = game[roomid].p1;
-		var p2 = game[roomid].p2;
+sockets.on('connection', (socket) => {
+  roomsNo += 1;
+  const roomid = Math.round(roomsNo / 2);
+  socket.join(roomid);
+  socket.on('disconnect', () => {
+    delete game[roomid];
+    roomsNo -= 1;
+    sockets.to(roomid).emit('another_player_disconnected', {
+      another_playerid: socket.id,
+    });
+  });
 
-		sockets.to(p1.id).emit("update-game", {
-			myname: p1.name,
-			othername: p2.name,
-			mygrid: p1.grid,
-			myhits: p1.myhits,
-			winner: room.winner,
-			pieces: p1.drawpieces,
-			myturno: room.turno === 1
-		});
-		sockets.to(p2.id).emit("update-game", {
-			myname: p2.name,
-			othername: p1.name,
-			mygrid: p2.grid,
-			myhits: p2.myhits,
-			winner: room.winner,
-			pieces: p2.drawpieces,
-			myturno: room.turno === 2
-		});
-	}
-	function createRoom(roomid) {
-		game[roomid] = {
-			winner: false,
-			turno: 1 + Math.floor(Math.random() * 2),
-			p1: {
-				id: socket.id,
-				score: 0,
-				grid: []
-			},
-			p2: {
-				id: null,
-				score: 0,
-				grid: []
-			},
-			[socket.id]: {
-				no: 1
-			}
-		};
-		sockets.to(socket.id).emit("init-config", {
-			awaitPlayer2: true
-		});
-	}
-	if (roomsNo % 2 === 1) {
-		createRoom(roomid);
-	} else if (roomsNo % 2 === 0) {
-		if (game[roomid] !== undefined) {
-			game[roomid].p2.id = socket.id;
-			game[roomid][socket.id] = { no: 2 };
-			sockets.to(socket.id).emit("init-config", {
-				awaitPlayer2: false
-			});
-		} else {
-			createRoom(roomid);
-		}
-	}
-	socket.on("load-grid", data => {
-		var n = game[roomid][socket.id].no;
-		game[roomid]["p" + n].name = data.name;
-		var count = 0;
-		if (Array.isArray(data.grid) && data.grid.length === 10) {
+  function updateGame(roomid) {
+    const room = game[roomid];
+    const p1 = game[roomid].players[0];
+    const p2 = game[roomid].players[1];
 
-			for (var i = 0; i < data.grid.length; i++) {
-				for (var j = 0; j < data.grid[i].length; j++) {
-					if (data.grid[i].length === 10) {
-						var g = data.grid[i][j];
-						if (g === 1) {
-							count += 1;
-						}
-					} else {
-						count = 0;
-						break;
-					}
-				}
-			}
-			if (count !== maxScore) {
-				socket.disconnect(0);
-			}
-		}
-		game[roomid]["p" + n].grid = data.grid;
-		game[roomid]["p" + n].pieces = data.pieces;
-		game[roomid]["p" + n].drawpieces = {};
-		game[roomid]["p" + n].myhits =
-			[
-				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-			];
-		if (game[roomid].p1.grid.length !== 0 && game[roomid].p2.grid.length !== 0) {
-			updateGame(roomid);
-		}
-	});
-	socket.on("firing", coords => {
-		var room = game[roomid];
-		var n = room[socket.id].no;
-		if (coords.x >= 0 && coords.x <= 9 && coords.y >= 0 && coords.y <= 9 && room.winner === false) {
-			if (n === 1 && game[roomid].turno === 1) {
-				var targetGrid = room.p2.grid;
-				if (targetGrid[coords.y][coords.x] === 1) {
-					room.p2.grid[coords.y][coords.x] = 2;
-					room.p1.myhits[coords.y][coords.x] = 2;
+    sockets.to(p1.id).emit('update-game', {
+      player: {
+        name: p1.name,
+        grid: p1.grid,
+        hits: p1.hits,
+        pieces: p1.drawpieces,
+      },
+      room: {
+        opponentname: p2.name,
+        winner: room.winner === p1.id,
+        turno: room.turno === p1.id,
+        end: room.end,
+      },
+    });
+    sockets.to(p2.id).emit('update-game', {
+      player: {
+        name: p2.name,
+        grid: p2.grid,
+        hits: p2.hits,
+        pieces: p2.drawpieces,
+      },
+      room: {
+        opponentname: p1.name,
+        winner: room.winner === p2.id,
+        turno: room.turno === p2.id,
+        end: room.end,
+      },
+    });
+  }
+  function createRoom(roomid) {
+    game[roomid] = {
+      winner: false,
+      turno: socket.id,
+      players: [new Player(socket.id, '', [], null)],
+    };
+    sockets.to(socket.id).emit('init-config', { awaitPlayer2: true });
+  }
+  if (roomsNo % 2 === 1) {
+    createRoom(roomid);
+  } else if (roomsNo % 2 === 0) {
+    if (game[roomid] !== undefined) {
+      game[roomid].players.push(
+        new Player(socket.id, '', [], game[roomid].players[0])
+      );
 
-					if (room.p2.pieces[coords.x + coords.y * 10].id) {
-						var id = room.p2.pieces[coords.x + coords.y * 10].id;
-						var piece = room.p2.pieces[id];
-						piece.count += 1;
+      game[roomid].players[0].opponent = game[roomid].players[1];
 
-						if (piece.count === piece.len) {
-							for (var y = 0; y < piece.height; y++) {
-								for (var x = 0; x < piece.width; x++) {
-									room.p1.drawpieces[(piece.x + x) + (piece.y + y) * 10] = piece;
-								}
-							}
-						}
+      sockets.to(socket.id).emit('init-config', { awaitPlayer2: false });
+    } else {
+      createRoom(roomid);
+    }
+  }
+  socket.on('load-grid', (data) => {
+    const player = game[roomid].players.find((e) => e.id == socket.id);
+    player.name = data.name;
+    let count = 0;
 
-					}
+    if (Array.isArray(data.grid) && data.grid.length === 10) {
+      for (let i = 0; i < data.grid.length; i++) {
+        for (let j = 0; j < data.grid[i].length; j++) {
+          if (data.grid[i].length === 10) {
+            const g = data.grid[i][j];
+            if (g === 1) {
+              count += 1;
+            }
+          } else {
+            count = 0;
+            break;
+          }
+        }
+      }
+      if (count !== maxScore) {
+        socket.disconnect(0);
+      }
+    }
 
-					room.p1.score += 1;
-					if (room.p1.score === maxScore) {
-						room.winner = room.p1.name;
-					}
-				} else if (targetGrid[coords.y][coords.x] === 0) {
-					room.p2.grid[coords.y][coords.x] = 3;
-					room.p1.myhits[coords.y][coords.x] = 3;
-					room.turno = 2;
-				}
-			} else if (n === 2 && room.turno === 2) {
-				var targetGrid = room.p1.grid;
-				if (targetGrid[coords.y][coords.x] === 1) {
-					room.p1.grid[coords.y][coords.x] = 2;
-					room.p2.myhits[coords.y][coords.x] = 2;
+    player.grid = data.grid;
+    player.pieces = data.pieces;
 
-					if (room.p1.pieces[coords.x + coords.y * 10].id) {
-						var id = room.p1.pieces[coords.x + coords.y * 10].id;
-						var piece = room.p1.pieces[id];
-						piece.count += 1;
+    if (game[roomid].players.length == 2) {
+      updateGame(roomid);
+    }
+  });
+  socket.on('firing', (coords) => {
+    const room = game[roomid];
+    const player = room.players.find((e) => e.id === socket.id);
+    const opponent = player.opponent;
+    if (
+      coords.x >= 0 &&
+      coords.x <= 9 &&
+      coords.y >= 0 &&
+      coords.y <= 9 &&
+      room.winner === false
+    ) {
+      if (room.turno === socket.id) {
+        const targetGrid = opponent.grid;
+        if (targetGrid[coords.y][coords.x] === 1) {
+          opponent.grid[coords.y][coords.x] = 2;
+          player.hits[coords.y][coords.x] = 2;
 
-						if (piece.count === piece.len) {
-							for (var y = 0; y < piece.height; y++) {
-								for (var x = 0; x < piece.width; x++) {
-									room.p2.drawpieces[(piece.x + x) + (piece.y + y) * 10] = piece;
-								}
-							}
-						}
+          if (opponent.pieces[coords.x + coords.y * 10].id) {
+            const id = opponent.pieces[coords.x + coords.y * 10].id;
+            const piece = opponent.pieces[id];
+            piece.count += 1;
 
-					}
+            if (piece.count === piece.len) {
+              for (let y = 0; y < piece.height; y++) {
+                for (let x = 0; x < piece.width; x++) {
+                  player.drawpieces[piece.x + x + (piece.y + y) * 10] = piece;
+                }
+              }
+            }
+          }
 
-					room.p2.score += 1;
-					if (room.p2.score === maxScore) {
-						room.winner = room.p2.name;
-					}
-				} else if (targetGrid[coords.y][coords.x] === 0) {
-					room.p1.grid[coords.y][coords.x] = 3;
-					room.p2.myhits[coords.y][coords.x] = 3;
-					room.turno = 1;
-				}
-			}
-
-			updateGame(roomid);
-		}
-	});
+          player.score += 1;
+          if (player.score === maxScore) {
+            room.winner = player.id;
+            room.end = true;
+          }
+        } else if (targetGrid[coords.y][coords.x] === 0) {
+          opponent.grid[coords.y][coords.x] = 3;
+          player.hits[coords.y][coords.x] = 3;
+          room.turno = opponent.id;
+        }
+      }
+      updateGame(roomid);
+    }
+  });
 });
