@@ -1,14 +1,19 @@
-const http = require('http');
-const express = require('express');
+import { createServer } from 'http';
+import { Server } from 'socket.io';
+import express from 'express';
+
 const app = express();
+const server = createServer(app);
+
 app.use(express.static('public'));
-const server = http.createServer(app);
+
 server.listen(3000, function () {
   console.log(
     '** Server is listening on localhost:3000, open your browser on http://localhost:3000/ **'
   );
 });
-const sockets = require('socket.io')(server);
+
+const io = new Server(server);
 
 let roomsNo = 0;
 const game = {};
@@ -38,14 +43,14 @@ class Player {
   }
 }
 
-sockets.on('connection', (socket) => {
+io.on('connection', (socket) => {
   roomsNo += 1;
   const roomid = Math.round(roomsNo / 2);
   socket.join(roomid);
   socket.on('disconnect', () => {
     delete game[roomid];
     roomsNo -= 1;
-    sockets.to(roomid).emit('another_player_disconnected', {
+    io.to(roomid).emit('another_player_disconnected', {
       another_playerid: socket.id,
     });
   });
@@ -55,7 +60,7 @@ sockets.on('connection', (socket) => {
     const p1 = game[roomid].players[0];
     const p2 = game[roomid].players[1];
 
-    sockets.to(p1.id).emit('update-game', {
+    io.to(p1.id).emit('update-game', {
       player: {
         name: p1.name,
         grid: p1.grid,
@@ -69,7 +74,7 @@ sockets.on('connection', (socket) => {
         end: room.end,
       },
     });
-    sockets.to(p2.id).emit('update-game', {
+    io.to(p2.id).emit('update-game', {
       player: {
         name: p2.name,
         grid: p2.grid,
@@ -90,7 +95,7 @@ sockets.on('connection', (socket) => {
       turno: socket.id,
       players: [new Player(socket.id, '', [], null)],
     };
-    sockets.to(socket.id).emit('init-config', { awaitPlayer2: true });
+    io.to(socket.id).emit('init-config', { awaitPlayer2: true });
   }
   if (roomsNo % 2 === 1) {
     createRoom(roomid);
@@ -102,7 +107,7 @@ sockets.on('connection', (socket) => {
 
       game[roomid].players[0].opponent = game[roomid].players[1];
 
-      sockets.to(socket.id).emit('init-config', { awaitPlayer2: false });
+      io.to(socket.id).emit('init-config', { awaitPlayer2: false });
     } else {
       createRoom(roomid);
     }

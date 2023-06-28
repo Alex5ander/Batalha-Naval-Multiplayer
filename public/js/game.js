@@ -112,7 +112,7 @@ var game = {
       this.objects.push(new Piece(1, 17, 1, '#d800cc'));
       this.objects.push(new Piece(1, 19, 1, '#d800cc'));
       playGameScreen.classList.add('hidden');
-      this.renderLoop();
+      this.update();
     }
   },
   resete: function () {
@@ -191,38 +191,31 @@ var game = {
       this.socket.emit('firing', e.nc);
     }
   },
-  renderLoop: function () {
+  draw: function () {
     fillRect(0, 0, canvas.width, canvas.height, '#f8f8f8');
-    for (let i = 0; i < this.events.length; i++) {
-      let e = this.events[i];
-      for (let j = 0; j < this.objects.length; j++) {
-        if (this.objects[j][e.type]) {
-          this.objects[j][e.type](e);
-        }
-      }
-      this.events.splice(i, 1);
-      i--;
-    }
     for (let i = 0; i < this.objects.length; i++) {
       this.objects[i].draw(this.ctx);
     }
+
     if (this.data) {
       const { player, room } = this.data;
       this.myboard.draw(this.ctx);
       let turnoName = room.turno ? player.name : room.opponentname;
 
       const tileCenterY = tileSize / 2;
+      const left = 1 + player.name.length / 2;
+      const right = cols - (1 + room.opponentname.length / 2);
 
       fillText(
         player.name,
-        6 * tileSize,
+        left * tileSize,
         2 * tileSize + tileCenterY,
         tileSize,
         '#00b800'
       );
       fillText(
         room.opponentname,
-        25 * tileSize,
+        right * tileSize,
         2 * tileSize + tileCenterY,
         tileSize,
         '#f83800'
@@ -245,7 +238,20 @@ var game = {
         color
       );
     }
-    window.requestAnimationFrame(this.renderLoop.bind(this));
+  },
+  update: function () {
+    for (let i = 0; i < this.events.length; i++) {
+      let e = this.events[i];
+      for (let j = 0; j < this.objects.length; j++) {
+        if (this.objects[j][e.type]) {
+          this.objects[j][e.type](e);
+        }
+      }
+      this.events.splice(i, 1);
+      i--;
+    }
+    this.draw();
+    window.requestAnimationFrame(this.update.bind(this));
   },
 };
 

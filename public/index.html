@@ -1,57 +1,47 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="author" content="Alexsander Gutierrez" />
-    <meta
-      name="description"
-      content="Protótipo de jogo de batalha naval multiplayer"
-    />
-    <title>Batalha Naval</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="css/styles.css" />
-  </head>
 
-  <body>
-    <div id="game-area">
-      <canvas id="canvas" width="640" height="480"></canvas>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="author" content="Alexsander Gutierrez" />
+  <meta name="description" content="Protótipo de jogo de batalha naval multiplayer" />
+  <title>Batalha Naval</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
 
-      <div id="play-game-screen">
-        <button id="btn-jogar">JOGAR</button>
-      </div>
+<body>
+  <div id="game-area">
+    <canvas id="canvas" width="640" height="480"></canvas>
 
-      <button id="btn-rotate-piece" class="hidden">&#8635;</button>
+    <div id="play-game-screen">
+      <button id="btn-jogar">JOGAR</button>
+    </div>
 
-      <div id="form" class="hidden">
-        <div class="form-controls">
-          <input
-            id="input-player-name"
-            type="text"
-            maxlength="45"
-            placeholder="Nome"
-            value=""
-          />
-          <button id="btn-batalhar">BATALHAR</button>
-        </div>
-      </div>
+    <button id="btn-rotate-piece" class="hidden">&#8635;</button>
 
-      <div id="awaitcontainer" class="hidden">
-        <span id="spinner"></span>
-        <button id="btn-cancelar">CANCELAR</button>
+    <div id="form" class="hidden">
+      <div class="form-controls">
+        <input id="input-player-name" type="text" maxlength="45" placeholder="Nome" value="" />
+        <button id="btn-batalhar">BATALHAR</button>
       </div>
     </div>
-    <script src="js/canvas.js"></script>
-    <script src="js/socket.io.js"></script>
-    <script src="js/Board.js"></script>
-    <script src="js/BoardEditor.js"></script>
-    <script src="js/Piece.js"></script>
-    <script src="js/game.js"></script>
-  </body>
+
+    <div id="awaitcontainer" class="hidden">
+      <span id="spinner"></span>
+      <button id="btn-cancelar">CANCELAR</button>
+    </div>
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/canvas.js"></script>
+  <script src="js/Board.js"></script>
+  <script src="js/BoardEditor.js"></script>
+  <script src="js/Piece.js"></script>
+  <script src="js/game.js"></script>
+</body>
+
 </html>
