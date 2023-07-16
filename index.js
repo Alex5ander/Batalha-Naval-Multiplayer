@@ -22,7 +22,7 @@ const maxScore = 21;
 class Player {
   constructor(id, name, grid, opponent) {
     this.id = id;
-    this.name = name;
+    this.name = name.trim() || 'Player#' + Math.random().toString(16);
     this.grid = grid;
     this.hits = [
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],

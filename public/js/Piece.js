@@ -1,6 +1,8 @@
+import { fillRect, isPointInPath, strokeRect, tileSize } from './canvas.js';
+
 class Piece {
-  constructor(x, y, len, color) {
-    this.id = x + y * 10 + 'color';
+  constructor(x, y, len, color, onDrop = (_) => {}) {
+    this.id = x + y * 10 + color;
     this.x = x;
     this.y = y;
     this.count = 0;
@@ -14,6 +16,7 @@ class Piece {
     this.len = len;
     this.color = color;
     this.selected = false;
+    this.onDrop = onDrop;
   }
   click(e) {
     var path = new Path2D();
@@ -23,7 +26,7 @@ class Piece {
       this.width * tileSize,
       this.height * tileSize
     );
-    if (ctx.isPointInPath(path, e.mx, e.my)) {
+    if (isPointInPath(path, e.mx, e.my)) {
       return true;
     }
     return false;
@@ -44,10 +47,7 @@ class Piece {
   }
   mouseup(e) {
     if (this.click(e)) {
-      e.subject.notify({
-        type: 'drop',
-        piece: this,
-      });
+      this.onDrop(this);
     }
     this.selected = false;
   }
@@ -64,10 +64,7 @@ class Piece {
   }
   touchend(e) {
     if (this.click(e)) {
-      e.subject.notify({
-        type: 'drop',
-        piece: this,
-      });
+      this.onDrop(this);
     }
     this.selected = false;
   }
@@ -77,7 +74,7 @@ class Piece {
       this.y = (e.my - (this.height * tileSize) / 2) / tileSize;
     }
   }
-  draw(ctx) {
+  draw() {
     fillRect(
       this.x * tileSize,
       this.y * tileSize,
@@ -95,17 +92,16 @@ class Piece {
         2
       );
     } else if (this.inBoard) {
-      ctx.save();
-      ctx.lineWidth = 2.5;
       strokeRect(
         this.x * tileSize,
         this.y * tileSize,
         this.width * tileSize,
         this.height * tileSize,
         '#080808',
-        2
+        2.5
       );
-      ctx.restore();
     }
   }
 }
+
+export default Piece;

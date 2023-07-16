@@ -1,7 +1,11 @@
+import Board from './Board.js';
+
 class BoardEditor extends Board {
-  constructor(x, y) {
-    super(x, y, false);
+  constructor(x, y, onDrop = (_) => {}) {
+    super(x, y);
+    this.onDrop = onDrop;
     this.lastSelectedPiece = false;
+    this.count = 0;
   }
   isBusy(piece, nc) {
     var busy = false;
@@ -64,6 +68,8 @@ class BoardEditor extends Board {
 
       piece.inBoard = true;
       this.lastSelectedPiece = piece;
+
+      this.count += 1;
       return true;
     }
     return false;
@@ -86,10 +92,11 @@ class BoardEditor extends Board {
       }
       this.lastSelectedPiece = false;
       delete this.pieces[piece.id];
+      this.count -= 1;
     }
     piece.inBoard = false;
   }
-  rotatePieceInBoard(e) {
+  rotatePieceInBoard() {
     if (this.lastSelectedPiece) {
       var piece = this.lastSelectedPiece;
       var w = piece.width;
@@ -99,11 +106,10 @@ class BoardEditor extends Board {
       piece.height = w;
       piece.x = this.x + piece.lx;
       piece.y = this.y + piece.ly;
-      this.drop({ subject: e.subject, piece: piece });
+      this.drop(piece);
     }
   }
-  drop(e) {
-    var piece = e.piece;
+  drop(piece) {
     var nc = {
       x: Math.floor(piece.x + 0.5 - this.x),
       y: Math.floor(piece.y + 0.5 - this.y),
@@ -139,12 +145,9 @@ class BoardEditor extends Board {
       this.remove(piece);
       piece.resete();
     }
-    var allInBoard = e.subject.objects.every(
-      (o) => o.inBoard === true || o.inBoard === undefined
-    );
-    e.subject.notify({
-      type: 'allInBoard',
-      allInBoard: allInBoard,
-    });
+
+    this.onDrop(this.count == 10);
   }
 }
+
+export default BoardEditor;
