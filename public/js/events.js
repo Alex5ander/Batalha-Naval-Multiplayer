@@ -1,12 +1,13 @@
-const network = (onDisconnect, onInitConfig, onUpdate) => {
+import { onInit, onUpdate, reseteGame } from './game.js';
+
+const network = () => {
   const socket = io();
 
-  socket.on('connect_error', onDisconnect);
+  socket.on('connect_error', reseteGame);
 
-  socket.on('another_player_disconnected', onDisconnect);
-  socket.on('disconnect', onDisconnect);
+  socket.on('another_player_disconnected', reseteGame);
 
-  socket.on('init-config', onInitConfig);
+  socket.on('init-config', onInit);
 
   socket.on('update-game', onUpdate);
 

@@ -37,14 +37,17 @@ function touchevents(e) {
 
 let objects = [];
 let events = [];
+/** @type {BoardEditor} */
 let editor = null;
+/** @type {Board} */
 let myboard = null;
+/** @type {Board} */
 let myhits = null;
 let data = null;
 
 let net = null;
 
-const onDisconnect = () => {
+export const reseteGame = () => {
   playGameScreen.classList.remove('hidden');
   form.classList.add('hidden');
   awaitcontainer.classList.add('hidden');
@@ -57,7 +60,7 @@ const onDisconnect = () => {
   data = null;
 };
 
-const onInit = (data) => {
+export const onInit = (data) => {
   form.classList.add('hidden');
   btnRotatePiece.classList.add('hidden');
 
@@ -74,7 +77,7 @@ const onInit = (data) => {
   });
 };
 
-const onUpdate = (d) => {
+export const onUpdate = (d) => {
   data = d;
   myboard = new Board(2, 6, data.player.grid);
   myboard.pieces = editor.pieces;
@@ -83,7 +86,10 @@ const onUpdate = (d) => {
   objects = [myboard, myhits];
 
   if (data.room.end) {
-    setTimeout(() => net.disconnect(), 5000);
+    setTimeout(() => {
+      net.disconnect();
+      reseteGame();
+    }, 5000);
   }
 
   if (data.room.opponentname) {
@@ -91,7 +97,7 @@ const onUpdate = (d) => {
   }
 };
 
-const createNetwork = () => network(onDisconnect, onInit, onUpdate);
+const createNetwork = () => network();
 
 const play = (e) => {
   e.preventDefault();
@@ -113,29 +119,30 @@ const play = (e) => {
     editor.rotatePieceInBoard();
   };
 
-  objects.push(editor);
+  objects = [
+    editor,
+    new Piece(1, 1, 5, '#f83800', onDrop),
 
-  objects.push(new Piece(1, 1, 5, '#f83800', onDrop));
+    new Piece(1, 3, 3, '#00b800', onDrop),
+    new Piece(1, 5, 3, '#00b800', onDrop),
 
-  objects.push(new Piece(1, 3, 3, '#00b800', onDrop));
-  objects.push(new Piece(1, 5, 3, '#00b800', onDrop));
+    new Piece(1, 7, 2, '#d8f878', onDrop),
+    new Piece(1, 9, 2, '#d8f878', onDrop),
+    new Piece(1, 11, 2, '#d8f878', onDrop),
 
-  objects.push(new Piece(1, 7, 2, '#d8f878', onDrop));
-  objects.push(new Piece(1, 9, 2, '#d8f878', onDrop));
-  objects.push(new Piece(1, 11, 2, '#d8f878', onDrop));
-
-  objects.push(new Piece(1, 13, 1, '#d800cc', onDrop));
-  objects.push(new Piece(1, 15, 1, '#d800cc', onDrop));
-  objects.push(new Piece(1, 17, 1, '#d800cc', onDrop));
-  objects.push(new Piece(1, 19, 1, '#d800cc', onDrop));
+    new Piece(1, 13, 1, '#d800cc', onDrop),
+    new Piece(1, 15, 1, '#d800cc', onDrop),
+    new Piece(1, 17, 1, '#d800cc', onDrop),
+    new Piece(1, 19, 1, '#d800cc', onDrop),
+  ];
 };
 
 const cancel = (e) => {
   e.preventDefault();
-  net.disconnect();
-  awaitcontainer.classList.add('hidden');
   form.classList.add('hidden');
+  awaitcontainer.classList.add('hidden');
   btnRotatePiece.classList.remove('hidden');
+  net.disconnect();
 };
 
 const battle = (e) => {
