@@ -9,39 +9,30 @@ class BoardEditor extends Board {
   }
   isBusy(piece, nc) {
     var busy = false;
+    const isOccupied = (x, y) =>
+      x >= 0 && x <= 9 && y >= 0 && y <= 9 && this.grid[y][x] === 1;
     var d =
-      (nc.x - 1 >= 0 && nc.y - 1 >= 0 && this.grid[nc.y - 1][nc.x - 1] === 1) ||
-      (nc.x + piece.width <= 9 &&
-        nc.y - 1 >= 0 &&
-        this.grid[nc.y - 1][nc.x + piece.width] === 1) ||
-      (nc.x + piece.width <= 9 &&
-        nc.y + piece.height <= 9 &&
-        this.grid[nc.y + piece.height][nc.x + piece.width] === 1) ||
-      (nc.x - 1 >= 0 &&
-        nc.y + piece.height <= 9 &&
-        this.grid[nc.y + piece.height][nc.x - 1] === 1);
+      isOccupied(nc.x - 1, nc.y - 1) ||
+      isOccupied(nc.x + piece.width, nc.y - 1) ||
+      isOccupied(nc.x + piece.width, nc.y + piece.height) ||
+      isOccupied(nc.x - 1, nc.y + piece.height);
+
     for (var i = 0; i < piece.len; i++) {
       if (piece.width > piece.height) {
         var hy =
-          (nc.y - 1 >= 0 && this.grid[nc.y - 1][nc.x + i] === 1) ||
-          (nc.y + 1 <= 9 && this.grid[nc.y + 1][nc.x + i] === 1);
+          isOccupied(nc.x + i, nc.y - 1) || isOccupied(nc.x + i, nc.y + 1);
         var vx =
-          (nc.x - 1 >= 0 && this.grid[nc.y][nc.x - 1] === 1) ||
-          (nc.x + piece.width <= 9 &&
-            this.grid[nc.y][nc.x + piece.width] === 1);
-        if (this.grid[nc.y][nc.x + i] !== 0 || vx || hy || d) {
+          isOccupied(nc.x - 1, nc.y) || isOccupied(nc.x + piece.width, nc.y);
+        if (isOccupied(nc.x + i, nc.y) || vx || hy || d) {
           busy = true;
           break;
         }
       } else {
         var hy =
-          (nc.y - 1 >= 0 && this.grid[nc.y - 1][nc.x] === 1) ||
-          (nc.y + piece.height <= 9 &&
-            this.grid[nc.y + piece.height][nc.x] === 1);
+          isOccupied(nc.x, nc.y - 1) || isOccupied(nc.x, nc.y + piece.height);
         var vx =
-          (nc.x - 1 >= 0 && this.grid[nc.y + i][nc.x - 1] === 1) ||
-          (nc.x + 1 <= 9 && this.grid[nc.y + i][nc.x + 1] === 1);
-        if (this.grid[nc.y + i][nc.x] !== 0 || vx || hy || d) {
+          isOccupied(nc.x - 1, nc.y + i) || isOccupied(nc.x + 1, nc.y + i);
+        if (isOccupied(nc.x, nc.y + i) || vx || hy || d) {
           busy = true;
           break;
         }

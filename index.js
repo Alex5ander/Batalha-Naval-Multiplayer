@@ -31,18 +31,7 @@ class Player {
     this.id = id;
     this.name = name.trim() || 'Player#' + Math.random().toString(16);
     this.grid = grid;
-    this.hits = [
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    ];
+    this.hits = Array.from({ length: 10 }, () => Array(10).fill(0));
     this.pieces = {};
     this.drawpieces = [];
     this.score = 0;
@@ -109,8 +98,7 @@ const updateGame = (roomid) => {
   const room = game[roomid];
   const p1 = game[roomid].players[0];
   const p2 = game[roomid].players[1];
-
-  io.to(p1.id).emit('update-game', {
+  const updateData = (p1, p2) => ({
     player: {
       name: p1.name,
       grid: p1.grid,
@@ -124,20 +112,8 @@ const updateGame = (roomid) => {
       end: room.end,
     },
   });
-  io.to(p2.id).emit('update-game', {
-    player: {
-      name: p2.name,
-      grid: p2.grid,
-      hits: p2.hits,
-      pieces: p2.drawpieces,
-    },
-    room: {
-      opponentname: p1.name,
-      winner: room.winner === p2.id,
-      turno: room.turno === p2.id,
-      end: room.end,
-    },
-  });
+  io.to(p1.id).emit('update-game', updateData(p1, p2));
+  io.to(p2.id).emit('update-game', updateData(p2, p1));
 };
 
 /**
