@@ -24,8 +24,7 @@ class BoardEditor extends Board {
         var vx =
           isOccupied(nc.x - 1, nc.y) || isOccupied(nc.x + piece.width, nc.y);
         if (isOccupied(nc.x + i, nc.y) || vx || hy || d) {
-          busy = true;
-          break;
+          return true;
         }
       } else {
         var hy =
@@ -33,12 +32,11 @@ class BoardEditor extends Board {
         var vx =
           isOccupied(nc.x - 1, nc.y + i) || isOccupied(nc.x + 1, nc.y + i);
         if (isOccupied(nc.x, nc.y + i) || vx || hy || d) {
-          busy = true;
-          break;
+          return true;
         }
       }
     }
-    return busy;
+    return false;
   }
   insert(piece, nc) {
     if (this.isBusy(piece, nc) === false) {
