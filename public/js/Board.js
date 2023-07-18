@@ -1,4 +1,7 @@
+import { colors } from './Piece.js';
 import {
+  MarkerTile,
+  WaterTile,
   drawTileSprite,
   fillRect,
   fillText,
@@ -6,29 +9,11 @@ import {
   tileSize,
 } from './canvas.js';
 
-const waterTile = new Image();
-waterTile.src = '../images/watertile.png';
-
-const markerTile = new Image();
-markerTile.src = '../images/markertile.png';
-
 class Board {
   constructor(x, y, grid, onclick = (_) => {}) {
     this.x = x;
     this.y = y;
-    this.pieces = {};
-    this.grid = grid || [
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    ];
+    this.grid = grid || Array.from({ length: 10 }, () => Array(10).fill(0));
     this.onclick = onclick;
     this.selected = false;
   }
@@ -60,11 +45,6 @@ class Board {
   }
   draw() {
     var letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
-    for (let i = 0; i < 32 * 24; i++) {
-      const col = i % 32;
-      const row = Math.floor(i / 32);
-      strokeRect(col * tileSize, row * tileSize, tileSize, tileSize, '#080808');
-    }
 
     const cols = 10;
     const size = this.grid.length * cols;
@@ -73,24 +53,11 @@ class Board {
       const col = i % cols;
       const row = Math.floor(i / cols);
       drawTileSprite(
-        waterTile,
+        WaterTile,
         (this.x + col) * tileSize,
         (this.y + row) * tileSize,
         tileSize
       );
-    }
-
-    for (var i in this.pieces) {
-      if (this.pieces[i]) {
-        var p = this.pieces[i];
-        fillRect(
-          (this.x + p.lx) * tileSize,
-          (this.y + p.ly) * tileSize,
-          p.width * tileSize,
-          p.height * tileSize,
-          p.color
-        );
-      }
     }
 
     for (var i = 0; i < this.grid.length; i++) {
@@ -108,7 +75,17 @@ class Board {
       for (var j = 0; j < this.grid[i].length; j++) {
         var g = this.grid[i][j];
 
-        if (g === 3) {
+        if (colors[g]) {
+          fillRect(
+            (this.x + j) * tileSize,
+            (this.y + i) * tileSize,
+            tileSize,
+            tileSize,
+            colors[g]
+          );
+        }
+
+        if (g === 2) {
           fillRect(
             (this.x + j) * tileSize,
             (this.y + i) * tileSize,
@@ -118,9 +95,9 @@ class Board {
           );
         }
 
-        if (g === 2) {
+        if (g === 1) {
           drawTileSprite(
-            markerTile,
+            MarkerTile,
             (this.x + j) * tileSize,
             (this.y + i) * tileSize,
             tileSize

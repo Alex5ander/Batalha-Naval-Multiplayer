@@ -8,11 +8,9 @@
 - ![Node JS](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
 - ![Socket IO](https://img.shields.io/badge/Socket.io-010101?&style=for-the-badge&logo=Socket.io&logoColor=white)
 
-## Capturas de tela
+## Captura de tela
 
-![screenshot](./screenshot_1.png)
-
-![screenshot](./screenshot_2.png)
+![screenshot](./screenshot.png)
 
 ## Rodando localmente
 

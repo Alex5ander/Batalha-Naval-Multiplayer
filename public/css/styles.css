@@ -32,6 +32,7 @@ body {
 canvas {
   image-rendering: pixelated;
   background-color: var(--color-white);
+  cursor: none;
 }
 
 #play-game-screen {

@@ -2,7 +2,15 @@ import { network } from './events.js';
 import Board from './Board.js';
 import BoardEditor from './BoardEditor.js';
 import Piece from './Piece.js';
-import { drawHUD, resize, fillRect } from './canvas.js';
+import {
+  drawHUD,
+  resize,
+  fillRect,
+  strokeRect,
+  tileSize,
+  drawTileSprite,
+  Crosshair,
+} from './canvas.js';
 
 const btnBattle = document.getElementById('btn-batalhar');
 const awaitcontainer = document.getElementById('awaitcontainer');
@@ -13,6 +21,9 @@ const inputPlayerName = document.getElementById('input-player-name');
 const form = document.getElementById('form');
 const btnRotatePiece = document.getElementById('btn-rotate-piece');
 
+let mx = 0;
+let my = 0;
+
 function mouseevents(e) {
   const { offsetLeft, offsetTop, width, height } = canvas;
   const event = {
@@ -20,6 +31,8 @@ function mouseevents(e) {
     my: Math.floor((e.clientY - offsetTop) % height),
     type: e.type,
   };
+  mx = event.mx;
+  my = event.my;
   events.push(event);
 }
 
@@ -32,6 +45,8 @@ function touchevents(e) {
     my: Math.floor((touch.clientY - offsetTop) % height),
     type: e.type,
   };
+  mx = event.mx;
+  my = event.my;
   events.push(event);
 }
 
@@ -70,19 +85,13 @@ export const onInit = (data) => {
     awaitcontainer.classList.add('hidden');
   }
 
-  net.loadGrid({
-    name: inputPlayerName.value,
-    grid: editor.grid,
-    pieces: editor.pieces,
-  });
+  net.loadGrid({ name: inputPlayerName.value, grid: editor.grid });
 };
 
 export const onUpdate = (d) => {
   data = d;
   myboard = new Board(2, 6, data.player.grid);
-  myboard.pieces = editor.pieces;
   myhits = new Board(21, 6, data.player.hits, (coords) => net.firing(coords));
-  myhits.pieces = data.player.pieces;
   objects = [myboard, myhits];
 
   if (data.room.end) {
@@ -121,19 +130,19 @@ const play = (e) => {
 
   objects = [
     editor,
-    new Piece(1, 1, 5, '#f83800', onDrop),
+    new Piece(1, 1, 5, 'A', onDrop),
 
-    new Piece(1, 3, 3, '#00b800', onDrop),
-    new Piece(1, 5, 3, '#00b800', onDrop),
+    new Piece(1, 3, 3, 'B', onDrop),
+    new Piece(1, 5, 3, 'C', onDrop),
 
-    new Piece(1, 7, 2, '#d8f878', onDrop),
-    new Piece(1, 9, 2, '#d8f878', onDrop),
-    new Piece(1, 11, 2, '#d8f878', onDrop),
+    new Piece(1, 7, 2, 'D', onDrop),
+    new Piece(1, 9, 2, 'E', onDrop),
+    new Piece(1, 11, 2, 'F', onDrop),
 
-    new Piece(1, 13, 1, '#d800cc', onDrop),
-    new Piece(1, 15, 1, '#d800cc', onDrop),
-    new Piece(1, 17, 1, '#d800cc', onDrop),
-    new Piece(1, 19, 1, '#d800cc', onDrop),
+    new Piece(1, 13, 1, 'G', onDrop),
+    new Piece(1, 15, 1, 'H', onDrop),
+    new Piece(1, 17, 1, 'I', onDrop),
+    new Piece(1, 19, 1, 'J', onDrop),
   ];
 };
 
@@ -167,7 +176,12 @@ window.addEventListener('orientationchange', resize);
 resize();
 
 (function loop() {
-  fillRect(0, 0, canvas.width, canvas.height, '#f8f8f8');
+  fillRect(0, 0, canvas.width, canvas.height, '#3cbcfcff');
+  for (let i = 0; i < 32 * 24; i++) {
+    const col = i % 32;
+    const row = Math.floor(i / 32);
+    strokeRect(col * tileSize, row * tileSize, tileSize, tileSize, '#080808');
+  }
   for (const object of objects) {
     object.draw();
   }
@@ -183,6 +197,14 @@ resize();
       }
     }
   }
+
+  drawTileSprite(
+    Crosshair,
+    mx - tileSize / 2,
+    my - tileSize / 2,
+    tileSize,
+    tileSize
+  );
   events = [];
   window.requestAnimationFrame(loop);
 })();

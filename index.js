@@ -18,6 +18,10 @@ const io = new Server(server);
 let roomsNo = 0;
 const game = {};
 const maxScore = 21;
+const tags = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+const WATER = 0;
+const HIT = 1;
+const WATERSHOT = 2;
 
 class Player {
   /**
@@ -32,10 +36,9 @@ class Player {
     this.name = name.trim() || 'Player#' + Math.random().toString(16);
     this.grid = grid;
     this.hits = Array.from({ length: 10 }, () => Array(10).fill(0));
-    this.pieces = {};
-    this.drawpieces = [];
     this.score = 0;
     this.opponent = opponent;
+    this.pieces = [];
   }
 }
 
@@ -63,12 +66,28 @@ const loadGrid = (socket, data, roomid) => {
   player.name = data.name;
   let count = 0;
 
+  let pieces = [];
+
+  const flatGrid = data.grid.flat();
+
+  tags.forEach((tag) => {
+    const indexes = flatGrid
+      .map((e, i) => (e == tag ? i : -1))
+      .filter((e) => e != -1);
+
+    pieces.push({
+      indexes,
+      tag,
+      life: indexes.length,
+    });
+  });
+
   if (Array.isArray(data.grid) && data.grid.length === 10) {
     for (let i = 0; i < data.grid.length; i++) {
       for (let j = 0; j < data.grid[i].length; j++) {
         if (data.grid[i].length === 10) {
           const g = data.grid[i][j];
-          if (g === 1) {
+          if (g !== 0) {
             count += 1;
           }
         } else {
@@ -83,7 +102,7 @@ const loadGrid = (socket, data, roomid) => {
   }
 
   player.grid = data.grid;
-  player.pieces = data.pieces;
+  player.pieces = pieces;
 
   if (game[roomid].players.length == 2) {
     updateGame(roomid);
@@ -103,7 +122,6 @@ const updateGame = (roomid) => {
       name: p1.name,
       grid: p1.grid,
       hits: p1.hits,
-      pieces: p1.drawpieces,
     },
     room: {
       opponentname: p2.name,
@@ -124,8 +142,10 @@ const updateGame = (roomid) => {
  */
 const firing = (socket, coords, roomid) => {
   const room = game[roomid];
+  /** @type {Player} */
   const player = room.players.find((e) => e.id === socket.id);
   const opponent = player.opponent;
+  const targetGrid = opponent.grid;
   if (
     coords.x >= 0 &&
     coords.x <= 9 &&
@@ -134,33 +154,32 @@ const firing = (socket, coords, roomid) => {
     room.winner === false
   ) {
     if (room.turno === socket.id) {
-      const targetGrid = opponent.grid;
-      if (targetGrid[coords.y][coords.x] === 1) {
-        opponent.grid[coords.y][coords.x] = 2;
-        player.hits[coords.y][coords.x] = 2;
+      if (tags.includes(targetGrid[coords.y][coords.x])) {
+        targetGrid[coords.y][coords.x] = HIT;
+        player.hits[coords.y][coords.x] = HIT;
 
-        if (opponent.pieces[coords.x + coords.y * 10].id) {
-          const id = opponent.pieces[coords.x + coords.y * 10].id;
-          const piece = opponent.pieces[id];
-          piece.count += 1;
+        const piece = opponent.pieces.find((piece) =>
+          piece.indexes.includes(coords.x + coords.y * 10)
+        );
 
-          if (piece.count === piece.len) {
-            for (let y = 0; y < piece.height; y++) {
-              for (let x = 0; x < piece.width; x++) {
-                player.drawpieces[piece.x + x + (piece.y + y) * 10] = piece;
-              }
-            }
-          }
+        piece.life -= 1;
+        if (piece.life === 0) {
+          piece.indexes.forEach((e) => {
+            const x = e % 10;
+            const y = Math.floor(e / 10);
+            player.hits[y][x] = piece.tag;
+          });
         }
 
         player.score += 1;
+
         if (player.score === maxScore) {
           room.winner = player.id;
           room.end = true;
         }
-      } else if (targetGrid[coords.y][coords.x] === 0) {
-        opponent.grid[coords.y][coords.x] = 3;
-        player.hits[coords.y][coords.x] = 3;
+      } else if (targetGrid[coords.y][coords.x] === WATER) {
+        targetGrid[coords.y][coords.x] = WATERSHOT;
+        player.hits[coords.y][coords.x] = WATERSHOT;
         room.turno = opponent.id;
       }
     }

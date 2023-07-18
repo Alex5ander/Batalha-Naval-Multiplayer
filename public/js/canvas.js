@@ -5,6 +5,15 @@ const ctx = canvas.getContext('2d');
 /** @type HTMLDivElement */
 const gameArea = document.getElementById('game-area');
 
+const WaterTile = new Image();
+WaterTile.src = '../images/watertile.png';
+
+const MarkerTile = new Image();
+MarkerTile.src = '../images/markertile.png';
+
+const Crosshair = new Image();
+Crosshair.src = '../images/crosshair.png';
+
 let tileSize = 32;
 
 function fillRect(x, y, w, h, color) {
@@ -37,45 +46,63 @@ function fillText(text, x, y, fontSize, color) {
 const cols = 32;
 const rows = 24;
 
-function drawHUD(data) {
+const DATA = {
+  player: {
+    name: 'Player',
+  },
+  room: {
+    opponentname: 'Player',
+    winner: false,
+    turno: false,
+    end: false,
+  },
+};
+/**
+ *
+ * @param {DATA} data
+ */
+function drawHUD(data = DATA) {
   const { player, room } = data;
-  let turnoName = room.turno ? player.name : room.opponentname;
 
-  const tileCenterY = tileSize / 2;
-  const left = 1 + player.name.length / 2;
-  const right = cols - (1 + room.opponentname.length / 2);
+  const fontSize = tileSize / 2;
+  const y = tileSize * 4 - fontSize;
 
-  fillText(
-    player.name,
-    left * tileSize,
-    2 * tileSize + tileCenterY,
-    tileSize,
-    '#00b800'
-  );
-  fillText(
-    room.opponentname,
-    right * tileSize,
-    2 * tileSize + tileCenterY,
-    tileSize,
-    '#f83800'
-  );
+  const x0 = 7 * tileSize;
+  const x1 = 26 * tileSize;
+
+  const color1 = room.turno ? '#fff' : '#bbb';
+  const color2 = !room.turno ? '#fff' : '#bbb';
+
+  fillText(player.name, x0, y, fontSize, color1);
+  fillText(room.opponentname, x1, y, fontSize, color2);
+
+  const lineY = 4 * tileSize;
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.strokeStyle = color1;
+  ctx.lineWidth = 10;
+  ctx.lineCap = 'round';
+  ctx.moveTo(2 * tileSize, lineY);
+  ctx.lineTo(12 * tileSize, lineY);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.strokeStyle = color2;
+  ctx.lineWidth = 10;
+  ctx.lineCap = 'round';
+  ctx.moveTo(21 * tileSize, lineY);
+  ctx.lineTo(31 * tileSize, lineY);
+  ctx.stroke();
+  ctx.restore();
 
   if (room.end) {
     const color = room.winner ? '#00b8007f' : '#f838007f';
     const text = room.winner ? 'Você venceu!' : 'Você perdeu!';
 
     fillRect(0, 0, canvas.width, canvas.height, color);
-    fillText(text, 16 * tileSize, 12 * tileSize, tileSize, '#f8f8f8');
+    fillText(text, canvas.width / 2, canvas.height / 2, tileSize, '#f8f8f8');
   }
-
-  const color = room.turno ? '#00b800' : '#f83800';
-  fillText(
-    'Turno: ' + turnoName,
-    16 * tileSize,
-    1 * tileSize + tileCenterY,
-    tileSize / 2,
-    color
-  );
 }
 
 const gameAP = cols / rows;
@@ -111,4 +138,7 @@ export {
   drawTileSprite,
   resize,
   tileSize,
+  WaterTile,
+  MarkerTile,
+  Crosshair,
 };

@@ -1,20 +1,32 @@
 import { fillRect, isPointInPath, strokeRect, tileSize } from './canvas.js';
 
+export const colors = {
+  A: '#f83800',
+  B: '#00b800',
+  C: '#00b800',
+  D: '#d8f878',
+  E: '#d8f878',
+  F: '#d8f878',
+  G: '#d800cc',
+  H: '#d800cc',
+  I: '#d800cc',
+  J: '#d800cc',
+};
+
 class Piece {
-  constructor(x, y, len, color, onDrop = (_) => {}) {
-    this.id = x + y * 10 + color;
+  constructor(x, y, len, tag, onDrop = (_) => {}) {
+    this.tag = tag;
     this.x = x;
     this.y = y;
     this.count = 0;
     this.startX = x;
     this.startY = y;
-    this.lx = false;
-    this.ly = false;
+    this.inBoardX = null;
+    this.inBoardY = null;
     this.inBoard = false;
     this.width = len;
     this.height = 1;
     this.len = len;
-    this.color = color;
     this.selected = false;
     this.onDrop = onDrop;
   }
@@ -37,8 +49,8 @@ class Piece {
     this.width = this.len;
     this.height = 1;
     this.inBoard = false;
-    this.lx = false;
-    this.ly = false;
+    this.inBoardX = null;
+    this.inBoardY = null;
   }
   mousedown(e) {
     if (this.click(e)) {
@@ -80,7 +92,7 @@ class Piece {
       this.y * tileSize,
       this.width * tileSize,
       this.height * tileSize,
-      this.color
+      colors[this.tag]
     );
     if (this.selected === true) {
       strokeRect(
