@@ -66,22 +66,6 @@ const loadGrid = (socket, data, roomid) => {
   player.name = data.name;
   let count = 0;
 
-  let pieces = [];
-
-  const flatGrid = data.grid.flat();
-
-  tags.forEach((tag) => {
-    const indexes = flatGrid
-      .map((e, i) => (e == tag ? i : -1))
-      .filter((e) => e != -1);
-
-    pieces.push({
-      indexes,
-      tag,
-      life: indexes.length,
-    });
-  });
-
   if (Array.isArray(data.grid) && data.grid.length === 10) {
     for (let i = 0; i < data.grid.length; i++) {
       for (let j = 0; j < data.grid[i].length; j++) {
@@ -100,6 +84,27 @@ const loadGrid = (socket, data, roomid) => {
       socket.disconnect(0);
     }
   }
+
+  let pieces = [];
+  const flatGrid = [];
+
+  for (let i = 0; i < 100; i++) {
+    const x = i % 10;
+    const y = Math.floor(i / 10);
+    flatGrid.push(data.grid[y][x]);
+  }
+
+  tags.forEach((tag) => {
+    const indexes = flatGrid
+      .map((e, i) => (e == tag ? i : -1))
+      .filter((e) => e != -1);
+
+    pieces.push({
+      indexes,
+      tag,
+      life: indexes.length,
+    });
+  });
 
   player.grid = data.grid;
   player.pieces = pieces;
