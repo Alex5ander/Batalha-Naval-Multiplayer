@@ -9,8 +9,10 @@ import {
   strokeRect,
   tileSize,
   drawTileSprite,
-  Crosshair,
+  cols,
+  rows,
 } from './canvas.js';
+import { Crosshair, WaterTile } from './assets.js';
 
 const btnBattle = document.getElementById('btn-batalhar');
 const awaitcontainer = document.getElementById('awaitcontainer');
@@ -72,7 +74,6 @@ export const reseteGame = () => {
   editor = null;
   myboard = null;
   myhits = null;
-  data = null;
 };
 
 export const onInit = (data) => {
@@ -90,8 +91,8 @@ export const onInit = (data) => {
 
 export const onUpdate = (d) => {
   data = d;
-  myboard = new Board(2, 6, data.player.grid);
-  myhits = new Board(21, 6, data.player.hits, (coords) => net.firing(coords));
+  myboard = new Board(2, 5, data.player.grid);
+  myhits = new Board(21, 5, data.player.hits, (coords) => net.firing(coords));
   objects = [myboard, myhits];
 
   if (data.room.end) {
@@ -110,7 +111,7 @@ const createNetwork = () => network();
 
 const play = (e) => {
   e.preventDefault();
-  editor = new BoardEditor(11, 7, (allInBoard) => {
+  editor = new BoardEditor(cols / 2 - 5, rows / 2 - 5, (allInBoard) => {
     if (allInBoard === true) {
       form.classList.remove('hidden');
     } else if (allInBoard === false) {
@@ -140,9 +141,9 @@ const play = (e) => {
     new Piece(1, 11, 2, 'F', onDrop),
 
     new Piece(1, 13, 1, 'G', onDrop),
-    new Piece(1, 15, 1, 'H', onDrop),
-    new Piece(1, 17, 1, 'I', onDrop),
-    new Piece(1, 19, 1, 'J', onDrop),
+    new Piece(3, 13, 1, 'H', onDrop),
+    new Piece(1, 15, 1, 'I', onDrop),
+    new Piece(3, 15, 1, 'J', onDrop),
   ];
 };
 
@@ -176,11 +177,19 @@ window.addEventListener('orientationchange', resize);
 resize();
 
 (function loop() {
-  fillRect(0, 0, canvas.width, canvas.height, '#3cbcfcff');
   for (let i = 0; i < 32 * 24; i++) {
     const col = i % 32;
     const row = Math.floor(i / 32);
-    strokeRect(col * tileSize, row * tileSize, tileSize, tileSize, '#080808');
+
+    drawTileSprite(
+      WaterTile,
+      col * tileSize,
+      row * tileSize,
+      tileSize,
+      tileSize
+    );
+
+    strokeRect(col * tileSize, row * tileSize, tileSize, tileSize, '#fff');
   }
   for (const object of objects) {
     object.draw();

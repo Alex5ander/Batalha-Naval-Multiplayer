@@ -1,7 +1,6 @@
 import { colors } from './Piece.js';
+import { MarkerTile, WaterTile } from './assets.js';
 import {
-  MarkerTile,
-  WaterTile,
   drawTileSprite,
   fillRect,
   fillText,

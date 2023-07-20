@@ -5,15 +5,6 @@ const ctx = canvas.getContext('2d');
 /** @type HTMLDivElement */
 const gameArea = document.getElementById('game-area');
 
-const WaterTile = new Image();
-WaterTile.src = '../images/watertile.png';
-
-const MarkerTile = new Image();
-MarkerTile.src = '../images/markertile.png';
-
-const Crosshair = new Image();
-Crosshair.src = '../images/crosshair.png';
-
 let tileSize = 32;
 
 function fillRect(x, y, w, h, color) {
@@ -44,7 +35,7 @@ function fillText(text, x, y, fontSize, color) {
 }
 
 const cols = 32;
-const rows = 24;
+const rows = 18;
 
 const DATA = {
   player: {
@@ -65,7 +56,8 @@ function drawHUD(data = DATA) {
   const { player, room } = data;
 
   const fontSize = tileSize / 2;
-  const y = tileSize * 4 - fontSize;
+  const lineY = 3 * tileSize;
+  const y = lineY - fontSize;
 
   const x0 = 7 * tileSize;
   const x1 = 26 * tileSize;
@@ -75,8 +67,6 @@ function drawHUD(data = DATA) {
 
   fillText(player.name, x0, y, fontSize, color1);
   fillText(room.opponentname, x1, y, fontSize, color2);
-
-  const lineY = 4 * tileSize;
 
   ctx.save();
   ctx.beginPath();
@@ -107,7 +97,7 @@ function drawHUD(data = DATA) {
 
 const gameAP = cols / rows;
 
-function resize(e) {
+function resize(_) {
   let newWidth = window.innerWidth;
   let newHeight = window.innerHeight;
   gameArea.style.width = newWidth + 'px';
@@ -138,7 +128,6 @@ export {
   drawTileSprite,
   resize,
   tileSize,
-  WaterTile,
-  MarkerTile,
-  Crosshair,
+  rows,
+  cols,
 };

@@ -7,35 +7,27 @@ class BoardEditor extends Board {
     this.lastSelectedPiece = false;
     this.count = 0;
   }
+  isOccupied(x, y) {
+    return x >= 0 && x <= 9 && y >= 0 && y <= 9 && this.grid[y][x] !== 0;
+  }
   isBusy(piece, nc) {
-    const isOccupied = (x, y) =>
-      x >= 0 && x <= 9 && y >= 0 && y <= 9 && this.grid[y][x] !== 0;
-    const d =
-      isOccupied(nc.x - 1, nc.y - 1) ||
-      isOccupied(nc.x + piece.width, nc.y - 1) ||
-      isOccupied(nc.x + piece.width, nc.y + piece.height) ||
-      isOccupied(nc.x - 1, nc.y + piece.height);
-
     for (let i = 0; i < piece.len; i++) {
-      if (piece.width > piece.height) {
-        const hy =
-          isOccupied(nc.x + i, nc.y - 1) || isOccupied(nc.x + i, nc.y + 1);
-        const vx =
-          isOccupied(nc.x - 1, nc.y) || isOccupied(nc.x + piece.width, nc.y);
-        if (isOccupied(nc.x + i, nc.y) || vx || hy || d) {
-          return true;
-        }
-      } else {
-        const hy =
-          isOccupied(nc.x, nc.y - 1) || isOccupied(nc.x, nc.y + piece.height);
-        const vx =
-          isOccupied(nc.x - 1, nc.y + i) || isOccupied(nc.x + 1, nc.y + i);
-        if (isOccupied(nc.x, nc.y + i) || vx || hy || d) {
-          return true;
-        }
-      }
+      const px = piece.width > piece.height ? i : 0;
+      const py = piece.width > piece.height ? 0 : i;
+
+      const directions = [
+        [nc.x - 1, nc.y - 1],
+        [nc.x + piece.width, nc.y - 1],
+        [nc.x - 1, nc.y + piece.height],
+        [nc.x + piece.width, nc.y + piece.height],
+        [nc.x + px, nc.y + py - 1],
+        [nc.x + px - 1, nc.y + py],
+        [nc.x + px + 1, nc.y + py],
+        [nc.x + px, nc.y + py + 1],
+      ];
+
+      return directions.some((e) => this.isOccupied(...e));
     }
-    return false;
   }
   insert(piece, nc) {
     if (this.isBusy(piece, nc) === false) {

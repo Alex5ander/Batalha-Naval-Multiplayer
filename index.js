@@ -33,7 +33,10 @@ class Player {
    */
   constructor(id, name, grid, opponent) {
     this.id = id;
-    this.name = name.trim() || 'Player#' + Math.random().toString(16);
+    this.name =
+      name.trim().substring(0, 10) +
+      '#' +
+      Math.floor(Math.random() * 128).toString(16);
     this.grid = grid;
     this.hits = Array.from({ length: 10 }, () => Array(10).fill(0));
     this.score = 0;
