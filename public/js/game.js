@@ -5,8 +5,6 @@ import Piece from './Piece.js';
 import {
   drawHUD,
   resize,
-  fillRect,
-  strokeRect,
   tileSize,
   drawTileSprite,
   cols,
@@ -177,19 +175,10 @@ window.addEventListener('orientationchange', resize);
 resize();
 
 (function loop() {
-  for (let i = 0; i < 32 * 24; i++) {
-    const col = i % 32;
-    const row = Math.floor(i / 32);
-
-    drawTileSprite(
-      WaterTile,
-      col * tileSize,
-      row * tileSize,
-      tileSize,
-      tileSize
-    );
-
-    strokeRect(col * tileSize, row * tileSize, tileSize, tileSize, '#fff');
+  for (let i = 0; i < rows * cols; i++) {
+    const col = i % cols;
+    const row = Math.floor(i / cols);
+    drawTileSprite(WaterTile, col * tileSize, row * tileSize, tileSize);
   }
   for (const object of objects) {
     object.draw();
@@ -207,13 +196,7 @@ resize();
     }
   }
 
-  drawTileSprite(
-    Crosshair,
-    mx - tileSize / 2,
-    my - tileSize / 2,
-    tileSize,
-    tileSize
-  );
+  drawTileSprite(Crosshair, mx - tileSize / 2, my - tileSize / 2, tileSize);
   events = [];
   window.requestAnimationFrame(loop);
 })();

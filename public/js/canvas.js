@@ -62,8 +62,11 @@ function drawHUD(data = DATA) {
   const x0 = 7 * tileSize;
   const x1 = 26 * tileSize;
 
-  const color1 = room.turno ? '#fff' : '#bbb';
-  const color2 = !room.turno ? '#fff' : '#bbb';
+  const active = '#f8f8f8';
+  const disabled = '#d8d8d8ff';
+
+  const color1 = room.turno ? active : disabled;
+  const color2 = !room.turno ? active : disabled;
 
   fillText(player.name, x0, y, fontSize, color1);
   fillText(room.opponentname, x1, y, fontSize, color2);
@@ -120,14 +123,14 @@ function resize(_) {
 const isPointInPath = (a, b, c) => ctx.isPointInPath(a, b, c);
 
 export {
-  isPointInPath,
-  drawHUD,
-  fillText,
-  fillRect,
-  strokeRect,
-  drawTileSprite,
-  resize,
-  tileSize,
   rows,
   cols,
+  resize,
+  drawHUD,
+  fillRect,
+  fillText,
+  tileSize,
+  strokeRect,
+  isPointInPath,
+  drawTileSprite,
 };

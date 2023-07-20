@@ -48,17 +48,6 @@ class Board {
     const cols = 10;
     const size = this.grid.length * cols;
 
-    for (var i = 0; i < size; i++) {
-      const col = i % cols;
-      const row = Math.floor(i / cols);
-      drawTileSprite(
-        WaterTile,
-        (this.x + col) * tileSize,
-        (this.y + row) * tileSize,
-        tileSize
-      );
-    }
-
     for (var i = 0; i < this.grid.length; i++) {
       let fontSize = tileSize / 2;
 
@@ -108,7 +97,7 @@ class Board {
           (this.y + i) * tileSize,
           tileSize,
           tileSize,
-          '#3cbcfcff'
+          '#f8f8f8'
         );
       }
     }
