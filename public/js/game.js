@@ -72,6 +72,7 @@ export const reseteGame = () => {
   editor = null;
   myboard = null;
   myhits = null;
+  data = null;
 };
 
 export const onInit = (data) => {
