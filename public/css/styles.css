@@ -68,7 +68,7 @@ canvas {
   align-items: center;
 }
 
-#btn-jogar {
+#btn-play {
   color: var(--color-white);
   background-color: var(--color-green);
 
@@ -80,7 +80,7 @@ canvas {
   border-radius: 0.5rem;
 }
 
-#btn-jogar:hover {
+#btn-play:hover {
   background-color: #58d854;
 }
 
@@ -154,7 +154,7 @@ canvas {
   border-radius: 0.5rem;
 }
 
-#btn-batalhar {
+#btn-battle {
   margin-top: 16px;
   color: var(--color-white);
   background-color: var(--color-orange);
@@ -168,7 +168,7 @@ canvas {
   border-radius: 0.5rem;
 }
 
-#btn-batalhar:hover {
+#btn-battle:hover {
   background-color: var(--color-yellow);
 }
 

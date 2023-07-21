@@ -1,5 +1,5 @@
 import { colors } from './Piece.js';
-import { MarkerTile, WaterTile } from './assets.js';
+import { MarkerTile } from './assets.js';
 import {
   drawTileSprite,
   fillRect,
@@ -16,37 +16,27 @@ class Board {
     this.onclick = onclick;
     this.selected = false;
   }
-  click(x, y) {
-    if (
-      x > this.x * tileSize &&
-      x < this.x * tileSize + 10 * tileSize &&
-      y > this.y * tileSize &&
-      y < this.y * tileSize + 10 * tileSize
-    ) {
-      return true;
-    }
-    return false;
+  click({ mx, my }) {
+    return (
+      mx > this.x * tileSize &&
+      mx < this.x * tileSize + 10 * tileSize &&
+      my > this.y * tileSize &&
+      my < this.y * tileSize + 10 * tileSize
+    );
   }
-  mousedown(e) {
-    if (this.click(e.mx, e.my) === true) {
-      this.selected = true;
-    }
+  mousedown() {
+    this.selected = true;
   }
   mouseup(e) {
     var nc = {
       x: Math.floor(e.mx / tileSize) - this.x,
       y: Math.floor(e.my / tileSize) - this.y,
     };
-    if (this.click(e.mx, e.my) === true && this.selected === true) {
-      this.onclick(nc);
-    }
+    this.onclick(nc);
     this.selected = false;
   }
   draw() {
     var letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
-
-    const cols = 10;
-    const size = this.grid.length * cols;
 
     for (var i = 0; i < this.grid.length; i++) {
       let fontSize = tileSize / 2;

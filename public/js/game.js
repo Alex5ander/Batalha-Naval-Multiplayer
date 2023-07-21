@@ -12,28 +12,46 @@ import {
 } from './canvas.js';
 import { Crosshair, WaterTile } from './assets.js';
 
-const btnBattle = document.getElementById('btn-batalhar');
+const btnBattle = document.getElementById('btn-battle');
 const awaitcontainer = document.getElementById('awaitcontainer');
 const playGameScreen = document.getElementById('play-game-screen');
-const btnPlay = document.getElementById('btn-jogar');
+const btnPlay = document.getElementById('btn-play');
 const btnCancel = document.getElementById('btn-cancelar');
 const inputPlayerName = document.getElementById('input-player-name');
 const form = document.getElementById('form');
 const btnRotatePiece = document.getElementById('btn-rotate-piece');
 
-let mx = 0;
-let my = 0;
+const crosshair = { x: 0, y: 0 };
+
+const handleEvent = (event) => {
+  crosshair.x = event.mx;
+  crosshair.y = event.my;
+
+  const selected = objects.find((e) => e.selected);
+  const clicked = objects.find((e) => e.click(event));
+
+  if (event.type === 'mousemove' || event.type === 'touchmove') {
+    if (selected) {
+      if (selected[event.type]) {
+        selected[event.type](event);
+      }
+    }
+  } else if (clicked) {
+    if (clicked[event.type]) {
+      clicked[event.type](event);
+    }
+  }
+};
 
 function mouseevents(e) {
+  e.preventDefault();
   const { offsetLeft, offsetTop, width, height } = canvas;
   const event = {
     mx: Math.floor((e.clientX - offsetLeft) % width),
     my: Math.floor((e.clientY - offsetTop) % height),
     type: e.type,
   };
-  mx = event.mx;
-  my = event.my;
-  events.push(event);
+  handleEvent(event);
 }
 
 function touchevents(e) {
@@ -45,13 +63,10 @@ function touchevents(e) {
     my: Math.floor((touch.clientY - offsetTop) % height),
     type: e.type,
   };
-  mx = event.mx;
-  my = event.my;
-  events.push(event);
+  handleEvent(event);
 }
 
 let objects = [];
-let events = [];
 /** @type {BoardEditor} */
 let editor = null;
 /** @type {Board} */
@@ -68,7 +83,6 @@ export const reseteGame = () => {
   awaitcontainer.classList.add('hidden');
   btnRotatePiece.classList.add('hidden');
   objects = [];
-  events = [];
   editor = null;
   myboard = null;
   myhits = null;
@@ -123,13 +137,7 @@ const play = (e) => {
   btnRotatePiece.classList.remove('hidden');
   playGameScreen.classList.add('hidden');
 
-  btnRotatePiece.onclick = (e) => {
-    e.preventDefault();
-    editor.rotatePieceInBoard();
-  };
-
-  objects = [
-    editor,
+  const pieces = [
     new Piece(1, 1, 5, 'A', onDrop),
 
     new Piece(1, 3, 3, 'B', onDrop),
@@ -144,6 +152,14 @@ const play = (e) => {
     new Piece(1, 15, 1, 'I', onDrop),
     new Piece(3, 15, 1, 'J', onDrop),
   ];
+
+  btnRotatePiece.onclick = (e) => {
+    e.preventDefault();
+    //  editor.rotatePieceInBoard();
+    editor.random(pieces);
+  };
+
+  objects = [editor, ...pieces];
 };
 
 const cancel = (e) => {
@@ -189,15 +205,12 @@ resize();
     drawHUD(data);
   }
 
-  for (const event of events) {
-    for (const object of objects) {
-      if (object[event.type]) {
-        object[event.type](event);
-      }
-    }
-  }
+  drawTileSprite(
+    Crosshair,
+    crosshair.x - tileSize / 2,
+    crosshair.y - tileSize / 2,
+    tileSize
+  );
 
-  drawTileSprite(Crosshair, mx - tileSize / 2, my - tileSize / 2, tileSize);
-  events = [];
   window.requestAnimationFrame(loop);
 })();

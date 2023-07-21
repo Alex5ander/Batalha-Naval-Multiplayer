@@ -1,4 +1,5 @@
 import Board from './Board.js';
+import Piece from './Piece.js';
 
 class BoardEditor extends Board {
   constructor(x, y, onDrop = (_) => {}) {
@@ -26,8 +27,12 @@ class BoardEditor extends Board {
         [nc.x + px, nc.y + py + 1],
       ];
 
-      return directions.some((e) => this.isOccupied(...e));
+      if (directions.some((e) => this.isOccupied(...e))) {
+        return true;
+      }
     }
+
+    return false;
   }
   insert(piece, nc) {
     if (this.isBusy(piece, nc) === false) {
@@ -121,6 +126,34 @@ class BoardEditor extends Board {
     }
 
     this.onDrop(this.count === 10);
+  }
+
+  /**
+   *
+   * @param {Piece[]} pieces
+   */
+  random(pieces) {
+    this.grid = Array.from({ length: 10 }, () => Array(10).fill(0));
+    this.count = 0;
+
+    for (const piece of pieces) {
+      piece.inBoard = false;
+    }
+
+    for (let i = 0; i < pieces.length; i) {
+      const piece = pieces[i];
+      if (!piece.inBoard) {
+        piece.x = this.x + Math.floor(Math.random() * 10);
+        piece.y = this.y + Math.floor(Math.random() * 10);
+        if (Math.floor(Math.random() * 2) === 1) {
+          this.lastSelectedPiece = piece;
+          this.rotatePieceInBoard();
+        }
+        this.drop(piece);
+      } else {
+        i++;
+      }
+    }
   }
 }
 

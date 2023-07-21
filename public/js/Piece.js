@@ -38,10 +38,7 @@ class Piece {
       this.width * tileSize,
       this.height * tileSize
     );
-    if (isPointInPath(path, e.mx, e.my)) {
-      return true;
-    }
-    return false;
+    return isPointInPath(path, e.mx, e.my);
   }
   resete() {
     this.x = this.startX;
@@ -52,22 +49,16 @@ class Piece {
     this.inBoardX = null;
     this.inBoardY = null;
   }
-  mousedown(e) {
-    if (this.click(e)) {
-      this.selected = true;
-    }
+  mousedown() {
+    this.selected = true;
   }
-  mouseup(e) {
-    if (this.click(e)) {
-      this.onDrop(this);
-    }
+  mouseup() {
+    this.onDrop(this);
     this.selected = false;
   }
   mousemove(e) {
-    if (this.selected) {
-      this.x = (e.mx - (this.width * tileSize) / 2) / tileSize;
-      this.y = (e.my - (this.height * tileSize) / 2) / tileSize;
-    }
+    this.x = (e.mx - (this.width * tileSize) / 2) / tileSize;
+    this.y = (e.my - (this.height * tileSize) / 2) / tileSize;
   }
   touchstart(e) {
     if (this.click(e)) {
