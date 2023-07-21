@@ -57,8 +57,10 @@ class Piece {
     this.selected = false;
   }
   mousemove(e) {
-    this.x = (e.mx - (this.width * tileSize) / 2) / tileSize;
-    this.y = (e.my - (this.height * tileSize) / 2) / tileSize;
+    if (this.selected) {
+      this.x = (e.mx - (this.width * tileSize) / 2) / tileSize;
+      this.y = (e.my - (this.height * tileSize) / 2) / tileSize;
+    }
   }
   touchstart(e) {
     if (this.click(e)) {
@@ -91,7 +93,7 @@ class Piece {
         this.y * tileSize,
         this.width * tileSize,
         this.height * tileSize,
-        '#080808',
+        '#fca044',
         2
       );
     } else if (this.inBoard) {

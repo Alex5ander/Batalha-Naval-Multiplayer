@@ -1,7 +1,7 @@
 import { onInit, onUpdate, reseteGame } from './game.js';
 
 const network = () => {
-  const socket = io('/', { reconnection: false });
+  const socket = io();
 
   socket.on('connect_error', reseteGame);
 

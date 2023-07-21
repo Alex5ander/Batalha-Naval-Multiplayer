@@ -9,6 +9,7 @@
 }
 
 * {
+  box-sizing: border-box;
   font-family: 'Press Start 2P';
 }
 .hidden {
@@ -49,23 +50,29 @@ canvas {
   height: min-content;
 }
 
-#btn-rotate-piece {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
+#btn-rotate-piece,
+#btn-randomize-piece {
+  max-width: 200px;
+  height: 48px;
+  border-radius: 1rem;
+  padding: 1rem;
   background-color: var(--color-yellow);
   font-size: 1em;
   line-height: 0.5em;
-  margin: auto;
-  left: 0;
   right: 0;
   top: 8px;
   position: absolute;
   border: none;
-  padding: 16px;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+#btn-rotate-piece {
+  right: 16px;
+}
+#btn-randomize-piece {
+  left: 16px;
 }
 
 #btn-play {

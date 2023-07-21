@@ -20,6 +20,7 @@ const btnCancel = document.getElementById('btn-cancelar');
 const inputPlayerName = document.getElementById('input-player-name');
 const form = document.getElementById('form');
 const btnRotatePiece = document.getElementById('btn-rotate-piece');
+const btnRandomizePiece = document.getElementById('btn-randomize-piece');
 
 const crosshair = { x: 0, y: 0 };
 
@@ -27,18 +28,20 @@ const handleEvent = (event) => {
   crosshair.x = event.mx;
   crosshair.y = event.my;
 
-  const selected = objects.find((e) => e.selected);
-  const clicked = objects.find((e) => e.click(event));
+  const selecteds = objects.filter((e) => e.selected);
+  const clicks = objects.filter((e) => e.click(event));
 
   if (event.type === 'mousemove' || event.type === 'touchmove') {
-    if (selected) {
+    for (const selected of selecteds) {
       if (selected[event.type]) {
         selected[event.type](event);
       }
     }
-  } else if (clicked) {
-    if (clicked[event.type]) {
-      clicked[event.type](event);
+  } else {
+    for (const click of clicks) {
+      if (click[event.type]) {
+        click[event.type](event);
+      }
     }
   }
 };
@@ -82,6 +85,7 @@ export const reseteGame = () => {
   form.classList.add('hidden');
   awaitcontainer.classList.add('hidden');
   btnRotatePiece.classList.add('hidden');
+  btnRandomizePiece.classList.add('hidden');
   objects = [];
   editor = null;
   myboard = null;
@@ -92,6 +96,7 @@ export const reseteGame = () => {
 export const onInit = (data) => {
   form.classList.add('hidden');
   btnRotatePiece.classList.add('hidden');
+  btnRandomizePiece.classList.add('hidden');
 
   if (data.awaitPlayer2) {
     awaitcontainer.classList.remove('hidden');
@@ -135,6 +140,7 @@ const play = (e) => {
   const onDrop = (piece) => editor.drop(piece);
 
   btnRotatePiece.classList.remove('hidden');
+  btnRandomizePiece.classList.remove('hidden');
   playGameScreen.classList.add('hidden');
 
   const pieces = [
@@ -155,7 +161,11 @@ const play = (e) => {
 
   btnRotatePiece.onclick = (e) => {
     e.preventDefault();
-    //  editor.rotatePieceInBoard();
+    editor.rotatePieceInBoard();
+  };
+
+  btnRandomizePiece.onclick = (e) => {
+    e.preventDefault();
     editor.random(pieces);
   };
 
@@ -167,6 +177,7 @@ const cancel = (e) => {
   form.classList.add('hidden');
   awaitcontainer.classList.add('hidden');
   btnRotatePiece.classList.remove('hidden');
+  btnRandomizePiece.classList.remove('hidden');
   net.disconnect();
 };
 
