@@ -49,23 +49,26 @@ canvas {
   width: min-content;
   height: min-content;
 }
-
+#board-editor {
+  padding: 8px;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  position: absolute;
+  width: max-content;
+  height: min-content;
+}
 #btn-rotate-piece,
 #btn-randomize-piece {
   max-width: 200px;
   height: 48px;
   border-radius: 1rem;
-  padding: 1rem;
+  padding: 0.5rem;
   background-color: var(--color-yellow);
   font-size: 1em;
   line-height: 0.5em;
-  right: 0;
-  top: 8px;
-  position: absolute;
   border: none;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 #btn-rotate-piece {

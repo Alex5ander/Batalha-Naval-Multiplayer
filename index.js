@@ -15,8 +15,8 @@ server.listen(3000, function () {
 
 const io = new Server(server);
 
-let roomsNo = 0;
-const game = {};
+/** @type {Room[]} */
+let game = [];
 const maxScore = 21;
 const tags = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 const WATER = 0;
@@ -45,27 +45,27 @@ class Player {
   }
 }
 
-/**
- *
- * @param {Socket} socket
- * @param {number} roomid
- */
-const createRoom = (socket, roomid) => {
-  game[roomid] = {
-    winner: false,
-    turno: socket.id,
-    players: [new Player(socket.id, '', [], null)],
-  };
-};
+class Room {
+  /**
+   *
+   * @param {Player} player
+   */
+  constructor(player) {
+    this.id = player.id + '#' + Math.floor(Math.random() * 127).toString(16);
+    this.winner = false;
+    this.turno = player.id;
+    this.players = [player];
+  }
+}
 
 /**
  *
  * @param {Socket} socket
  * @param {*} data
- * @param {number} roomid
+ * @param {Room} room
  */
-const loadGrid = (socket, data, roomid) => {
-  const player = game[roomid].players.find((e) => e.id == socket.id);
+const loadGrid = (socket, data, room) => {
+  const player = room.players.find((e) => e.id == socket.id);
   player.name = data.name;
   let count = 0;
 
@@ -112,19 +112,15 @@ const loadGrid = (socket, data, roomid) => {
   player.grid = data.grid;
   player.pieces = pieces;
 
-  if (game[roomid].players.length == 2) {
-    updateGame(roomid);
+  if (room.players.length == 2) {
+    updateGame(room);
   }
 };
 
-/**
- *
- * @param {number} roomid
- */
-const updateGame = (roomid) => {
-  const room = game[roomid];
-  const p1 = game[roomid].players[0];
-  const p2 = game[roomid].players[1];
+/** @param {Room} room */
+const updateGame = (room) => {
+  const p1 = room.players[0];
+  const p2 = room.players[1];
   const updateData = (p1, p2) => ({
     player: {
       name: p1.name,
@@ -146,11 +142,9 @@ const updateGame = (roomid) => {
  *
  * @param {Socket} socket
  * @param {*} coords
- * @param {number} roomid
+ * @param {Room} room
  */
-const firing = (socket, coords, roomid) => {
-  const room = game[roomid];
-  /** @type {Player} */
+const firing = (socket, coords, room) => {
   const player = room.players.find((e) => e.id === socket.id);
   const opponent = player.opponent;
   const targetGrid = opponent.grid;
@@ -191,40 +185,36 @@ const firing = (socket, coords, roomid) => {
         room.turno = opponent.id;
       }
     }
-    updateGame(roomid);
+    updateGame(room);
   }
 };
 
 io.on('connection', (socket) => {
-  roomsNo += 1;
-  const roomid = Math.round(roomsNo / 2);
-  socket.join(roomid);
+  let room = game.find((e) => e.players.length === 1);
+
+  if (room) {
+    socket.join(room.id);
+    room.players.push(new Player(socket.id, '', [], room.players[0]));
+    room.players[0].opponent = room.players[1];
+    socket.emit('init-config', { awaitPlayer2: false });
+  } else {
+    room = new Room(new Player(socket.id, '', [], null));
+    socket.join(room.id);
+    game.push(room);
+    socket.emit('init-config', { awaitPlayer2: true });
+  }
 
   socket.on('disconnect', () => {
-    const room = game[roomid];
-    if (room) {
-      if (room.players.length === 1) {
-        roomsNo -= 1;
-      } else {
-        io.to(roomid).emit('another_player_disconnected', {
-          another_playerid: socket.id,
-        });
-      }
-    }
-    delete game[roomid];
-  });
-
-  if (roomsNo % 2 === 1) {
-    createRoom(socket, roomid);
-    socket.emit('init-config', { awaitPlayer2: true });
-  } else if (roomsNo % 2 === 0) {
-    game[roomid].players.push(
-      new Player(socket.id, '', [], game[roomid].players[0])
+    const roomIndex = game.findIndex((e) =>
+      e.players.some((p) => socket.id === p.id)
     );
 
-    game[roomid].players[0].opponent = game[roomid].players[1];
-    socket.emit('init-config', { awaitPlayer2: false });
-  }
-  socket.on('load-grid', (data) => loadGrid(socket, data, roomid));
-  socket.on('firing', (data) => firing(socket, data, roomid));
+    io.to(room.id).emit('another_player_disconnected', {
+      another_playerid: socket.id,
+    });
+    game.splice(roomIndex, 1);
+  });
+
+  socket.on('load-grid', (data) => loadGrid(socket, data, room));
+  socket.on('firing', (data) => firing(socket, data, room));
 });

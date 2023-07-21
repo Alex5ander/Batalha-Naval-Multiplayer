@@ -19,6 +19,7 @@ const btnPlay = document.getElementById('btn-play');
 const btnCancel = document.getElementById('btn-cancelar');
 const inputPlayerName = document.getElementById('input-player-name');
 const form = document.getElementById('form');
+const boardEditorControls = document.getElementById('board-editor');
 const btnRotatePiece = document.getElementById('btn-rotate-piece');
 const btnRandomizePiece = document.getElementById('btn-randomize-piece');
 
@@ -84,8 +85,7 @@ export const reseteGame = () => {
   playGameScreen.classList.remove('hidden');
   form.classList.add('hidden');
   awaitcontainer.classList.add('hidden');
-  btnRotatePiece.classList.add('hidden');
-  btnRandomizePiece.classList.add('hidden');
+  boardEditorControls.classList.add('hidden');
   objects = [];
   editor = null;
   myboard = null;
@@ -95,8 +95,7 @@ export const reseteGame = () => {
 
 export const onInit = (data) => {
   form.classList.add('hidden');
-  btnRotatePiece.classList.add('hidden');
-  btnRandomizePiece.classList.add('hidden');
+  boardEditorControls.classList.add('hidden');
 
   if (data.awaitPlayer2) {
     awaitcontainer.classList.remove('hidden');
@@ -139,8 +138,7 @@ const play = (e) => {
 
   const onDrop = (piece) => editor.drop(piece);
 
-  btnRotatePiece.classList.remove('hidden');
-  btnRandomizePiece.classList.remove('hidden');
+  boardEditorControls.classList.remove('hidden');
   playGameScreen.classList.add('hidden');
 
   const pieces = [
@@ -176,8 +174,7 @@ const cancel = (e) => {
   e.preventDefault();
   form.classList.add('hidden');
   awaitcontainer.classList.add('hidden');
-  btnRotatePiece.classList.remove('hidden');
-  btnRandomizePiece.classList.remove('hidden');
+  boardEditorControls.classList.remove('hidden');
   net.disconnect();
 };
 
