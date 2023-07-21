@@ -33,15 +33,17 @@ class Player {
    */
   constructor(id, name, grid, opponent) {
     this.id = id;
-    this.name =
-      name.trim().substring(0, 10) +
-      '#' +
-      Math.floor(Math.random() * 128).toString(16);
+    this.name = name;
     this.grid = grid;
     this.hits = Array.from({ length: 10 }, () => Array(10).fill(0));
     this.score = 0;
     this.opponent = opponent;
     this.pieces = [];
+  }
+  /** @param {string} name */
+  setName(name) {
+    this.name =
+      name.trim() + '#' + Math.floor(Math.random() * 127).toString(16);
   }
 }
 
@@ -51,7 +53,7 @@ class Room {
    * @param {Player} player
    */
   constructor(player) {
-    this.id = player.id + '#' + Math.floor(Math.random() * 127).toString(16);
+    this.id = Math.floor(Math.random() * 127).toString(16) + Date.now();
     this.winner = false;
     this.turno = player.id;
     this.players = [player];
@@ -66,7 +68,7 @@ class Room {
  */
 const loadGrid = (socket, data, room) => {
   const player = room.players.find((e) => e.id == socket.id);
-  player.name = data.name;
+  player.setName(data.name);
   let count = 0;
 
   if (Array.isArray(data.grid) && data.grid.length === 10) {
@@ -205,14 +207,13 @@ io.on('connection', (socket) => {
   }
 
   socket.on('disconnect', () => {
-    const roomIndex = game.findIndex((e) =>
-      e.players.some((p) => socket.id === p.id)
+    const currentRoom = game.find((e) =>
+      e.players.find((p) => socket.id === p.id)
     );
 
-    io.to(room.id).emit('another_player_disconnected', {
-      another_playerid: socket.id,
-    });
-    game.splice(roomIndex, 1);
+    game = game.filter((e) => e.id !== currentRoom.id);
+
+    io.to(currentRoom.id).emit('another_player_disconnected');
   });
 
   socket.on('load-grid', (data) => loadGrid(socket, data, room));
