@@ -211,9 +211,10 @@ io.on('connection', (socket) => {
       e.players.find((p) => socket.id === p.id)
     );
 
-    game = game.filter((e) => e.id !== currentRoom.id);
-
-    io.to(currentRoom.id).emit('another_player_disconnected');
+    if (currentRoom) {
+      game = game.filter((e) => e.id !== currentRoom.id);
+      io.to(currentRoom.id).emit('another_player_disconnected');
+    }
   });
 
   socket.on('load-grid', (data) => loadGrid(socket, data, room));
