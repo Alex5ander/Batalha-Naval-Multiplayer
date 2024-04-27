@@ -2,7 +2,7 @@ import Board from './Board.js';
 import Piece from './Piece.js';
 
 class BoardEditor extends Board {
-  constructor(x, y, onDrop = (_) => {}) {
+  constructor(x, y, onDrop = (_) => { }) {
     super(x, y);
     this.onDrop = onDrop;
     this.lastSelectedPiece = false;

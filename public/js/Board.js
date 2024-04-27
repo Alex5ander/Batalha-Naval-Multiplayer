@@ -9,7 +9,7 @@ import {
 } from './canvas.js';
 
 class Board {
-  constructor(x, y, grid, onclick = (_) => {}) {
+  constructor(x, y, grid, onclick = (_) => { }) {
     this.x = x;
     this.y = y;
     this.grid = grid || Array.from({ length: 10 }, () => Array(10).fill(0));

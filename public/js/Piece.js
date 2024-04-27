@@ -14,7 +14,7 @@ export const colors = {
 };
 
 class Piece {
-  constructor(x, y, len, tag, onDrop = (_) => {}) {
+  constructor(x, y, len, tag, onDrop = (_) => { }) {
     this.tag = tag;
     this.x = x;
     this.y = y;
