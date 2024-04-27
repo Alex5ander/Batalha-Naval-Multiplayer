@@ -8,6 +8,8 @@ import {
   tileSize,
 } from './canvas.js';
 
+const strokeColor = '#f8f8f8';
+const textColor = '#080808';
 class Board {
   constructor(x, y, grid, onclick = (_) => { }) {
     this.x = x;
@@ -47,8 +49,8 @@ class Board {
       let lx = (this.x + i) * tileSize + tileSize / 2;
       let ly = this.y * tileSize - fontSize;
 
-      fillText(i + 1, nx, ny, fontSize, '#080808');
-      fillText(letters[i], lx, ly, fontSize, '#080808');
+      fillText(i + 1, nx, ny, fontSize, textColor);
+      fillText(letters[i], lx, ly, fontSize, textColor);
 
       for (var j = 0; j < this.grid[i].length; j++) {
         var g = this.grid[i][j];
@@ -87,7 +89,7 @@ class Board {
           (this.y + i) * tileSize,
           tileSize,
           tileSize,
-          '#f8f8f8'
+          strokeColor
         );
       }
     }

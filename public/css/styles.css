@@ -65,9 +65,9 @@ canvas {
 
 #btn-rotate-piece,
 #btn-randomize-piece {
-  max-width: 200px;
+  width: 48px;
   height: 48px;
-  border-radius: 1rem;
+  border-radius: 50%;
   padding: 0.5rem;
   background-color: var(--color-yellow);
   font-size: 1em;

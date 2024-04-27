@@ -17,6 +17,7 @@ class BoardEditor extends Board {
       const py = piece.width > piece.height ? 0 : i;
 
       const directions = [
+        [nc.x, nc.y],
         [nc.x - 1, nc.y - 1],
         [nc.x + piece.width, nc.y - 1],
         [nc.x - 1, nc.y + piece.height],
@@ -36,8 +37,8 @@ class BoardEditor extends Board {
   }
   insert(piece, nc) {
     if (this.isBusy(piece, nc) === false) {
-      for (var y = 0; y < piece.height; y++) {
-        for (var x = 0; x < piece.width; x++) {
+      for (let y = 0; y < piece.height; y++) {
+        for (let x = 0; x < piece.width; x++) {
           this.grid[nc.y + y][nc.x + x] = piece.tag;
         }
       }
@@ -52,34 +53,25 @@ class BoardEditor extends Board {
       this.lastSelectedPiece = piece;
 
       this.count += 1;
-      return true;
     }
-    return false;
-  }
-  move(piece, nc) {
-    this.remove(piece);
-    if (this.insert(piece, nc)) {
-      return true;
-    }
-    return false;
   }
   remove(piece) {
     if (piece.inBoard) {
-      for (var y = 0; y < piece.height; y++) {
-        for (var x = 0; x < piece.width; x++) {
+      for (let y = 0; y < piece.height; y++) {
+        for (let x = 0; x < piece.width; x++) {
           this.grid[piece.inBoardY + y][piece.inBoardX + x] = 0;
         }
       }
       this.lastSelectedPiece = false;
       this.count -= 1;
+      piece.inBoard = false;
     }
-    piece.inBoard = false;
   }
   rotatePieceInBoard() {
     if (this.lastSelectedPiece) {
-      var piece = this.lastSelectedPiece;
-      var w = piece.width;
-      var h = piece.height;
+      let piece = this.lastSelectedPiece;
+      let w = piece.width;
+      let h = piece.height;
       this.remove(piece);
       piece.width = h;
       piece.height = w;
@@ -89,12 +81,12 @@ class BoardEditor extends Board {
     }
   }
   drop(piece) {
-    var nc = {
+    let nc = {
       x: Math.floor(piece.x + 0.5 - this.x),
       y: Math.floor(piece.y + 0.5 - this.y),
     };
-    var ex = nc.x + Math.floor(piece.width) - 1;
-    var ey = nc.y + Math.floor(piece.height) - 1;
+    let ex = nc.x + Math.floor(piece.width) - 1;
+    let ey = nc.y + Math.floor(piece.height) - 1;
     if (
       nc.x >= 0 &&
       nc.x <= 9 &&
@@ -106,25 +98,16 @@ class BoardEditor extends Board {
       ey <= 9
     ) {
       if (piece.inBoard) {
-        if (this.move(piece, nc) === false) {
-          piece.x = this.x + piece.inBoardX;
-          piece.y = this.y + piece.inBoardY;
-          var nc = {
-            x: Math.floor(piece.x + 0.5 - this.x),
-            y: Math.floor(piece.y + 0.5 - this.y),
-          };
-          this.insert(piece, nc);
-        }
-      } else if (!piece.inBoard) {
-        if (this.insert(piece, nc) === false) {
-          piece.resete();
-        }
+        this.remove(piece);
+      }
+      this.insert(piece, nc);
+      if (!piece.inBoard) {
+        piece.resete();
       }
     } else {
       this.remove(piece);
       piece.resete();
     }
-
     this.onDrop(this.count === 10);
   }
 
@@ -145,11 +128,11 @@ class BoardEditor extends Board {
       if (!piece.inBoard) {
         piece.x = this.x + Math.floor(Math.random() * 10);
         piece.y = this.y + Math.floor(Math.random() * 10);
+        this.lastSelectedPiece = piece;
         if (Math.floor(Math.random() * 2) === 1) {
-          this.lastSelectedPiece = piece;
           this.rotatePieceInBoard();
         }
-        this.drop(piece);
+        else { this.drop(piece); }
       } else {
         i++;
       }
