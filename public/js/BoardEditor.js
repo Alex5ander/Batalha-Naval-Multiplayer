@@ -8,9 +8,17 @@ class BoardEditor extends Board {
     this.lastSelectedPiece = false;
     this.count = 0;
   }
+  /**
+   * @param {number} x 
+   * @param {number} y 
+   */
   isOccupied(x, y) {
     return x >= 0 && x <= 9 && y >= 0 && y <= 9 && this.grid[y][x] !== 0;
   }
+  /** 
+   * @param {Piece} piece 
+   * @param {{x:number; y:number}} nc  
+   */
   isBusy(piece, nc) {
     for (let i = 0; i < piece.len; i++) {
       const px = piece.width > piece.height ? i : 0;
@@ -35,6 +43,10 @@ class BoardEditor extends Board {
 
     return false;
   }
+  /** 
+   * @param {Piece} piece 
+   * @param {{x:number; y:number}} nc  
+   */
   insert(piece, nc) {
     if (this.isBusy(piece, nc) === false) {
       for (let y = 0; y < piece.height; y++) {
@@ -55,6 +67,7 @@ class BoardEditor extends Board {
       this.count += 1;
     }
   }
+  /** @param {Piece} piece  */
   remove(piece) {
     if (piece.inBoard) {
       for (let y = 0; y < piece.height; y++) {
@@ -80,6 +93,7 @@ class BoardEditor extends Board {
       this.drop(piece);
     }
   }
+  /** @param {Piece} piece  */
   drop(piece) {
     let nc = {
       x: Math.floor(piece.x + 0.5 - this.x),
@@ -132,7 +146,9 @@ class BoardEditor extends Board {
         if (Math.floor(Math.random() * 2) === 1) {
           this.rotatePieceInBoard();
         }
-        else { this.drop(piece); }
+        else {
+          this.insert(piece);
+        }
       } else {
         i++;
       }
