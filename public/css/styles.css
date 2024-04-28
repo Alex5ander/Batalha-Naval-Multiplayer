@@ -73,6 +73,12 @@ canvas {
   font-size: 1em;
   line-height: 0.5em;
   border: none;
+  cursor: pointer;
+}
+
+#btn-rotate-piece:hover,
+#btn-randomize-piece:hover {
+  background-color: #f0ffc3;
 }
 
 #btn-rotate-piece {

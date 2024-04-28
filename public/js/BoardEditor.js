@@ -62,7 +62,7 @@ class BoardEditor extends Board {
           this.grid[piece.inBoardY + y][piece.inBoardX + x] = 0;
         }
       }
-      this.lastSelectedPiece = false;
+      this.lastSelectedPiece = null;
       this.count -= 1;
       piece.inBoard = false;
     }

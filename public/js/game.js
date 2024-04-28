@@ -200,9 +200,11 @@ window.addEventListener('orientationchange', resize);
 resize();
 
 (function loop() {
-  for (let i = 0; i < (rows + 1) * (cols + 1); i++) {
-    const col = i % (cols + 1);
-    const row = Math.floor(i / (cols + 1));
+  const w = Math.floor(canvas.width / tileSize) + 1;
+  const h = Math.floor(canvas.height / tileSize) + 1;
+  for (let i = 0; i < w * h; i++) {
+    const col = i % w;
+    const row = Math.floor(i / w);
     drawTileSprite(WaterTile, col * tileSize, row * tileSize, tileSize);
   }
   for (const object of objects) {

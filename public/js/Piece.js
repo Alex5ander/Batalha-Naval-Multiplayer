@@ -54,7 +54,9 @@ class Piece {
   }
   mouseup() {
     this.onDrop(this);
-    this.selected = false;
+    if (this.selected) {
+      this.selected = false;
+    }
   }
   mousemove(e) {
     if (this.selected) {
