@@ -147,7 +147,7 @@ class BoardEditor extends Board {
           this.rotatePieceInBoard();
         }
         else {
-          this.insert(piece);
+          this.drop(piece);
         }
       } else {
         i++;
