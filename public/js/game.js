@@ -18,16 +18,27 @@ const playGameScreen = document.getElementById('play-game-screen');
 const btnPlay = document.getElementById('btn-play');
 const btnCancel = document.getElementById('btn-cancelar');
 const inputPlayerName = document.getElementById('input-player-name');
-const form = document.getElementById('form');
+const formBattle = document.getElementById('form-battle');
 const boardEditorControls = document.getElementById('board-editor');
 const btnRotatePiece = document.getElementById('btn-rotate-piece');
 const btnRandomizePiece = document.getElementById('btn-randomize-piece');
 
+let objects = [];
+/** @type {BoardEditor} */
+let editor = null;
+/** @type {Board} */
+let myboard = null;
+/** @type {Board} */
+let myhits = null;
+let data = null;
+
+let net = null;
+
 const crosshair = { x: 0, y: 0 };
 
 const handleEvent = (event) => {
-  crosshair.x = event.mx;
-  crosshair.y = event.my;
+  crosshair.x = event.x;
+  crosshair.y = event.y;
 
   const selecteds = objects.filter((e) => e.selected);
   const clicks = objects.filter((e) => e.click(event));
@@ -51,8 +62,8 @@ function mouseevents(e) {
   e.preventDefault();
   const { offsetLeft, offsetTop, width, height } = canvas;
   const event = {
-    mx: Math.floor((e.clientX - offsetLeft) % width),
-    my: Math.floor((e.clientY - offsetTop) % height),
+    x: Math.floor((e.clientX - offsetLeft) % width),
+    y: Math.floor((e.clientY - offsetTop) % height),
     type: e.type,
   };
   handleEvent(event);
@@ -63,27 +74,16 @@ function touchevents(e) {
   const touch =
     e.type === 'touchend' ? e.changedTouches[0] : e.targetTouches[0];
   const event = {
-    mx: Math.floor((touch.clientX - offsetLeft) % width),
-    my: Math.floor((touch.clientY - offsetTop) % height),
+    x: Math.floor((touch.clientX - offsetLeft) % width),
+    y: Math.floor((touch.clientY - offsetTop) % height),
     type: e.type,
   };
   handleEvent(event);
 }
 
-let objects = [];
-/** @type {BoardEditor} */
-let editor = null;
-/** @type {Board} */
-let myboard = null;
-/** @type {Board} */
-let myhits = null;
-let data = null;
-
-let net = null;
-
 export const reseteGame = () => {
   playGameScreen.classList.remove('hidden');
-  form.classList.add('hidden');
+  formBattle.classList.add('hidden');
   awaitcontainer.classList.add('hidden');
   boardEditorControls.classList.add('hidden');
   objects = [];
@@ -94,7 +94,7 @@ export const reseteGame = () => {
 };
 
 export const onInit = (data) => {
-  form.classList.add('hidden');
+  formBattle.classList.add('hidden');
   boardEditorControls.classList.add('hidden');
 
   if (data.awaitPlayer2) {
@@ -130,9 +130,9 @@ const play = (e) => {
   e.preventDefault();
   editor = new BoardEditor(cols / 2 - 5, rows / 2 - 5, (allInBoard) => {
     if (allInBoard === true) {
-      form.classList.remove('hidden');
+      formBattle.classList.remove('hidden');
     } else if (allInBoard === false) {
-      form.classList.add('hidden');
+      formBattle.classList.add('hidden');
     }
   });
 
@@ -172,7 +172,7 @@ const play = (e) => {
 
 const cancel = (e) => {
   e.preventDefault();
-  form.classList.add('hidden');
+  formBattle.classList.remove('hidden');
   awaitcontainer.classList.add('hidden');
   boardEditorControls.classList.remove('hidden');
   net.disconnect();

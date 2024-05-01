@@ -7,6 +7,9 @@ const gameArea = document.getElementById('game-area');
 
 let tileSize = 32;
 
+const strokeColor = '#f8f8f8';
+const textColor = '#080808';
+
 function fillRect(x, y, w, h, color) {
   ctx.fillStyle = color;
   ctx.fillRect(x, y, w, h);
@@ -122,6 +125,33 @@ function resize(_) {
 
 const isPointInPath = (a, b, c) => ctx.isPointInPath(a, b, c);
 
+const drawGrid = (x, y) => {
+  var letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+  for (var i = 0; i < 10; i++) {
+    let fontSize = tileSize / 2;
+
+    let nx = x * tileSize - tileSize / 2;
+    let ny = y * tileSize + i * tileSize + fontSize;
+
+    let lx = (x + i) * tileSize + tileSize / 2;
+    let ly = y * tileSize - fontSize;
+
+    fillText(i + 1, nx, ny, fontSize, textColor);
+    fillText(letters[i], lx, ly, fontSize, textColor);
+
+    for (var j = 0; j < 10; j++) {
+
+      strokeRect(
+        (x + j) * tileSize,
+        (y + i) * tileSize,
+        tileSize,
+        tileSize,
+        strokeColor
+      );
+    }
+  }
+}
+
 export {
   rows,
   cols,
@@ -133,4 +163,5 @@ export {
   strokeRect,
   isPointInPath,
   drawTileSprite,
+  drawGrid
 };

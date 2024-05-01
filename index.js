@@ -29,21 +29,20 @@ class Player {
    * @param {string} id
    * @param {string} name
    * @param {number[][]} grid
-   * @param {Player} opponent
+   * @param {string} opponentid
    */
-  constructor(id, name, grid, opponent) {
+  constructor(id, name, grid, opponentid) {
     this.id = id;
     this.name = name;
     this.grid = grid;
     this.hits = Array.from({ length: 10 }, () => Array(10).fill(0));
     this.score = 0;
-    this.opponent = opponent;
+    this.opponentid = opponentid;
     this.pieces = [];
   }
   /** @param {string} name */
   setName(name) {
-    this.name =
-      name.trim() + '#' + Math.floor(Math.random() * 127).toString(16);
+    this.name = name.trim()
   }
 }
 
@@ -148,7 +147,7 @@ const updateGame = (room) => {
  */
 const firing = (socket, coords, room) => {
   const player = room.players.find((e) => e.id === socket.id);
-  const opponent = player.opponent;
+  const opponent = room.players.find((e) => e.id == player.opponentid);
   const targetGrid = opponent.grid;
   if (
     coords.x >= 0 &&
@@ -196,8 +195,8 @@ io.on('connection', (socket) => {
 
   if (room) {
     socket.join(room.id);
-    room.players.push(new Player(socket.id, '', [], room.players[0]));
-    room.players[0].opponent = room.players[1];
+    room.players.push(new Player(socket.id, '', [], room.players[0].id));
+    room.players[0].opponentid = room.players[1].id;
     socket.emit('init-config', { awaitPlayer2: false });
   } else {
     room = new Room(new Player(socket.id, '', [], null));

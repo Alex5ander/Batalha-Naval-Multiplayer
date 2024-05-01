@@ -1,15 +1,12 @@
 import { colors } from './Piece.js';
 import { MarkerTile } from './assets.js';
 import {
+  drawGrid,
   drawTileSprite,
   fillRect,
-  fillText,
-  strokeRect,
-  tileSize,
+  tileSize
 } from './canvas.js';
 
-const strokeColor = '#f8f8f8';
-const textColor = '#080808';
 class Board {
   constructor(x, y, grid, onclick = (_) => { }) {
     this.x = x;
@@ -18,81 +15,61 @@ class Board {
     this.onclick = onclick;
     this.selected = false;
   }
-  click({ mx, my }) {
+  click({ x, y }) {
     return (
-      mx > this.x * tileSize &&
-      mx < this.x * tileSize + 10 * tileSize &&
-      my > this.y * tileSize &&
-      my < this.y * tileSize + 10 * tileSize
+      x > this.x * tileSize &&
+      x < this.x * tileSize + 10 * tileSize &&
+      y > this.y * tileSize &&
+      y < this.y * tileSize + 10 * tileSize
     );
   }
   mousedown() {
     this.selected = true;
   }
   mouseup(e) {
-    var nc = {
-      x: Math.floor(e.mx / tileSize) - this.x,
-      y: Math.floor(e.my / tileSize) - this.y,
-    };
-    this.onclick(nc);
+    this.onclick({
+      x: Math.floor(e.x / tileSize) - this.x,
+      y: Math.floor(e.y / tileSize) - this.y,
+    });
     this.selected = false;
   }
   draw() {
-    var letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+    drawGrid(this.x, this.y);
+    const cells = this.grid.flat();
 
-    for (var i = 0; i < this.grid.length; i++) {
-      let fontSize = tileSize / 2;
+    cells.forEach((value, index) => {
+      const j = index % 10;
+      const i = Math.floor(index / 10) % 10;
 
-      let nx = this.x * tileSize - tileSize / 2;
-      let ny = this.y * tileSize + i * tileSize + fontSize;
-
-      let lx = (this.x + i) * tileSize + tileSize / 2;
-      let ly = this.y * tileSize - fontSize;
-
-      fillText(i + 1, nx, ny, fontSize, textColor);
-      fillText(letters[i], lx, ly, fontSize, textColor);
-
-      for (var j = 0; j < this.grid[i].length; j++) {
-        var g = this.grid[i][j];
-
-        if (colors[g]) {
-          fillRect(
-            (this.x + j) * tileSize,
-            (this.y + i) * tileSize,
-            tileSize,
-            tileSize,
-            colors[g]
-          );
-        }
-
-        if (g === 2) {
-          fillRect(
-            (this.x + j) * tileSize,
-            (this.y + i) * tileSize,
-            tileSize,
-            tileSize,
-            '#0000bc'
-          );
-        }
-
-        if (g === 1) {
-          drawTileSprite(
-            MarkerTile,
-            (this.x + j) * tileSize,
-            (this.y + i) * tileSize,
-            tileSize
-          );
-        }
-
-        strokeRect(
+      if (colors[value]) {
+        fillRect(
           (this.x + j) * tileSize,
           (this.y + i) * tileSize,
           tileSize,
           tileSize,
-          strokeColor
+          colors[value]
         );
       }
-    }
+
+      if (value === 2) {
+        fillRect(
+          (this.x + j) * tileSize,
+          (this.y + i) * tileSize,
+          tileSize,
+          tileSize,
+          '#0000bc'
+        );
+      }
+
+      if (value === 1) {
+        drawTileSprite(
+          MarkerTile,
+          (this.x + j) * tileSize,
+          (this.y + i) * tileSize,
+          tileSize
+        );
+      }
+    })
   }
 }
 

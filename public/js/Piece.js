@@ -18,17 +18,18 @@ class Piece {
     this.tag = tag;
     this.x = x;
     this.y = y;
-    this.count = 0;
     this.startX = x;
     this.startY = y;
-    this.inBoardX = null;
-    this.inBoardY = null;
+    this.boardX = null;
+    this.boardY = null;
     this.inBoard = false;
     this.width = len;
     this.height = 1;
     this.len = len;
     this.selected = false;
     this.onDrop = onDrop;
+    this.startMouse = { x: 0, y: 0 };
+    this.interpolation = { active: false, x: 0, y: 0, onEnd: () => { } };
   }
   click(e) {
     var path = new Path2D();
@@ -38,50 +39,74 @@ class Piece {
       this.width * tileSize,
       this.height * tileSize
     );
-    return isPointInPath(path, e.mx, e.my);
+    return isPointInPath(path, e.x, e.y);
   }
   resete() {
-    this.x = this.startX;
-    this.y = this.startY;
     this.width = this.len;
     this.height = 1;
     this.inBoard = false;
-    this.inBoardX = null;
-    this.inBoardY = null;
+    this.boardX = null;
+    this.boardY = null;
+    this.interpolate(this.startX, this.startY);
   }
-  mousedown() {
+  interpolate(x, y, end = () => { }) {
+    this.interpolation.active = true;
+    this.interpolation.x = x;
+    this.interpolation.y = y;
+    this.interpolation.onEnd = end
+  }
+  rotate() {
+    let w = this.width;
+    let h = this.height;
+    this.width = h;
+    this.height = w;
+  }
+  mousedown(e) {
+    this.interpolation.active = false;
     this.selected = true;
+    this.startMouse = { x: e.x, y: e.y }
   }
   mouseup() {
     this.onDrop(this);
-    if (this.selected) {
-      this.selected = false;
-    }
+    this.selected = false;
   }
   mousemove(e) {
     if (this.selected) {
-      this.x = (e.mx - (this.width * tileSize) / 2) / tileSize;
-      this.y = (e.my - (this.height * tileSize) / 2) / tileSize;
+      this.x += (e.x - this.startMouse.x) / tileSize
+      this.y += (e.y - this.startMouse.y) / tileSize;
+      this.startMouse = { x: e.x, y: e.y };
     }
   }
   touchstart(e) {
-    if (this.click(e)) {
-      this.selected = true;
-    }
+    this.interpolation.active = false;
+    this.selected = true;
+    this.startMouse = { x: e.x, y: e.y }
   }
   touchend(e) {
-    if (this.click(e)) {
-      this.onDrop(this);
-    }
+    this.onDrop(this);
     this.selected = false;
   }
   touchmove(e) {
     if (this.selected) {
-      this.x = (e.mx - (this.width * tileSize) / 2) / tileSize;
-      this.y = (e.my - (this.height * tileSize) / 2) / tileSize;
+      this.x += (e.x - this.startMouse.x) / tileSize
+      this.y += (e.y - this.startMouse.y) / tileSize;
+      this.startMouse = { x: e.x, y: e.y };
     }
   }
   draw() {
+    if (this.interpolation.active) {
+      this.x += (this.interpolation.x - this.x) * 0.1;
+      this.y += (this.interpolation.y - this.y) * 0.1;
+      let distance = Math.sqrt(Math.pow((this.interpolation.x - this.x), 2) - Math.pow((this.interpolation.y - this.y), 2));
+      if (distance < 0.1) {
+        this.x = this.interpolation.x;
+        this.y = this.interpolation.y;
+        this.interpolation.active = false;
+        this.interpolation.onEnd();
+        this.interpolation.onEnd = () => { }
+      }
+    }
+
     fillRect(
       this.x * tileSize,
       this.y * tileSize,
@@ -89,6 +114,16 @@ class Piece {
       this.height * tileSize,
       colors[this.tag]
     );
+
+    strokeRect(
+      this.x * tileSize,
+      this.y * tileSize,
+      this.width * tileSize,
+      this.height * tileSize,
+      '#080808',
+      2.5
+    );
+
     if (this.selected === true) {
       strokeRect(
         this.x * tileSize,
@@ -97,15 +132,6 @@ class Piece {
         this.height * tileSize,
         '#fca044',
         2
-      );
-    } else if (this.inBoard) {
-      strokeRect(
-        this.x * tileSize,
-        this.y * tileSize,
-        this.width * tileSize,
-        this.height * tileSize,
-        '#080808',
-        2.5
       );
     }
   }
