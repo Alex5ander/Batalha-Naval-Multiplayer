@@ -7,12 +7,14 @@ const network = () => {
 
   socket.on('another_player_disconnected', reseteGame);
 
-  socket.on('init-config', onInit);
+  socket.on('init_config', onInit);
 
-  socket.on('update-game', onUpdate);
+  socket.on('update_game', onUpdate);
 
-  const loadGrid = (data) => socket.emit('load-grid', data);
+  /** @param {{name: string; grid: number[][] }} data */
+  const loadGrid = (data) => socket.emit('load_grid', data);
 
+  /** @param {{x:number; y:number}} coords */
   const firing = (coords) => socket.emit('firing', coords);
 
   const disconnect = () => socket.close();

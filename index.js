@@ -135,8 +135,8 @@ const updateGame = (room) => {
       end: room.end,
     },
   });
-  io.to(p1.id).emit('update-game', updateData(p1, p2));
-  io.to(p2.id).emit('update-game', updateData(p2, p1));
+  io.to(p1.id).emit('update_game', updateData(p1, p2));
+  io.to(p2.id).emit('update_game', updateData(p2, p1));
 };
 
 /**
@@ -197,12 +197,12 @@ io.on('connection', (socket) => {
     socket.join(room.id);
     room.players.push(new Player(socket.id, '', [], room.players[0].id));
     room.players[0].opponentid = room.players[1].id;
-    socket.emit('init-config', { awaitPlayer2: false });
+    socket.emit('init_config', { awaitPlayer2: false });
   } else {
     room = new Room(new Player(socket.id, '', [], null));
     socket.join(room.id);
     game.push(room);
-    socket.emit('init-config', { awaitPlayer2: true });
+    socket.emit('init_config', { awaitPlayer2: true });
   }
 
   socket.on('disconnect', () => {
@@ -216,6 +216,6 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on('load-grid', (data) => loadGrid(socket, data, room));
+  socket.on('load_grid', (data) => loadGrid(socket, data, room));
   socket.on('firing', (data) => firing(socket, data, room));
 });

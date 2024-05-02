@@ -9,6 +9,7 @@ import {
   drawTileSprite,
   cols,
   rows,
+  drawAnimatedTileSprite,
 } from './canvas.js';
 import { Crosshair, WaterTile } from './assets.js';
 
@@ -124,8 +125,6 @@ export const onUpdate = (d) => {
   }
 };
 
-const createNetwork = () => network();
-
 const play = (e) => {
   e.preventDefault();
   editor = new BoardEditor(cols / 2 - 5, rows / 2 - 5, (allInBoard) => {
@@ -180,7 +179,7 @@ const cancel = (e) => {
 
 const battle = (e) => {
   e.preventDefault();
-  net = createNetwork();
+  net = network();
 };
 
 btnBattle.addEventListener('click', battle);
@@ -205,7 +204,7 @@ resize();
   for (let i = 0; i < w * h; i++) {
     const col = i % w;
     const row = Math.floor(i / w);
-    drawTileSprite(WaterTile, col * tileSize, row * tileSize, tileSize);
+    drawAnimatedTileSprite(WaterTile, col * tileSize, row * tileSize, tileSize, Math.floor(Date.now() / 500) % 7);
   }
   for (const object of objects) {
     object.draw();

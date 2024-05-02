@@ -19,6 +19,10 @@ function drawTileSprite(img, x, y, size) {
   ctx.drawImage(img, x, y, size, size);
 }
 
+function drawAnimatedTileSprite(img, x, y, size, i) {
+  ctx.drawImage(img, i * 128, 0, 128, 128, x, y, size, size);
+}
+
 function strokeRect(x, y, w, h, color, strokeWidth) {
   ctx.save();
   ctx.lineWidth = strokeWidth || 0.5;
@@ -163,5 +167,6 @@ export {
   strokeRect,
   isPointInPath,
   drawTileSprite,
+  drawAnimatedTileSprite,
   drawGrid
 };

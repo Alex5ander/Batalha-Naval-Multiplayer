@@ -1,5 +1,5 @@
 const WaterTile = new Image();
-WaterTile.src = '../images/watertile.png';
+WaterTile.src = '../images/watertilediagonal.png';
 
 const MarkerTile = new Image();
 MarkerTile.src = '../images/markertile.png';
