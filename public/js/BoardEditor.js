@@ -78,11 +78,11 @@ class BoardEditor extends Board {
     piece.boardY = center.y;
 
     piece.inBoard = true;
-    piece.pulse = true;
     if (this.lastSelectedPiece) {
       this.lastSelectedPiece.pulse = false;
     }
     this.lastSelectedPiece = piece;
+    piece.pulse = true
   }
   /** @param {Piece} piece  */
   remove(piece) {
@@ -91,7 +91,6 @@ class BoardEditor extends Board {
         this.grid[piece.boardY + y][piece.boardX + x] = 0;
       }
     }
-    this.lastSelectedPiece = null;
     piece.inBoard = false;
     piece.pulse = false;
   }
