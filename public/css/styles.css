@@ -23,7 +23,7 @@ body {
 }
 
 #game-area {
-  position: absolute;
+  position: fixed;
   text-align: center;
   width: 100%;
   background-color: var(--color-black);
@@ -36,20 +36,6 @@ canvas {
   image-rendering: pixelated;
   background-color: var(--color-white);
   cursor: none;
-}
-
-#play-game-screen {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  margin: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: min-content;
-  height: min-content;
 }
 
 #board-editor {
@@ -94,6 +80,11 @@ canvas {
 }
 
 #btn-play {
+  position: absolute;
+
+  width: 56px;
+  height: 56px;
+
   color: var(--color-white);
   background-color: var(--color-green);
 
@@ -101,12 +92,28 @@ canvas {
   transition: 0.2s ease-in-out;
 
   border: none;
-  padding: 16px;
   border-radius: 0.5rem;
 }
 
 #btn-play:hover {
   background-color: #58d854;
+}
+
+#btn-back {
+  position: absolute;
+  bottom: 64px;
+  width: 56px;
+  height: 56px;
+  background-color: var(--color-red);
+  color: var(--color-white);
+  border: none;
+  cursor: pointer;
+  border-radius: 0.5rem;
+  transition: 0.2s ease-in-out;
+}
+
+#btn-back:hover {
+  background-color: #e65326;
 }
 
 #awaitcontainer {

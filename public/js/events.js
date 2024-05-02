@@ -1,11 +1,11 @@
-import { onInit, onUpdate, reseteGame } from './game.js';
+import { AnotherPlayerDisconnected, onInit, onUpdate, reseteGame } from './game.js';
 
 const network = () => {
   const socket = io();
 
   socket.on('connect_error', reseteGame);
 
-  socket.on('another_player_disconnected', reseteGame);
+  socket.on('another_player_disconnected', AnotherPlayerDisconnected);
 
   socket.on('init_config', onInit);
 

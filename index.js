@@ -212,7 +212,9 @@ io.on('connection', (socket) => {
 
     if (currentRoom) {
       game = game.filter((e) => e.id !== currentRoom.id);
-      io.to(currentRoom.id).emit('another_player_disconnected');
+      if (!currentRoom.winner) {
+        io.to(currentRoom.id).emit('another_player_disconnected');
+      }
     }
   });
 

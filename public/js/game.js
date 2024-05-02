@@ -11,14 +11,15 @@ import {
   rows,
   drawAnimatedTileSprite,
   fillRect,
+  fillText,
 } from './canvas.js';
 import { Crosshair, WaterTile } from './assets.js';
 
 const btnBattle = document.getElementById('btn-battle');
 const awaitcontainer = document.getElementById('awaitcontainer');
-const playGameScreen = document.getElementById('play-game-screen');
 const btnPlay = document.getElementById('btn-play');
 const btnCancel = document.getElementById('btn-cancelar');
+const btnBack = document.getElementById('btn-back');
 const inputPlayerName = document.getElementById('input-player-name');
 const formBattle = document.getElementById('form-battle');
 const boardEditorControls = document.getElementById('board-editor');
@@ -33,6 +34,7 @@ let myboard = null;
 /** @type {Board} */
 let myhits = null;
 let data = null;
+let status = { time: 0, text: "" };
 
 let net = null;
 
@@ -44,13 +46,14 @@ const handleEvent = (event) => {
   crosshair.x = event.x;
   crosshair.y = event.y;
 
-  for (let object of objects) {
-    if (object[event.type]) {
-      object[event.type](event);
+  if (awaitcontainer.classList.contains('hidden')) {
+    for (let object of objects) {
+      if (object[event.type]) {
+        object[event.type](event);
+      }
     }
   }
 }
-
 
 const mouseevents = (e) => {
   e.preventDefault();
@@ -76,7 +79,8 @@ const touchevents = (e) => {
 }
 
 export const reseteGame = () => {
-  playGameScreen.classList.remove('hidden');
+  btnPlay.classList.remove('hidden');
+  btnBack.classList.add('hidden');
   formBattle.classList.add('hidden');
   awaitcontainer.classList.add('hidden');
   boardEditorControls.classList.add('hidden');
@@ -85,7 +89,14 @@ export const reseteGame = () => {
   myboard = null;
   myhits = null;
   data = null;
+  net.disconnect();
+  net = null;
 };
+
+export const AnotherPlayerDisconnected = () => {
+  status = { time: Date.now(), text: "Jogador " + data.room.opponentname + " desconectou" };
+  reseteGame();
+}
 
 export const onInit = (data) => {
   formBattle.classList.add('hidden');
@@ -100,17 +111,14 @@ export const onInit = (data) => {
   net.loadGrid({ name: inputPlayerName.value, grid: editor.grid });
 };
 
-export const onUpdate = (d) => {
-  data = d;
+export const onUpdate = (message) => {
+  data = message;
   myboard = new Board(2, 5, data.player.grid);
   myhits = new Board(21, 5, data.player.hits, (coords) => net.firing(coords));
   objects = [myboard, myhits];
 
   if (data.room.end) {
-    setTimeout(() => {
-      net.disconnect();
-      reseteGame();
-    }, 5000);
+    btnBack.classList.remove('hidden');
   }
 
   if (data.room.opponentname) {
@@ -142,7 +150,7 @@ const play = (e) => {
   }
 
   boardEditorControls.classList.remove('hidden');
-  playGameScreen.classList.add('hidden');
+  btnPlay.classList.add('hidden');
 
   const pieces = [
     new Piece(1, 1, 5, 'A', onPointerDown, onPointerUp),
@@ -189,9 +197,11 @@ const cancel = (e) => {
 
 const battle = (e) => {
   e.preventDefault();
+  lastPiece = null;
   net = network();
 };
 
+btnBack.addEventListener('click', reseteGame);
 btnBattle.addEventListener('click', battle);
 btnCancel.addEventListener('click', cancel);
 btnPlay.addEventListener('click', play);
@@ -234,6 +244,12 @@ resize();
 
   if (data) {
     drawHUD(data);
+  }
+
+  if (Date.now() - status.time <= 5000) {
+    let alpha = 1 - ((Date.now() - status.time) / 5000);
+    let color = `rgba(255, 255, 255, ${alpha})`;
+    fillText(status.text, canvas.width / 2, canvas.height - 20, tileSize, color);
   }
 
   drawTileSprite(

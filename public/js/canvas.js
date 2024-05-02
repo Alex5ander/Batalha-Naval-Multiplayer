@@ -52,7 +52,7 @@ const DATA = {
     opponentname: 'Player',
     winner: false,
     turno: false,
-    end: false,
+    end: true,
   },
 };
 /**

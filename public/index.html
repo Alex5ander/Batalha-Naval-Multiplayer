@@ -18,15 +18,13 @@
   <div id="game-area">
     <canvas id="canvas" width="640" height="480"></canvas>
 
-    <div id="play-game-screen">
-      <button id="btn-play">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-          width="24" height="24">
-          <path stroke-linecap="round" stroke-linejoin="round"
-            d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" />
-        </svg>
-      </button>
-    </div>
+    <button id="btn-play">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+        width="24" height="24">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" />
+      </svg>
+    </button>
 
     <div id="board-editor" class="hidden">
       <button id="btn-rotate-piece" title="Rotacionar a última peça selecionada">
@@ -36,6 +34,7 @@
             d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466" />
         </svg>
       </button>
+
       <button id="btn-randomize-piece" title="Embaralhar">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
           <path fill-rule="evenodd"
@@ -57,6 +56,13 @@
       <span id="spinner"></span>
       <button id="btn-cancelar">CANCELAR</button>
     </div>
+
+    <button id="btn-back" class="hidden">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+        <path fill-rule="evenodd"
+          d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8" />
+      </svg>
+    </button>
   </div>
   <script src="/socket.io/socket.io.js"></script>
   <script type="module" src="js/assets.js"></script>
