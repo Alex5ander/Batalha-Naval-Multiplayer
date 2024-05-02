@@ -27,6 +27,7 @@ class Piece {
     this.height = 1;
     this.len = len;
     this.selected = false;
+    this.pulse = false;
     this.onDrop = onDrop;
     this.startMouse = { x: 0, y: 0 };
     this.interpolation = { active: false, x: 0, y: 0, onEnd: () => { } };
@@ -64,6 +65,7 @@ class Piece {
   mousedown(e) {
     this.interpolation.active = false;
     this.selected = true;
+    this.pulse = false;
     this.startMouse = { x: e.x, y: e.y }
   }
   mouseup() {
@@ -80,6 +82,7 @@ class Piece {
   touchstart(e) {
     this.interpolation.active = false;
     this.selected = true;
+    this.pulse = false;
     this.startMouse = { x: e.x, y: e.y }
   }
   touchend(e) {
@@ -115,13 +118,25 @@ class Piece {
       colors[this.tag]
     );
 
+    if (this.pulse) {
+      let alpha = (Math.sin(2 * Math.PI * (((Date.now() / 1000) % 2) / 2)) + 1) / 2;
+      let color = `rgba(255, 255, 255, ${alpha})`;
+      fillRect(
+        this.x * tileSize,
+        this.y * tileSize,
+        this.width * tileSize,
+        this.height * tileSize,
+        color,
+      );
+    }
+
     strokeRect(
       this.x * tileSize,
       this.y * tileSize,
       this.width * tileSize,
       this.height * tileSize,
       '#080808',
-      2.5
+      2
     );
 
     if (this.selected === true) {

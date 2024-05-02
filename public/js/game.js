@@ -10,6 +10,7 @@ import {
   cols,
   rows,
   drawAnimatedTileSprite,
+  strokeRect,
 } from './canvas.js';
 import { Crosshair, WaterTile } from './assets.js';
 

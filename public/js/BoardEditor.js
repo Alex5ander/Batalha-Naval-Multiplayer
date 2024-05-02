@@ -5,7 +5,8 @@ class BoardEditor extends Board {
   constructor(x, y, onDrop = (_) => { }) {
     super(x, y);
     this.onDrop = onDrop;
-    this.lastSelectedPiece = false;
+    /** @type {Piece} */
+    this.lastSelectedPiece = null;
   }
   /** @param {Piece} piece */
   inBoard(piece) {
@@ -77,6 +78,10 @@ class BoardEditor extends Board {
     piece.boardY = center.y;
 
     piece.inBoard = true;
+    piece.pulse = true;
+    if (this.lastSelectedPiece) {
+      this.lastSelectedPiece.pulse = false;
+    }
     this.lastSelectedPiece = piece;
   }
   /** @param {Piece} piece  */
@@ -88,6 +93,7 @@ class BoardEditor extends Board {
     }
     this.lastSelectedPiece = null;
     piece.inBoard = false;
+    piece.pulse = false;
   }
   rotatePieceInBoard() {
     if (this.lastSelectedPiece) {
@@ -130,7 +136,6 @@ class BoardEditor extends Board {
       if (!piece.inBoard) {
         piece.x = this.x + Math.floor(Math.random() * 10);
         piece.y = this.y + Math.floor(Math.random() * 10);
-        this.lastSelectedPiece = piece;
         if (Math.floor(Math.random() * 2) === 1) {
           piece.rotate();
         }
@@ -138,6 +143,8 @@ class BoardEditor extends Board {
         piece.x = lastX;
         piece.y = lastY;
       } else {
+        this.lastSelectedPiece.pulse = false;
+        this.lastSelectedPiece = null;
         i++;
       }
     }

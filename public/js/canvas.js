@@ -25,9 +25,9 @@ function drawAnimatedTileSprite(img, x, y, size, i) {
 
 function strokeRect(x, y, w, h, color, strokeWidth) {
   ctx.save();
-  ctx.lineWidth = strokeWidth || 0.5;
+  ctx.lineWidth = strokeWidth || 1;
   ctx.strokeStyle = color;
-  ctx.strokeRect(x, y, w, h);
+  ctx.strokeRect(x + 0.5, y + 0.5, w, h);
   ctx.restore();
 }
 
@@ -134,14 +134,20 @@ const drawGrid = (x, y) => {
   for (var i = 0; i < 10; i++) {
     let fontSize = tileSize / 2;
 
-    let nx = x * tileSize - tileSize / 2;
-    let ny = y * tileSize + i * tileSize + fontSize;
+    let numberMeasureText = ctx.measureText(i + 1);
+    let numberHeight = numberMeasureText.actualBoundingBoxAscent - numberMeasureText.actualBoundingBoxDescent;
 
-    let lx = (x + i) * tileSize + tileSize / 2;
-    let ly = y * tileSize - fontSize;
+    let numberX = x * tileSize - tileSize / 2;
+    let numberY = y * tileSize + (i + 1) * tileSize - numberHeight;
 
-    fillText(i + 1, nx, ny, fontSize, textColor);
-    fillText(letters[i], lx, ly, fontSize, textColor);
+    let letterMeasureText = ctx.measureText(letters[i]);
+    let letterHeight = letterMeasureText.actualBoundingBoxAscent - letterMeasureText.actualBoundingBoxDescent;
+
+    let letterX = (x + i) * tileSize + tileSize / 2;
+    let letterY = y * tileSize - letterHeight;
+
+    fillText(i + 1, numberX, numberY, fontSize, textColor);
+    fillText(letters[i], letterX, letterY, fontSize, textColor);
 
     for (var j = 0; j < 10; j++) {
 
