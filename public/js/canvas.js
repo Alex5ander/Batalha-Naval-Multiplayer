@@ -133,18 +133,13 @@ const drawGrid = (x, y) => {
   var letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
   for (var i = 0; i < 10; i++) {
     let fontSize = tileSize / 2;
+    let middle = tileSize / 2;
 
-    let numberMeasureText = ctx.measureText(i + 1);
-    let numberHeight = numberMeasureText.actualBoundingBoxAscent - numberMeasureText.actualBoundingBoxDescent;
+    let numberX = x * tileSize - middle;
+    let numberY = (y + i + 1) * tileSize - middle;
 
-    let numberX = x * tileSize - tileSize / 2;
-    let numberY = y * tileSize + (i + 1) * tileSize - numberHeight;
-
-    let letterMeasureText = ctx.measureText(letters[i]);
-    let letterHeight = letterMeasureText.actualBoundingBoxAscent - letterMeasureText.actualBoundingBoxDescent;
-
-    let letterX = (x + i) * tileSize + tileSize / 2;
-    let letterY = y * tileSize - letterHeight;
+    let letterX = (x + i) * tileSize + middle;
+    let letterY = (y - 1) * tileSize + middle;
 
     fillText(i + 1, numberX, numberY, fontSize, textColor);
     fillText(letters[i], letterX, letterY, fontSize, textColor);

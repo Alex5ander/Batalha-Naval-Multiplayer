@@ -10,7 +10,7 @@ import {
   cols,
   rows,
   drawAnimatedTileSprite,
-  strokeRect,
+  fillRect,
 } from './canvas.js';
 import { Crosshair, WaterTile } from './assets.js';
 
@@ -37,30 +37,22 @@ let data = null;
 let net = null;
 
 const crosshair = { x: 0, y: 0 };
+/** @type {Piece} */
+let lastPiece = null;
 
 const handleEvent = (event) => {
   crosshair.x = event.x;
   crosshair.y = event.y;
 
-  const selecteds = objects.filter((e) => e.selected);
-  const clicks = objects.filter((e) => e.click(event));
-
-  if (event.type === 'mousemove' || event.type === 'touchmove') {
-    for (const selected of selecteds) {
-      if (selected[event.type]) {
-        selected[event.type](event);
-      }
-    }
-  } else {
-    for (const click of clicks) {
-      if (click[event.type]) {
-        click[event.type](event);
-      }
+  for (let object of objects) {
+    if (object[event.type]) {
+      object[event.type](event);
     }
   }
-};
+}
 
-function mouseevents(e) {
+
+const mouseevents = (e) => {
   e.preventDefault();
   const { offsetLeft, offsetTop, width, height } = canvas;
   const event = {
@@ -71,7 +63,7 @@ function mouseevents(e) {
   handleEvent(event);
 }
 
-function touchevents(e) {
+const touchevents = (e) => {
   const { offsetLeft, offsetTop, width, height } = canvas;
   const touch =
     e.type === 'touchend' ? e.changedTouches[0] : e.targetTouches[0];
@@ -136,35 +128,52 @@ const play = (e) => {
     }
   });
 
-  const onDrop = (piece) => editor.drop(piece);
+  lastPiece = null;
+
+  const onPointerUp = (piece) => {
+    editor.drop(piece);
+    lastPiece = piece.inBoard ? piece : null;
+    btnRotatePiece.disabled = lastPiece == null;
+  }
+
+  const onPointerDown = (_) => {
+    lastPiece = null;
+    btnRotatePiece.disabled = true;
+  }
 
   boardEditorControls.classList.remove('hidden');
   playGameScreen.classList.add('hidden');
 
   const pieces = [
-    new Piece(1, 1, 5, 'A', onDrop),
+    new Piece(1, 1, 5, 'A', onPointerDown, onPointerUp),
 
-    new Piece(1, 3, 3, 'B', onDrop),
-    new Piece(1, 5, 3, 'C', onDrop),
+    new Piece(1, 3, 3, 'B', onPointerDown, onPointerUp),
+    new Piece(1, 5, 3, 'C', onPointerDown, onPointerUp),
 
-    new Piece(1, 7, 2, 'D', onDrop),
-    new Piece(1, 9, 2, 'E', onDrop),
-    new Piece(1, 11, 2, 'F', onDrop),
+    new Piece(1, 7, 2, 'D', onPointerDown, onPointerUp),
+    new Piece(1, 9, 2, 'E', onPointerDown, onPointerUp),
+    new Piece(1, 11, 2, 'F', onPointerDown, onPointerUp),
 
-    new Piece(1, 13, 1, 'G', onDrop),
-    new Piece(3, 13, 1, 'H', onDrop),
-    new Piece(1, 15, 1, 'I', onDrop),
-    new Piece(3, 15, 1, 'J', onDrop),
+    new Piece(1, 13, 1, 'G', onPointerDown, onPointerUp),
+    new Piece(3, 13, 1, 'H', onPointerDown, onPointerUp),
+    new Piece(1, 15, 1, 'I', onPointerDown, onPointerUp),
+    new Piece(3, 15, 1, 'J', onPointerDown, onPointerUp),
   ];
 
   btnRotatePiece.onclick = (e) => {
     e.preventDefault();
-    editor.rotatePieceInBoard();
+    if (lastPiece) {
+      editor.rotatePieceInBoard(lastPiece);
+      lastPiece = lastPiece.inBoard ? lastPiece : null;
+      btnRotatePiece.disabled = lastPiece == null;
+    }
   };
 
   btnRandomizePiece.onclick = (e) => {
     e.preventDefault();
     editor.random(pieces);
+    lastPiece = null;
+    btnRotatePiece.disabled = true;
   };
 
   objects = [editor, ...pieces];
@@ -209,6 +218,18 @@ resize();
   }
   for (const object of objects) {
     object.draw();
+  }
+
+  if (lastPiece) {
+    let alpha = (Math.sin(2 * Math.PI * (((Date.now() / 1000) % 2) / 2)) + 1) / 2;
+    let color = `rgba(255, 255, 255, ${alpha})`;
+    fillRect(
+      lastPiece.x * tileSize,
+      lastPiece.y * tileSize,
+      lastPiece.width * tileSize,
+      lastPiece.height * tileSize,
+      color,
+    );
   }
 
   if (data) {

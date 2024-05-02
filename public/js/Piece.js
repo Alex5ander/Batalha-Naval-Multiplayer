@@ -14,7 +14,7 @@ export const colors = {
 };
 
 class Piece {
-  constructor(x, y, len, tag, onDrop = (_) => { }) {
+  constructor(x, y, len, tag, onPointerDown = (_) => { }, onPointerUp = (_) => { }) {
     this.tag = tag;
     this.x = x;
     this.y = y;
@@ -27,8 +27,8 @@ class Piece {
     this.height = 1;
     this.len = len;
     this.selected = false;
-    this.pulse = false;
-    this.onDrop = onDrop;
+    this.onPointerDown = onPointerDown;
+    this.onPointerUp = onPointerUp;
     this.startMouse = { x: 0, y: 0 };
     this.interpolation = { active: false, x: 0, y: 0, onEnd: () => { } };
   }
@@ -62,38 +62,49 @@ class Piece {
     this.width = h;
     this.height = w;
   }
-  mousedown(e) {
+  d(e) {
     this.interpolation.active = false;
     this.selected = true;
-    this.pulse = false;
     this.startMouse = { x: e.x, y: e.y }
+    this.onPointerDown(this);
   }
-  mouseup() {
-    this.onDrop(this);
+  u(e) {
     this.selected = false;
+    this.onPointerUp(this);
+  }
+  m(e) {
+    this.x += (e.x - this.startMouse.x) / tileSize
+    this.y += (e.y - this.startMouse.y) / tileSize;
+    this.startMouse = { x: e.x, y: e.y };
+  }
+  mousedown(e) {
+    if (this.click(e)) {
+      this.d(e);
+    }
+  }
+  mouseup(e) {
+    if (this.click(e) && this.selected) {
+      this.u(e);
+    }
   }
   mousemove(e) {
     if (this.selected) {
-      this.x += (e.x - this.startMouse.x) / tileSize
-      this.y += (e.y - this.startMouse.y) / tileSize;
-      this.startMouse = { x: e.x, y: e.y };
+      this.m(e);
     }
   }
   touchstart(e) {
-    this.interpolation.active = false;
-    this.selected = true;
-    this.pulse = false;
-    this.startMouse = { x: e.x, y: e.y }
+    if (this.click(e)) {
+      this.d(e);
+    }
   }
   touchend(e) {
-    this.onDrop(this);
-    this.selected = false;
+    if (this.click(e) && this.selected) {
+      this.u(e);
+    }
   }
   touchmove(e) {
     if (this.selected) {
-      this.x += (e.x - this.startMouse.x) / tileSize
-      this.y += (e.y - this.startMouse.y) / tileSize;
-      this.startMouse = { x: e.x, y: e.y };
+      this.m(e);
     }
   }
   draw() {
@@ -117,18 +128,6 @@ class Piece {
       this.height * tileSize,
       colors[this.tag]
     );
-
-    if (this.pulse) {
-      let alpha = (Math.sin(2 * Math.PI * (((Date.now() / 1000) % 2) / 2)) + 1) / 2;
-      let color = `rgba(255, 255, 255, ${alpha})`;
-      fillRect(
-        this.x * tileSize,
-        this.y * tileSize,
-        this.width * tileSize,
-        this.height * tileSize,
-        color,
-      );
-    }
 
     strokeRect(
       this.x * tileSize,

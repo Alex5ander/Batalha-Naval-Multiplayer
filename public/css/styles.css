@@ -81,6 +81,10 @@ canvas {
   background-color: #f0ffc3;
 }
 
+#btn-rotate-piece:disabled {
+  opacity: 0.75;
+}
+
 #btn-rotate-piece {
   right: 16px;
 }
