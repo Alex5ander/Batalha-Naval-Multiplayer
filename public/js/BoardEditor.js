@@ -2,9 +2,16 @@ import Board from './Board.js';
 import Piece from './Piece.js';
 import { drawGrid } from './canvas.js';
 class BoardEditor extends Board {
-  constructor(x, y, onDrop = (_) => { }) {
+  constructor(x, y) {
     super(x, y);
-    this.onDrop = onDrop;
+    /** 
+     * @callback onDrop
+     * @param {boolean} allInBoard
+     * @type {onDrop}
+    */
+    this.onDrop = (_) => { };
+    /** @type {Piece[]} */
+    this.pieces = [];
   }
   /** @param {Piece} piece */
   inBoard(piece) {
@@ -109,19 +116,18 @@ class BoardEditor extends Board {
     }
     this.onDrop(this.grid.flat().filter(e => e != 0).length == 21);
   }
-  /** @param {Piece[]} pieces */
-  random(pieces) {
+  random() {
     this.grid = Array.from({ length: 10 }, () => Array(10).fill(0));
 
-    for (const piece of pieces) {
+    for (const piece of this.pieces) {
       this.remove(piece)
     }
 
     let lastX = 0;
     let lastY = 0;
 
-    for (let i = 0; i < pieces.length; i) {
-      const piece = pieces[i];
+    for (let i = 0; i < this.pieces.length; i) {
+      const piece = this.pieces[i];
       lastX = piece.x;
       lastY = piece.y;
       if (!piece.inBoard) {
@@ -140,6 +146,9 @@ class BoardEditor extends Board {
   }
   draw() {
     drawGrid(this.x, this.y);
+    for (let piece of this.pieces) {
+      piece.draw();
+    }
   }
 }
 

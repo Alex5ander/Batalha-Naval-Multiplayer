@@ -1,9 +1,14 @@
+import { WaterTile } from "./assets.js";
+
 /** @type HTMLCanvasElement */
 const canvas = document.getElementById('canvas');
 /** @type CanvasRenderingContext2D **/
 const ctx = canvas.getContext('2d');
 /** @type HTMLDivElement */
 const gameArea = document.getElementById('game-area');
+
+const offscreencanvas = new OffscreenCanvas(canvas.width, canvas.height);
+const offctx = offscreencanvas.getContext('2d');
 
 let tileSize = 32;
 
@@ -19,8 +24,8 @@ function drawTileSprite(img, x, y, size) {
   ctx.drawImage(img, x, y, size, size);
 }
 
-function drawAnimatedTileSprite(img, x, y, size, i) {
-  ctx.drawImage(img, i * 128, 0, 128, 128, x, y, size, size);
+function drawAnimatedTileSprite(context, img, x, y, size, i) {
+  context.drawImage(img, i * 128, 0, 128, 128, x, y, size, size);
 }
 
 function strokeRect(x, y, w, h, color, strokeWidth) {
@@ -122,8 +127,12 @@ function resize(_) {
   canvas.width = newWidth;
   canvas.height = newHeight;
 
+  offscreencanvas.width = newWidth;
+  offscreencanvas.height = newHeight;
+
   tileSize = Math.trunc(Math.max(newWidth, newHeight) / 32);
 
+  offctx.imageSmoothingEnabled = false;
   ctx.imageSmoothingEnabled = false;
 }
 
@@ -157,7 +166,24 @@ const drawGrid = (x, y) => {
   }
 }
 
+let late = Date.now() - 501;
+
+const drawBackgroud = () => {
+  if (Date.now() - late > 500) {
+    const w = Math.floor(canvas.width / tileSize) + 1;
+    const h = Math.floor(canvas.height / tileSize) + 1;
+    for (let i = 0; i < w * h; i++) {
+      const col = i % w;
+      const row = Math.floor(i / w);
+      drawAnimatedTileSprite(offctx, WaterTile, col * tileSize, row * tileSize, tileSize, Math.floor(Date.now() / 500) % 7);
+    }
+    late = Date.now();
+  }
+  ctx.drawImage(offscreencanvas, 0, 0);
+}
+
 export {
+  canvas,
   rows,
   cols,
   resize,
@@ -169,5 +195,6 @@ export {
   isPointInPath,
   drawTileSprite,
   drawAnimatedTileSprite,
+  drawBackgroud,
   drawGrid
 };

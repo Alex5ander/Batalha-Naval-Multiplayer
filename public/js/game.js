@@ -1,4 +1,4 @@
-import { network } from './events.js';
+import { network } from './network.js';
 import Board from './Board.js';
 import BoardEditor from './BoardEditor.js';
 import Piece from './Piece.js';
@@ -9,205 +9,154 @@ import {
   drawTileSprite,
   cols,
   rows,
-  drawAnimatedTileSprite,
   fillRect,
   fillText,
+  canvas,
+  drawBackgroud,
 } from './canvas.js';
-import { Crosshair, WaterTile } from './assets.js';
+import { Crosshair } from './assets.js';
 
-const btnBattle = document.getElementById('btn-battle');
-const awaitcontainer = document.getElementById('awaitcontainer');
-const btnPlay = document.getElementById('btn-play');
-const btnCancel = document.getElementById('btn-cancelar');
-const btnBack = document.getElementById('btn-back');
-const inputPlayerName = document.getElementById('input-player-name');
-const formBattle = document.getElementById('form-battle');
-const boardEditorControls = document.getElementById('board-editor');
-const btnRotatePiece = document.getElementById('btn-rotate-piece');
-const btnRandomizePiece = document.getElementById('btn-randomize-piece');
-
-let objects = [];
+let playerName = "";
 /** @type {BoardEditor} */
-let editor = null;
+export let editor = null;
 /** @type {Board} */
 let myboard = null;
 /** @type {Board} */
 let myhits = null;
 let data = null;
 let status = { time: 0, text: "" };
-
 let net = null;
-
 const crosshair = { x: 0, y: 0 };
 /** @type {Piece} */
-let lastPiece = null;
+export let lastPiece = null;
+
+/**@param {Piece} piece  */
+export const setLastPiece = (piece) => { lastPiece = piece; }
 
 const handleEvent = (event) => {
   crosshair.x = event.x;
   crosshair.y = event.y;
 
-  if (awaitcontainer.classList.contains('hidden')) {
-    for (let object of objects) {
-      if (object[event.type]) {
-        object[event.type](event);
+  if (editor && net == null) {
+    editor.pieces.forEach(piece => {
+      if (piece[event.type]) {
+        piece[event.type](event);
       }
+    })
+  }
+
+  if (myhits) {
+    if (myhits[event.type]) {
+      myhits[event.type](event);
     }
   }
 }
 
+const getCoords = (_x, _y) => {
+  const { offsetLeft, offsetTop, width, height } = canvas;
+  let tx = Math.floor(_x - offsetLeft);
+  let ty = Math.floor(_y - offsetTop);
+  let x = tx < 0 ? 0 : tx > width ? width : tx;
+  let y = ty < 0 ? 0 : ty > height ? height : ty;
+  return { x, y };
+}
+
 const mouseevents = (e) => {
   e.preventDefault();
-  const { offsetLeft, offsetTop, width, height } = canvas;
-  const event = {
-    x: Math.floor((e.clientX - offsetLeft) % width),
-    y: Math.floor((e.clientY - offsetTop) % height),
-    type: e.type,
-  };
-  handleEvent(event);
+  const { x, y } = getCoords(e.clientX, e.clientY);
+  handleEvent({ x, y, type: e.type });
 }
 
 const touchevents = (e) => {
-  const { offsetLeft, offsetTop, width, height } = canvas;
   const touch =
     e.type === 'touchend' ? e.changedTouches[0] : e.targetTouches[0];
-  const event = {
-    x: Math.floor((touch.clientX - offsetLeft) % width),
-    y: Math.floor((touch.clientY - offsetTop) % height),
-    type: e.type,
-  };
-  handleEvent(event);
+  const { x, y } = getCoords(touch.clientX, touch.clientY);
+  handleEvent({ x, y, type: e.type, });
 }
 
-export const reseteGame = () => {
-  btnPlay.classList.remove('hidden');
-  btnBack.classList.add('hidden');
-  formBattle.classList.add('hidden');
-  awaitcontainer.classList.add('hidden');
-  boardEditorControls.classList.add('hidden');
-  objects = [];
+export const setPlayerName = (value) => { playerName = value };
+
+export const play = (e) => {
+  e.preventDefault();
+  editor = new BoardEditor(cols / 2 - 5, rows / 2 - 5);
+  editor.pieces = [
+    new Piece(1, 1, 5, 'A'),
+
+    new Piece(1, 3, 3, 'B'),
+    new Piece(1, 5, 3, 'C'),
+
+    new Piece(1, 7, 2, 'D'),
+    new Piece(1, 9, 2, 'E'),
+    new Piece(1, 11, 2, 'F'),
+
+    new Piece(1, 13, 1, 'G'),
+    new Piece(3, 13, 1, 'H'),
+    new Piece(1, 15, 1, 'I'),
+    new Piece(3, 15, 1, 'J'),
+  ];
+  lastPiece = null;
+};
+
+export const cancel = (e) => {
+  e.preventDefault();
+  net.disconnect();
+  net = null;
+};
+
+export const listener = {
+  onInitConfig: (_) => { },
+  onEnd: () => { },
+  onStart: () => { },
+  onResetGame: () => { }
+}
+
+export const resetGame = () => {
   editor = null;
   myboard = null;
   myhits = null;
   data = null;
   net.disconnect();
   net = null;
+  listener.onResetGame();
 };
 
-export const AnotherPlayerDisconnected = () => {
+const anotherPlayerDisconnected = () => {
   status = { time: Date.now(), text: "Jogador " + data.room.opponentname + " desconectou" };
-  reseteGame();
+  resetGame();
 }
 
-export const onInit = (data) => {
-  formBattle.classList.add('hidden');
-  boardEditorControls.classList.add('hidden');
+const onInitConfig = (message) => {
+  net.loadGrid({ name: playerName, grid: editor.grid });
+  listener.onInitConfig(message)
+}
 
-  if (data.awaitPlayer2) {
-    awaitcontainer.classList.remove('hidden');
-  } else {
-    awaitcontainer.classList.add('hidden');
-  }
-
-  net.loadGrid({ name: inputPlayerName.value, grid: editor.grid });
-};
-
-export const onUpdate = (message) => {
+const onUpdate = (message) => {
   data = message;
   myboard = new Board(2, 5, data.player.grid);
   myhits = new Board(21, 5, data.player.hits, (coords) => net.firing(coords));
-  objects = [myboard, myhits];
-
-  if (data.room.end) {
-    btnBack.classList.remove('hidden');
-  }
+  editor = null;
 
   if (data.room.opponentname) {
-    awaitcontainer.classList.add('hidden');
+    listener.onStart();
+  }
+
+  if (data.room.end) {
+    listener.onEnd();
   }
 };
 
-const play = (e) => {
-  e.preventDefault();
-  editor = new BoardEditor(cols / 2 - 5, rows / 2 - 5, (allInBoard) => {
-    if (allInBoard === true) {
-      formBattle.classList.remove('hidden');
-    } else if (allInBoard === false) {
-      formBattle.classList.add('hidden');
-    }
-  });
-
-  lastPiece = null;
-
-  const onPointerUp = (piece) => {
-    editor.drop(piece);
-    lastPiece = piece.inBoard ? piece : null;
-    btnRotatePiece.disabled = lastPiece == null;
-  }
-
-  const onPointerDown = (_) => {
-    lastPiece = null;
-    btnRotatePiece.disabled = true;
-  }
-
-  boardEditorControls.classList.remove('hidden');
-  btnPlay.classList.add('hidden');
-
-  const pieces = [
-    new Piece(1, 1, 5, 'A', onPointerDown, onPointerUp),
-
-    new Piece(1, 3, 3, 'B', onPointerDown, onPointerUp),
-    new Piece(1, 5, 3, 'C', onPointerDown, onPointerUp),
-
-    new Piece(1, 7, 2, 'D', onPointerDown, onPointerUp),
-    new Piece(1, 9, 2, 'E', onPointerDown, onPointerUp),
-    new Piece(1, 11, 2, 'F', onPointerDown, onPointerUp),
-
-    new Piece(1, 13, 1, 'G', onPointerDown, onPointerUp),
-    new Piece(3, 13, 1, 'H', onPointerDown, onPointerUp),
-    new Piece(1, 15, 1, 'I', onPointerDown, onPointerUp),
-    new Piece(3, 15, 1, 'J', onPointerDown, onPointerUp),
-  ];
-
-  btnRotatePiece.onclick = (e) => {
-    e.preventDefault();
-    if (lastPiece) {
-      editor.rotatePieceInBoard(lastPiece);
-      lastPiece = lastPiece.inBoard ? lastPiece : null;
-      btnRotatePiece.disabled = lastPiece == null;
-    }
-  };
-
-  btnRandomizePiece.onclick = (e) => {
-    e.preventDefault();
-    editor.random(pieces);
-    lastPiece = null;
-    btnRotatePiece.disabled = true;
-  };
-
-  objects = [editor, ...pieces];
-};
-
-const cancel = (e) => {
-  e.preventDefault();
-  formBattle.classList.remove('hidden');
-  awaitcontainer.classList.add('hidden');
-  boardEditorControls.classList.remove('hidden');
-  net.disconnect();
-};
-
-const battle = (e) => {
+export const battle = (e) => {
   e.preventDefault();
   lastPiece = null;
   net = network();
+  net.onUpdate(onUpdate);
+  net.connect_error(resetGame);
+  net.onInitConfig(onInitConfig);
+  net.anotherPlayerDisconnected(anotherPlayerDisconnected);
 };
 
-btnBack.addEventListener('click', reseteGame);
-btnBattle.addEventListener('click', battle);
-btnCancel.addEventListener('click', cancel);
-btnPlay.addEventListener('click', play);
-
 canvas.addEventListener('mousedown', mouseevents);
-canvas.addEventListener('mousemove', mouseevents);
+window.addEventListener('mousemove', mouseevents);
 canvas.addEventListener('mouseup', mouseevents);
 
 canvas.addEventListener('touchstart', touchevents);
@@ -219,19 +168,22 @@ window.addEventListener('orientationchange', resize);
 resize();
 
 (function loop() {
-  const w = Math.floor(canvas.width / tileSize) + 1;
-  const h = Math.floor(canvas.height / tileSize) + 1;
-  for (let i = 0; i < w * h; i++) {
-    const col = i % w;
-    const row = Math.floor(i / w);
-    drawAnimatedTileSprite(WaterTile, col * tileSize, row * tileSize, tileSize, Math.floor(Date.now() / 500) % 7);
+  drawBackgroud();
+
+  if (editor) {
+    editor.draw();
   }
-  for (const object of objects) {
-    object.draw();
+
+  if (myhits) {
+    myhits.draw();
+  }
+
+  if (myboard) {
+    myboard.draw();
   }
 
   if (lastPiece) {
-    let alpha = (Math.sin(2 * Math.PI * (((Date.now() / 1000) % 2) / 2)) + 1) / 2;
+    let alpha = (Math.sin(2 * Math.PI * (((Date.now() / 1000) % 2) / 2)) + 1) / 6;
     let color = `rgba(255, 255, 255, ${alpha})`;
     fillRect(
       lastPiece.x * tileSize,

@@ -34,7 +34,7 @@ body {
 
 canvas {
   image-rendering: pixelated;
-  background-color: var(--color-white);
+  background: url(../images/watertile.png) 0 0 / 24px;
   cursor: none;
 }
 
