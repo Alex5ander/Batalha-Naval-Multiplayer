@@ -49,8 +49,7 @@ canvas {
   height: min-content;
 }
 
-#btn-rotate-piece,
-#btn-randomize-piece {
+.btn-controls {
   width: 48px;
   height: 48px;
   border-radius: 50%;
@@ -62,20 +61,20 @@ canvas {
   cursor: pointer;
 }
 
-#btn-rotate-piece:hover,
-#btn-randomize-piece:hover {
+#btn-rotate:hover,
+#btn-shuffle:hover {
   background-color: #f0ffc3;
 }
 
-#btn-rotate-piece:disabled {
+#btn-rotate:disabled {
   opacity: 0.75;
 }
 
-#btn-rotate-piece {
+#btn-rotate {
   right: 16px;
 }
 
-#btn-randomize-piece {
+#btn-shuffle {
   left: 16px;
 }
 

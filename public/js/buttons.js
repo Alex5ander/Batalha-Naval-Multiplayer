@@ -1,3 +1,4 @@
+import Piece from "./Piece.js";
 import { battle, cancel, editor, play, resetGame, setPlayerName, setLastPiece, lastPiece, listener } from "./game.js";
 
 /** @type {HTMLButtonElement} */
@@ -9,9 +10,9 @@ const btnCancel = document.getElementById('btn-cancelar');
 /** @type {HTMLButtonElement} */
 const btnBack = document.getElementById('btn-back');
 /** @type {HTMLButtonElement} */
-const btnRotatePiece = document.getElementById('btn-rotate-piece');
+const btnRotatePiece = document.getElementById('btn-rotate');
 /** @type {HTMLButtonElement} */
-const btnRandomizePiece = document.getElementById('btn-randomize-piece');
+const btnShuffle = document.getElementById('btn-shuffle');
 
 /** @type {HTMLDivElement} */
 const awaitcontainer = document.getElementById('awaitcontainer');
@@ -22,6 +23,7 @@ const boardEditorControls = document.getElementById('board-editor');
 /** @type {HTMLInputElement} */
 const inputPlayerName = document.getElementById('input-player-name');
 
+/** @param {MouseEvent} e */
 const rotatePiece = (e) => {
   e.preventDefault();
   if (lastPiece) {
@@ -31,12 +33,7 @@ const rotatePiece = (e) => {
   }
 }
 
-const randomizePiece = (e) => {
-  e.preventDefault();
-  editor.random();
-  setLastPiece(null);
-}
-
+/** @param {Piece} piece */
 const onPointerUp = (piece) => {
   editor.drop(piece);
   setLastPiece(piece.inBoard ? piece : null);
@@ -48,13 +45,16 @@ const onPointerDown = (_) => {
   btnRotatePiece.disabled = true;
 }
 
-btnCancel.addEventListener('click', (e) => {
-  cancel(e); formBattle.classList.remove('hidden');
+/** @param {MouseEvent} e */
+const cancelBattle = (e) => {
+  cancel(e);
+  formBattle.classList.remove('hidden');
   awaitcontainer.classList.add('hidden');
   boardEditorControls.classList.remove('hidden');
-});
+}
 
-btnPlay.addEventListener('click', e => {
+/** @param {MouseEvent} e */
+const playGame = (e) => {
   play(e);
   editor.onDrop = (allInBoard) => {
     if (allInBoard === true) {
@@ -70,19 +70,18 @@ btnPlay.addEventListener('click', e => {
     piece.onPointerDown = onPointerDown;
     piece.onPointerUp = onPointerUp;
   })
-});
+}
 
-btnRandomizePiece.addEventListener('click', (e) => {
-  randomizePiece(e);
+/** @param {MouseEvent} e */
+const shuffle = (e) => {
+  e.preventDefault();
+  editor.shuffle();
+  setLastPiece(null);
   btnRotatePiece.disabled = true;
-});
+}
 
-btnBack.addEventListener('click', resetGame);
-btnBattle.addEventListener('click', battle);
-btnRotatePiece.addEventListener('click', rotatePiece);
-inputPlayerName.addEventListener('input', e => setPlayerName(e.target.value));
-
-listener.onInitConfig = (data) => {
+/** @param {{ awaitPlayer2: boolean }} data */
+const onInitConfig = (data) => {
   formBattle.classList.add('hidden');
   boardEditorControls.classList.add('hidden');
 
@@ -93,12 +92,23 @@ listener.onInitConfig = (data) => {
   }
 }
 
-listener.onEnd = () => btnBack.classList.remove('hidden');
-listener.onStart = () => awaitcontainer.classList.add('hidden');
-listener.onResetGame = () => {
+const reseteUI = () => {
   btnPlay.classList.remove('hidden');
   btnBack.classList.add('hidden');
   formBattle.classList.add('hidden');
   awaitcontainer.classList.add('hidden');
   boardEditorControls.classList.add('hidden');
 }
+
+btnCancel.addEventListener('click', cancelBattle);
+btnPlay.addEventListener('click', playGame);
+btnShuffle.addEventListener('click', shuffle);
+btnBack.addEventListener('click', resetGame);
+btnBattle.addEventListener('click', battle);
+btnRotatePiece.addEventListener('click', rotatePiece);
+inputPlayerName.addEventListener('input', e => setPlayerName(e.target.value));
+
+listener.onInitConfig = onInitConfig;
+listener.onEnd = () => btnBack.classList.remove('hidden');
+listener.onStart = () => awaitcontainer.classList.add('hidden');
+listener.onResetGame = reseteUI;

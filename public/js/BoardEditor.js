@@ -116,7 +116,7 @@ class BoardEditor extends Board {
     }
     this.onDrop(this.grid.flat().filter(e => e != 0).length == 21);
   }
-  random() {
+  shuffle() {
     this.grid = Array.from({ length: 10 }, () => Array(10).fill(0));
 
     for (const piece of this.pieces) {

@@ -104,6 +104,7 @@ export const cancel = (e) => {
 };
 
 export const listener = {
+  /** @param {{ awaitPlayer2: boolean }} _ */
   onInitConfig: (_) => { },
   onEnd: () => { },
   onStart: () => { },
@@ -125,6 +126,7 @@ const anotherPlayerDisconnected = () => {
   resetGame();
 }
 
+/** @param {{ awaitPlayer2: boolean }} message */
 const onInitConfig = (message) => {
   net.loadGrid({ name: playerName, grid: editor.grid });
   listener.onInitConfig(message)
@@ -201,7 +203,7 @@ resize();
   if (Date.now() - status.time <= 5000) {
     let alpha = 1 - ((Date.now() - status.time) / 5000);
     let color = `rgba(255, 255, 255, ${alpha})`;
-    fillText(status.text, canvas.width / 2, canvas.height - 20, tileSize, color);
+    fillText(status.text, canvas.width / 2, canvas.height - 20, tileSize / 2, color);
   }
 
   drawTileSprite(
