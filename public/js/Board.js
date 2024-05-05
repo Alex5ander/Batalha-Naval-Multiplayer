@@ -41,33 +41,19 @@ class Board {
       const j = index % 10;
       const i = Math.floor(index / 10) % 10;
 
+      let x = (this.x + j) * tileSize;
+      let y = (this.y + i) * tileSize;
+
       if (colors[value]) {
-        fillRect(
-          (this.x + j) * tileSize,
-          (this.y + i) * tileSize,
-          tileSize,
-          tileSize,
-          colors[value]
-        );
+        fillRect(x, y, tileSize, tileSize, colors[value]);
       }
 
       if (value === 2) {
-        fillRect(
-          (this.x + j) * tileSize,
-          (this.y + i) * tileSize,
-          tileSize,
-          tileSize,
-          '#0000bc'
-        );
+        fillRect(x, y, tileSize, tileSize, '#0000bc');
       }
 
       if (value === 1) {
-        drawTileSprite(
-          MarkerTile,
-          (this.x + j) * tileSize,
-          (this.y + i) * tileSize,
-          tileSize
-        );
+        drawTileSprite(MarkerTile, x, y, tileSize);
       }
     })
   }

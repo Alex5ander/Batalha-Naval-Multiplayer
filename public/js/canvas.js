@@ -28,7 +28,7 @@ function drawTileSprite(img, x, y, size) {
   ctx.drawImage(img, x, y, size, size);
 }
 
-function drawAnimatedTileSprite(context, img, x, y, size, i) {
+function drawAnimatedTileSprite(img, x, y, size, i, context = ctx) {
   context.drawImage(img, i * 128, 0, 128, 128, x, y, size, size);
 }
 
@@ -181,7 +181,7 @@ const drawBackgroud = () => {
     for (let i = 0; i < w * h; i++) {
       const col = i % w;
       const row = Math.floor(i / w);
-      drawAnimatedTileSprite(offctx, WaterTile, col * tileSize, row * tileSize, tileSize, Math.floor(Date.now() / 500) % 7);
+      drawAnimatedTileSprite(WaterTile, col * tileSize, row * tileSize, tileSize, Math.floor(Date.now() / 500) % 7, offctx);
     }
     late = Date.now();
   }
