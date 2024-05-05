@@ -23,44 +23,54 @@ class Piece {
     this.boardX = null;
     this.boardY = null;
     this.inBoard = false;
-    this.width = len;
-    this.height = 1;
     this.len = len;
     this.selected = false;
     this.onPointerDown = onPointerDown;
     this.onPointerUp = onPointerUp;
     this.startMouse = { x: 0, y: 0 };
-    this.interpolation = { active: false, x: 0, y: 0, onEnd: () => { } };
+    this.interpolation = { active: false, x: 0, y: 0, angle: 0, onEnd: () => { } };
+    this.angle = 0;
+    this.dx = 1;
+    this.dy = 0;
   }
   click(e) {
-    var path = new Path2D();
-    path.rect(
-      this.x * tileSize,
-      this.y * tileSize,
-      this.width * tileSize,
-      this.height * tileSize
-    );
-    return isPointInPath(path, e.x, e.y);
+    const path = new Path2D();
+    let x = this.x * tileSize;
+    let y = this.y * tileSize;
+    path.rect(x, y, this.len * tileSize, tileSize);
+    let p2 = new Path2D();
+    p2.addPath(path, new DOMMatrix().translate(x + tileSize / 2, y + tileSize / 2).
+      rotate(this.angle * 180 / Math.PI).translate(-(x + tileSize / 2), -(y + tileSize / 2)));
+    return isPointInPath(p2, e.x, e.y);
   }
   resete() {
-    this.width = this.len;
-    this.height = 1;
+    this.angle = 0;
+    this.dx = Math.floor(Math.cos(this.angle));
+    this.dy = Math.floor(Math.sin(this.angle));
     this.inBoard = false;
     this.boardX = null;
     this.boardY = null;
     this.interpolate(this.startX, this.startY);
   }
-  interpolate(x, y, end = () => { }) {
+  interpolate(x, y, angle = 0, end = () => { }) {
     this.interpolation.active = true;
     this.interpolation.x = x;
     this.interpolation.y = y;
-    this.interpolation.onEnd = end
+    this.interpolation.angle = angle;
+    this.interpolation.onEnd = end;
   }
   rotate() {
-    let w = this.width;
-    let h = this.height;
-    this.width = h;
-    this.height = w;
+    if (!this.interpolation.active) {
+      let angle = this.angle + Math.PI / 2;
+
+      this.interpolate(this.x, this.y, angle);
+
+      angle = angle == 3 * Math.PI / 2 ? -Math.PI / 2 : angle;
+      angle = angle == 2 * Math.PI ? 0 : angle;
+
+      this.dx = Math.floor(Math.cos(angle));
+      this.dy = Math.floor(Math.sin(angle));
+    }
   }
   d(e) {
     this.interpolation.active = false;
@@ -111,41 +121,55 @@ class Piece {
     if (this.interpolation.active) {
       this.x += (this.interpolation.x - this.x) * 0.1;
       this.y += (this.interpolation.y - this.y) * 0.1;
-      let distance = Math.sqrt(Math.pow((this.interpolation.x - this.x), 2) - Math.pow((this.interpolation.y - this.y), 2));
-      if (distance < 0.1) {
+      let distance = Math.sqrt(Math.pow(this.interpolation.x - this.x, 2) + Math.pow(this.interpolation.y - this.y, 2));
+
+      this.angle += (this.interpolation.angle - this.angle) * 0.1;
+      let diffangle = Math.abs(this.interpolation.angle - this.angle);
+
+      if (distance < 0.1 && diffangle < 0.1) {
         this.x = this.interpolation.x;
         this.y = this.interpolation.y;
+
+        this.angle = this.interpolation.angle == 2 * Math.PI ? 0 : this.interpolation.angle;
+        this.interpolation.angle = this.angle;
         this.interpolation.active = false;
         this.interpolation.onEnd();
         this.interpolation.onEnd = () => { }
       }
     }
 
+    let x = this.x * tileSize;
+    let y = this.y * tileSize;
+    let w = this.len * tileSize;
+
     fillRect(
-      this.x * tileSize,
-      this.y * tileSize,
-      this.width * tileSize,
-      this.height * tileSize,
-      colors[this.tag]
+      x,
+      y,
+      w,
+      tileSize,
+      colors[this.tag],
+      this.angle
     );
 
     strokeRect(
-      this.x * tileSize,
-      this.y * tileSize,
-      this.width * tileSize,
-      this.height * tileSize,
+      x,
+      y,
+      w,
+      tileSize,
       '#080808',
-      2
+      2,
+      this.angle
     );
 
     if (this.selected === true) {
       strokeRect(
-        this.x * tileSize,
-        this.y * tileSize,
-        this.width * tileSize,
-        this.height * tileSize,
+        x,
+        y,
+        w,
+        tileSize,
         '#fca044',
-        2
+        2,
+        this.angle
       );
     }
   }

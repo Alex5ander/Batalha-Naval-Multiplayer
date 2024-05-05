@@ -15,9 +15,13 @@ let tileSize = 32;
 const strokeColor = '#f8f8f8';
 const textColor = '#080808';
 
-function fillRect(x, y, w, h, color) {
+function fillRect(x, y, w, h, color, angle) {
+  ctx.save();
+  ctx.translate((x + tileSize / 2) - 0.5, (y + tileSize / 2) - 0.5);
+  ctx.rotate(angle);
   ctx.fillStyle = color;
-  ctx.fillRect(x, y, w, h);
+  ctx.fillRect(-tileSize / 2, -tileSize / 2, w, h);
+  ctx.restore();
 }
 
 function drawTileSprite(img, x, y, size) {
@@ -28,11 +32,13 @@ function drawAnimatedTileSprite(context, img, x, y, size, i) {
   context.drawImage(img, i * 128, 0, 128, 128, x, y, size, size);
 }
 
-function strokeRect(x, y, w, h, color, strokeWidth) {
+function strokeRect(x, y, w, h, color, strokeWidth = 1, angle = 0) {
   ctx.save();
-  ctx.lineWidth = strokeWidth || 1;
+  ctx.lineWidth = strokeWidth;
   ctx.strokeStyle = color;
-  ctx.strokeRect(x + 0.5, y + 0.5, w, h);
+  ctx.translate((x + tileSize / 2) - 0.5, (y + tileSize / 2) - 0.5);
+  ctx.rotate(angle);
+  ctx.strokeRect((-tileSize / 2), (-tileSize / 2), w, h);
   ctx.restore();
 }
 
@@ -136,7 +142,7 @@ function resize(_) {
   ctx.imageSmoothingEnabled = false;
 }
 
-const isPointInPath = (a, b, c) => ctx.isPointInPath(a, b, c);
+const isPointInPath = (path, x, y) => ctx.isPointInPath(path, x, y);
 
 const drawGrid = (x, y) => {
   var letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];

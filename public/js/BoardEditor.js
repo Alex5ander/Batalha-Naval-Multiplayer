@@ -18,8 +18,8 @@ class BoardEditor extends Board {
     return [
       Math.floor(piece.x + 0.5 - this.x),
       Math.floor(piece.y + 0.5 - this.y),
-      Math.floor(piece.x + 0.5 - this.x) + Math.floor(piece.width) - 1,
-      Math.floor(piece.y + 0.5 - this.y) + Math.floor(piece.height) - 1
+      Math.floor(piece.x + 0.5 - this.x) + (piece.dx * (piece.len - 1)),
+      Math.floor(piece.y + 0.5 - this.y) + (piece.dy * (piece.len - 1))
     ].every(e => e >= 0 && e <= 9)
   }
   /**
@@ -42,19 +42,20 @@ class BoardEditor extends Board {
     }
 
     for (let i = 0; i < piece.len; i++) {
-      const px = piece.width > piece.height ? i : 0;
-      const py = piece.width > piece.height ? 0 : i;
+      const px = piece.dx * i;
+      const py = piece.dy * i;
 
       const directions = [
         [center.x, center.y],
-        [center.x - 1, center.y - 1],
-        [center.x + piece.width, center.y - 1],
-        [center.x - 1, center.y + piece.height],
-        [center.x + piece.width, center.y + piece.height],
-        [center.x + px, center.y + py - 1],
-        [center.x + px - 1, center.y + py],
-        [center.x + px + 1, center.y + py],
-        [center.x + px, center.y + py + 1],
+        [center.x + px + 1, center.y], // right
+        [center.x + px - 1, center.y], // left
+        [center.x, center.y + py - 1], //up
+        [center.x, center.y + py + 1], //down
+
+        [center.x + px - 1, center.y + py - 1],
+        [center.x + px + 1, center.y + py - 1],
+        [center.x + px - 1, center.y + py + 1],
+        [center.x + px + 1, center.y + py + 1]
       ];
 
       if (directions.some((e) => this.isOccupied(e, piece.tag))) {
@@ -71,25 +72,20 @@ class BoardEditor extends Board {
       y: Math.floor(piece.y + 0.5 - this.y),
     }
 
-    for (let y = 0; y < piece.height; y++) {
-      for (let x = 0; x < piece.width; x++) {
-        this.grid[center.y + y][center.x + x] = piece.tag;
-      }
+    for (let i = 0; i < piece.len; i++) {
+      this.grid[center.y + (i * piece.dy)][center.x + (piece.dx * i)] = piece.tag;
     }
 
-    piece.interpolate(this.x + center.x, this.y + center.y);
+    piece.interpolate(this.x + center.x, this.y + center.y, piece.interpolation.angle, () => { });
 
     piece.boardX = center.x;
     piece.boardY = center.y;
-
     piece.inBoard = true;
   }
   /** @param {Piece} piece  */
   remove(piece) {
-    for (let y = 0; y < piece.height; y++) {
-      for (let x = 0; x < piece.width; x++) {
-        this.grid[piece.boardY + y][piece.boardX + x] = 0;
-      }
+    for (let i = 0; i < piece.len; i++) {
+      this.grid[piece.boardY + (i * piece.dy)][piece.boardX + (i * piece.dx)] = 0;
     }
     piece.inBoard = false;
   }

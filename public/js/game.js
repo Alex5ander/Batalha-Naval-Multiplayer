@@ -185,14 +185,15 @@ resize();
   }
 
   if (lastPiece) {
-    let alpha = (Math.sin(2 * Math.PI * (((Date.now() / 1000) % 2) / 2)) + 1) / 6;
+    let alpha = (Math.sin(2 * Math.PI * (((Date.now() / 1000) % 2) / 2)) + 1) / 4;
     let color = `rgba(255, 255, 255, ${alpha})`;
     fillRect(
       lastPiece.x * tileSize,
       lastPiece.y * tileSize,
-      lastPiece.width * tileSize,
-      lastPiece.height * tileSize,
+      lastPiece.len * tileSize,
+      tileSize,
       color,
+      lastPiece.angle
     );
   }
 
