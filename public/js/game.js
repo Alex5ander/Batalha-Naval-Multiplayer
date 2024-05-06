@@ -149,12 +149,14 @@ const onUpdate = (message) => {
 
 export const battle = (e) => {
   e.preventDefault();
-  lastPiece = null;
-  net = network();
-  net.onUpdate(onUpdate);
-  net.connect_error(resetGame);
-  net.onInitConfig(onInitConfig);
-  net.anotherPlayerDisconnected(anotherPlayerDisconnected);
+  if (net == null) {
+    lastPiece = null;
+    net = network();
+    net.onUpdate(onUpdate);
+    net.connect_error(resetGame);
+    net.onInitConfig(onInitConfig);
+    net.anotherPlayerDisconnected(anotherPlayerDisconnected);
+  }
 };
 
 canvas.addEventListener('mousedown', mouseevents);
