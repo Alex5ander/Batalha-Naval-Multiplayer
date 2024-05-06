@@ -128,7 +128,7 @@ const anotherPlayerDisconnected = () => {
 
 /** @param {{ awaitPlayer2: boolean }} message */
 const onInitConfig = (message) => {
-  net.loadGrid({ name: playerName, grid: editor.grid });
+  net.loadGrid({ grid: editor.grid });
   listener.onInitConfig(message)
 }
 
@@ -151,9 +151,9 @@ export const battle = (e) => {
   e.preventDefault();
   if (net == null) {
     lastPiece = null;
-    net = network();
+    net = network(playerName);
     net.onUpdate(onUpdate);
-    net.connect_error(resetGame);
+    net.connect_error(e => { console.log(e); net = null; });
     net.onInitConfig(onInitConfig);
     net.anotherPlayerDisconnected(anotherPlayerDisconnected);
   }

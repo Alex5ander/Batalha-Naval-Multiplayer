@@ -1,5 +1,6 @@
-const network = () => {
-  const socket = io();
+/** @param {string} name */
+const network = (name) => {
+  const socket = io(window.location.href, { reconnection: false, auth: { name } });
 
   const connect_error = (callback) => socket.on('connect_error', callback);
 

@@ -13,6 +13,10 @@
   font-family: 'Press Start 2P';
 }
 
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
 .hidden {
   display: none !important;
 }
@@ -59,6 +63,7 @@ canvas {
   line-height: 0.5em;
   border: none;
   cursor: pointer;
+  transition: 0.2s ease-in-out;
 }
 
 #btn-rotate:hover,
@@ -201,6 +206,10 @@ canvas {
 
 #btn-battle:hover {
   background-color: var(--color-yellow);
+}
+
+.btn-active:active {
+  transform: scale(1.5);
 }
 
 @-ms-keyframes spinner {

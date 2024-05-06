@@ -38,7 +38,7 @@
   <div id="game-area">
     <canvas id="canvas" width="640" height="480"></canvas>
 
-    <button id="btn-play">
+    <button id="btn-play" class="btn-active">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
         width="24" height="24">
         <path stroke-linecap="round" stroke-linejoin="round"
@@ -47,7 +47,7 @@
     </button>
 
     <div id="board-editor" class="hidden">
-      <button id="btn-rotate" class="btn-controls" title="Rotacionar a última peça selecionada" disabled>
+      <button id="btn-rotate" class="btn-controls btn-active" title="Rotacionar a última peça selecionada" disabled>
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
           <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z" />
           <path
@@ -55,7 +55,7 @@
         </svg>
       </button>
 
-      <button id="btn-shuffle" class="btn-controls" title="Embaralhar">
+      <button id="btn-shuffle" class="btn-controls btn-active" title="Embaralhar">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
           <path fill-rule="evenodd"
             d="M0 3.5A.5.5 0 0 1 .5 3H1c2.202 0 3.827 1.24 4.874 2.418.49.552.865 1.102 1.126 1.532.26-.43.636-.98 1.126-1.532C9.173 4.24 10.798 3 13 3v1c-1.798 0-3.173 1.01-4.126 2.082A9.6 9.6 0 0 0 7.556 8a9.6 9.6 0 0 0 1.317 1.918C9.828 10.99 11.204 12 13 12v1c-2.202 0-3.827-1.24-4.874-2.418A10.6 10.6 0 0 1 7 9.05c-.26.43-.636.98-1.126 1.532C4.827 11.76 3.202 13 1 13H.5a.5.5 0 0 1 0-1H1c1.798 0 3.173-1.01 4.126-2.082A9.6 9.6 0 0 0 6.444 8a9.6 9.6 0 0 0-1.317-1.918C4.172 5.01 2.796 4 1 4H.5a.5.5 0 0 1-.5-.5" />
@@ -68,16 +68,16 @@
     <div id="form-battle" class="hidden">
       <div class="form-controls">
         <input id="input-player-name" type="text" maxlength="45" placeholder="Nome" value="" autocomplete="off" />
-        <button id="btn-battle">BATALHAR</button>
+        <button id="btn-battle" class="btn-active">BATALHAR</button>
       </div>
     </div>
 
     <div id="awaitcontainer" class="hidden">
       <span id="spinner"></span>
-      <button id="btn-cancelar">CANCELAR</button>
+      <button id="btn-cancelar" class="btn-active">CANCELAR</button>
     </div>
 
-    <button id="btn-back" class="hidden">
+    <button id="btn-back" class="hidden btn-active">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
         <path fill-rule="evenodd"
           d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8" />

@@ -40,10 +40,6 @@ class Player {
     this.opponentid = opponentid;
     this.pieces = [];
   }
-  /** @param {string} name */
-  setName(name) {
-    this.name = name.trim()
-  }
 }
 
 class Room {
@@ -67,7 +63,6 @@ class Room {
  */
 const loadGrid = (socket, data, room) => {
   const player = room.players.find((e) => e.id == socket.id);
-  player.setName(data.name);
   let count = 0;
 
   if (Array.isArray(data.grid) && data.grid.length === 10) {
@@ -103,11 +98,7 @@ const loadGrid = (socket, data, room) => {
       .map((e, i) => (e == tag ? i : -1))
       .filter((e) => e != -1);
 
-    pieces.push({
-      indexes,
-      tag,
-      life: indexes.length,
-    });
+    pieces.push({ indexes, tag, life: indexes.length });
   });
 
   player.grid = data.grid;
@@ -190,19 +181,29 @@ const firing = (socket, coords, room) => {
   }
 };
 
+io.use((socket, next) => {
+  if (socket.handshake.auth.name && socket.handshake.auth.name.trim().length > 2) {
+    next();
+  } else {
+    next(new Error('player name invalid'))
+  }
+})
+
 io.on('connection', (socket) => {
   let room = game.find((e) => e.players.length === 1);
+  let playname = socket.handshake.auth.name.trim().substring(0, 10);
 
   if (room) {
     socket.join(room.id);
-    room.players.push(new Player(socket.id, '', [], room.players[0].id));
+    room.players.push(new Player(socket.id, playname, [], room.players[0].id));
     room.players[0].opponentid = room.players[1].id;
     socket.emit('init_config', { awaitPlayer2: false });
   } else {
-    room = new Room(new Player(socket.id, '', [], null));
+    room = new Room(new Player(socket.id, playname, [], null));
     socket.join(room.id);
     game.push(room);
     socket.emit('init_config', { awaitPlayer2: true });
+    console.log("join");
   }
 
   socket.on('disconnect', () => {
