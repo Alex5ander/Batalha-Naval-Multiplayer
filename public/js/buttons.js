@@ -81,7 +81,7 @@ const shuffle = (e) => {
 }
 
 /** @param {{ awaitPlayer2: boolean }} data */
-const onInitConfig = (data) => {
+const onJoin = (data) => {
   formBattle.classList.add('hidden');
   boardEditorControls.classList.add('hidden');
 
@@ -106,9 +106,12 @@ btnShuffle.addEventListener('click', shuffle);
 btnBack.addEventListener('click', resetGame);
 btnBattle.addEventListener('click', battle);
 btnRotatePiece.addEventListener('click', rotatePiece);
-inputPlayerName.addEventListener('input', e => setPlayerName(e.target.value));
+inputPlayerName.addEventListener('input', e => {
+  setPlayerName(e.target.value);
+  btnBattle.disabled = e.target.value.length < 3;
+});
 
-listener.onInitConfig = onInitConfig;
+listener.onJoin = onJoin;
 listener.onEnd = () => btnBack.classList.remove('hidden');
 listener.onStart = () => awaitcontainer.classList.add('hidden');
 listener.onResetGame = reseteUI;

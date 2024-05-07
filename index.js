@@ -16,7 +16,7 @@ server.listen(3000, function () {
 const io = new Server(server);
 
 /** @type {Room[]} */
-let game = [];
+let rooms = [];
 const maxScore = 21;
 const tags = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 const WATER = 0;
@@ -194,6 +194,16 @@ const firing = (socket, coords, room) => {
   }
 };
 
+/** @param {Room} room */
+const onDisconnect = (room) => {
+  if (room) {
+    rooms = rooms.filter((e) => e.id !== room.id);
+    if (!room.winner) {
+      io.to(room.id).emit('opponent_disconnected');
+    }
+  }
+}
+
 io.use((socket, next) => {
   if (socket.handshake.auth.name && socket.handshake.auth.name.trim().length > 2) {
     next();
@@ -203,31 +213,22 @@ io.use((socket, next) => {
 })
 
 io.on('connection', (socket) => {
-  let room = game.find((e) => e.player2 == null);
+  let room = rooms.find((e) => e.player2 == null);
   let playername = socket.handshake.auth.name.trim().substring(0, 10);
 
   if (room) {
     socket.join(room.id);
     room.player2 = new Player(socket.id, playername, room.player1.id);
     room.player1.opponentid = room.player2.id;
-    socket.emit('init_config', { awaitPlayer2: false });
+    socket.emit('join', { awaitPlayer2: false });
   } else {
     room = new Room(new Player(socket.id, playername, [], null));
     socket.join(room.id);
-    game.push(room);
-    socket.emit('init_config', { awaitPlayer2: true });
+    rooms.push(room);
+    socket.emit('join', { awaitPlayer2: true });
   }
 
-  socket.on('disconnect', () => {
-    const currentRoom = game.find(({ player1, player2 }) => player1.id == socket.id || player2.id == socket.id);
-    if (currentRoom) {
-      game = game.filter((e) => e.id !== currentRoom.id);
-      if (!currentRoom.winner) {
-        io.to(currentRoom.id).emit('another_player_disconnected');
-      }
-    }
-  });
-
+  socket.on('disconnect', () => onDisconnect(room));
   socket.on('load_grid', (data) => loadGrid(socket, data, room));
   socket.on('firing', (data) => firing(socket, data, room));
 });

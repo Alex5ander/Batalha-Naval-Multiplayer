@@ -4,9 +4,9 @@ const network = (name) => {
 
   const connect_error = (callback) => socket.on('connect_error', callback);
 
-  const anotherPlayerDisconnected = (callback) => socket.on('another_player_disconnected', callback);
+  const onOpponentDisconnected = (callback) => socket.on('opponent_disconnected', callback);
 
-  const onInitConfig = (callback) => socket.on('init_config', callback);
+  const onJoin = (callback) => socket.on('join', callback);
 
   const onUpdate = (callback) => socket.on('update_game', callback);
 
@@ -18,7 +18,7 @@ const network = (name) => {
 
   const disconnect = () => socket.close();
 
-  return { loadGrid, firing, disconnect, connect_error, anotherPlayerDisconnected, onInitConfig, onUpdate };
+  return { loadGrid, firing, disconnect, connect_error, onOpponentDisconnected, onJoin, onUpdate };
 };
 
 export { network };

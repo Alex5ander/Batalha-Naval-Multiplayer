@@ -17,6 +17,11 @@ button {
   -webkit-tap-highlight-color: transparent;
 }
 
+button:disabled {
+  filter: brightness(0.5);
+  cursor: not-allowed !important;
+}
+
 .hidden {
   display: none !important;
 }
@@ -38,7 +43,6 @@ body {
 
 canvas {
   image-rendering: pixelated;
-  background: url(../images/watertile.png) 0 0 / 24px;
   cursor: none;
 }
 
@@ -69,10 +73,6 @@ canvas {
 #btn-rotate:hover,
 #btn-shuffle:hover {
   background-color: #f0ffc3;
-}
-
-#btn-rotate:disabled {
-  opacity: 0.75;
 }
 
 #btn-rotate {
@@ -204,11 +204,12 @@ canvas {
   border-radius: 0.5rem;
 }
 
-#btn-battle:hover {
+#btn-battle:not(:disabled):hover {
   background-color: var(--color-yellow);
+  color: var(--color-black);
 }
 
-.btn-active:active {
+.btn-active:not(:disabled):active {
   transform: scale(1.5);
 }
 

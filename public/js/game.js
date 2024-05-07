@@ -90,7 +90,7 @@ export const cancel = (e) => {
 
 export const listener = {
   /** @param {{ awaitPlayer2: boolean }} _ */
-  onInitConfig: (_) => { },
+  onJoin: (_) => { },
   onEnd: () => { },
   onStart: () => { },
   onResetGame: () => { }
@@ -106,15 +106,15 @@ export const resetGame = () => {
   listener.onResetGame();
 };
 
-const anotherPlayerDisconnected = () => {
+const onOpponentDisconnected = () => {
   status = { time: Date.now(), text: "Jogador " + data.room.opponentname + " desconectou" };
   resetGame();
 }
 
 /** @param {{ awaitPlayer2: boolean }} message */
-const onInitConfig = (message) => {
+const onJoin = (message) => {
   net.loadGrid({ grid: editor.grid });
-  listener.onInitConfig(message)
+  listener.onJoin(message)
 }
 
 const onUpdate = (message) => {
@@ -139,8 +139,8 @@ export const battle = (e) => {
     net = network(playerName);
     net.onUpdate(onUpdate);
     net.connect_error(e => { console.log(e); net = null; });
-    net.onInitConfig(onInitConfig);
-    net.anotherPlayerDisconnected(anotherPlayerDisconnected);
+    net.onJoin(onJoin);
+    net.onOpponentDisconnected(onOpponentDisconnected);
   }
 };
 

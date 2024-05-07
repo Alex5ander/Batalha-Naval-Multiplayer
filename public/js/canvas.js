@@ -181,7 +181,7 @@ const drawBackgroud = () => {
     for (let i = 0; i < w * h; i++) {
       const col = i % w;
       const row = Math.floor(i / w);
-      drawAnimatedTileSprite(WaterTile, col * tileSize, row * tileSize, tileSize, Math.floor(Date.now() / 500) % 7, offctx);
+      drawAnimatedTileSprite(WaterTile, col * tileSize, row * tileSize, tileSize, Math.floor(Date.now() / 500) % 2, offctx);
     }
     late = Date.now();
   }
