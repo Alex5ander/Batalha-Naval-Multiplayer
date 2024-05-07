@@ -1,4 +1,5 @@
 import Piece from "./Piece.js";
+import { gameArea } from "./canvas.js";
 import { battle, cancel, editor, play, resetGame, setPlayerName, setLastPiece, lastPiece, listener } from "./game.js";
 
 /** @type {HTMLButtonElement} */
@@ -14,6 +15,8 @@ const btnRotatePiece = document.getElementById('btn-rotate');
 /** @type {HTMLButtonElement} */
 const btnShuffle = document.getElementById('btn-shuffle');
 
+/** @type {HTMLDivElement} */
+const loading = document.getElementById("loading");
 /** @type {HTMLDivElement} */
 const awaitcontainer = document.getElementById('awaitcontainer');
 /** @type {HTMLDivElement} */
@@ -106,6 +109,11 @@ const onInputName = (e) => {
   btnBattle.disabled = e.target.value.length < 3;
 }
 
+const onLoadAssets = () => {
+  loading.classList.add('hidden');
+  gameArea.classList.remove('hidden');
+}
+
 btnCancel.addEventListener('click', cancelBattle);
 btnPlay.addEventListener('click', playGame);
 btnShuffle.addEventListener('click', shuffle);
@@ -118,3 +126,4 @@ listener.onJoin = onJoin;
 listener.onEnd = () => btnBack.classList.remove('hidden');
 listener.onStart = () => awaitcontainer.classList.add('hidden');
 listener.onResetGame = reseteUI;
+listener.onLoadAssets = onLoadAssets;

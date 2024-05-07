@@ -14,7 +14,7 @@ import {
   canvas,
   drawBackgroud,
 } from './canvas.js';
-import { Crosshair } from './assets.js';
+import { Crosshair, onLoadAssets } from './assets.js';
 
 let playerName = "";
 /** @type {BoardEditor} */
@@ -93,7 +93,8 @@ export const listener = {
   onJoin: (_) => { },
   onEnd: () => { },
   onStart: () => { },
-  onResetGame: () => { }
+  onResetGame: () => { },
+  onLoadAssets: () => { }
 }
 
 export const resetGame = () => {
@@ -149,19 +150,7 @@ export const battle = (e) => {
   }
 };
 
-canvas.addEventListener('mousedown', mouseevents);
-window.addEventListener('mousemove', mouseevents);
-canvas.addEventListener('mouseup', mouseevents);
-
-canvas.addEventListener('touchstart', touchevents);
-canvas.addEventListener('touchmove', touchevents);
-canvas.addEventListener('touchend', touchevents);
-
-window.addEventListener('resize', resize);
-window.addEventListener('orientationchange', resize);
-resize();
-
-(function loop(t) {
+function loop(t) {
   drawBackgroud(t);
 
   if (editor) {
@@ -207,4 +196,22 @@ resize();
   );
 
   window.requestAnimationFrame(loop);
-})();
+}
+
+const start = () => {
+  listener.onLoadAssets();
+  canvas.addEventListener('mousedown', mouseevents);
+  window.addEventListener('mousemove', mouseevents);
+  canvas.addEventListener('mouseup', mouseevents);
+
+  canvas.addEventListener('touchstart', touchevents);
+  canvas.addEventListener('touchmove', touchevents);
+  canvas.addEventListener('touchend', touchevents);
+
+  window.addEventListener('resize', resize);
+  window.addEventListener('orientationchange', resize);
+  resize();
+  loop();
+}
+
+onLoadAssets(start);

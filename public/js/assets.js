@@ -7,4 +7,9 @@ MarkerTile.src = '../images/markertile.png';
 const Crosshair = new Image();
 Crosshair.src = '../images/crosshair.png';
 
-export { WaterTile, MarkerTile, Crosshair };
+const onLoadAssets = async (callback) => {
+  await Promise.all([WaterTile, MarkerTile, Crosshair].map(e => new Promise(resolve => e.onload = resolve)))
+  callback();
+}
+
+export { WaterTile, MarkerTile, Crosshair, onLoadAssets };

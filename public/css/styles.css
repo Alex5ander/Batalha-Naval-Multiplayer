@@ -8,6 +8,10 @@
   --color-gray: #d8d8d8ff;
 }
 
+html {
+  background-color: var(--color-black);
+}
+
 * {
   box-sizing: border-box;
   font-family: 'Press Start 2P';
@@ -35,7 +39,6 @@ body {
   position: fixed;
   text-align: center;
   width: 100%;
-  background-color: var(--color-black);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -133,7 +136,7 @@ canvas {
   justify-content: center;
 }
 
-#spinner {
+.spinner {
   width: 200px;
   height: 200px;
   border: 24px solid transparent;
@@ -147,6 +150,8 @@ canvas {
   margin: auto;
   animation: spinner 1s infinite linear;
 }
+
+.loading {}
 
 #btn-cancelar {
   background-color: var(--color-red);

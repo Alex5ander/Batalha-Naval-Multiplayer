@@ -195,6 +195,7 @@ const drawBackgroud = (t) => {
 }
 
 export {
+  gameArea,
   canvas,
   rows,
   cols,

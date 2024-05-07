@@ -35,7 +35,7 @@
 </head>
 
 <body>
-  <div id="game-area">
+  <div id="game-area" class="hidden">
     <canvas id="canvas" width="640" height="480"></canvas>
 
     <button id="btn-play" class="btn-active">
@@ -73,7 +73,7 @@
     </div>
 
     <div id="awaitcontainer" class="hidden">
-      <span id="spinner"></span>
+      <span class="spinner"></span>
       <button id="btn-cancelar" class="btn-active">CANCELAR</button>
     </div>
 
@@ -83,7 +83,13 @@
           d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8" />
       </svg>
     </button>
+
   </div>
+
+  <div id="loading" style="position: fixed;inset: 0;z-index: 999;">
+    <span class="spinner"></span>
+  </div>
+
   <script src="/socket.io/socket.io.js"></script>
   <script type="module" src="js/assets.js"></script>
   <script type="module" src="js/canvas.js"></script>
