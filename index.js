@@ -49,7 +49,8 @@ class Room {
   constructor(player) {
     this.id = Math.floor(Math.random() * 127).toString(16) + Date.now();
     this.winner = false;
-    this.turno = player.id;
+    /** @type {string} turn */
+    this.turn = "";
     this.player1 = player;
     /** @type {Player} player2 */
     this.player2 = null;
@@ -135,7 +136,7 @@ const updateGame = (room) => {
     room: {
       opponentname: player2.name,
       winner: room.winner === player1.id,
-      turno: room.turno === player1.id,
+      turn: room.turn === player1.id,
       end: room.end,
     },
   });
@@ -160,7 +161,7 @@ const firing = (socket, coords, room) => {
     coords.y <= 9 &&
     room.winner === false
   ) {
-    if (room.turno === socket.id) {
+    if (room.turn === socket.id) {
       if (tags.includes(targetGrid[coords.y][coords.x])) {
         targetGrid[coords.y][coords.x] = HIT;
         player.hits[coords.y][coords.x] = HIT;
@@ -187,19 +188,23 @@ const firing = (socket, coords, room) => {
       } else if (targetGrid[coords.y][coords.x] === WATER) {
         targetGrid[coords.y][coords.x] = WATERSHOT;
         player.hits[coords.y][coords.x] = WATERSHOT;
-        room.turno = opponent.id;
+        room.turn = opponent.id;
       }
+      updateGame(room);
     }
-    updateGame(room);
   }
 };
 
-/** @param {Room} room */
-const onDisconnect = (room) => {
+/** 
+ * @param {Socket} socket
+ * @param {Room} room 
+ * */
+const onDisconnect = (socket, room) => {
   if (room) {
+    let player = getPlayerById(socket.id, room);
     rooms = rooms.filter((e) => e.id !== room.id);
     if (!room.winner) {
-      io.to(room.id).emit('opponent_disconnected');
+      io.to(room.id).emit('opponent_disconnected', player.name);
     }
   }
 }
@@ -220,6 +225,7 @@ io.on('connection', (socket) => {
     socket.join(room.id);
     room.player2 = new Player(socket.id, playername, room.player1.id);
     room.player1.opponentid = room.player2.id;
+    room.turn = Math.floor(Math.random() * 2) == 0 ? room.player1.id : room.player2.id;
     socket.emit('join', { awaitPlayer2: false });
   } else {
     room = new Room(new Player(socket.id, playername, [], null));
@@ -228,7 +234,7 @@ io.on('connection', (socket) => {
     socket.emit('join', { awaitPlayer2: true });
   }
 
-  socket.on('disconnect', () => onDisconnect(room));
+  socket.on('disconnect', () => onDisconnect(socket, room));
   socket.on('load_grid', (data) => loadGrid(socket, data, room));
   socket.on('firing', (data) => firing(socket, data, room));
 });

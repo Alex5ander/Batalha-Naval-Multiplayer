@@ -52,7 +52,7 @@ class Board {
       }
 
       if (value === WATERSHOT) {
-        fillRect(x, y, tileSize, tileSize, '#0000bc');
+        fillRect(x, y, tileSize, tileSize, '#0000bc88');
       }
 
       if (value === HIT) {

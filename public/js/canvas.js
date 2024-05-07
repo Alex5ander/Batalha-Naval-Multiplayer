@@ -62,7 +62,7 @@ const DATA = {
   room: {
     opponentname: 'Player',
     winner: false,
-    turno: false,
+    turn: false,
     end: true,
   },
 };
@@ -83,8 +83,8 @@ function drawHUD(data = DATA) {
   const active = '#f8f8f8';
   const disabled = '#d8d8d8ff';
 
-  const color1 = room.turno ? active : disabled;
-  const color2 = !room.turno ? active : disabled;
+  const color1 = room.turn ? active : disabled;
+  const color2 = !room.turn ? active : disabled;
 
   fillText(player.name, x0, y, fontSize, color1);
   fillText(room.opponentname, x1, y, fontSize, color2);
@@ -175,13 +175,14 @@ const drawGrid = (x, y) => {
 let late = Date.now() - 501;
 
 const drawBackgroud = () => {
-  if (Date.now() - late > 500) {
+  if (Date.now() - late > 1000) {
     const w = Math.floor(canvas.width / tileSize) + 1;
     const h = Math.floor(canvas.height / tileSize) + 1;
+    const frame = Math.floor(Date.now() / 1000) % 2;
     for (let i = 0; i < w * h; i++) {
       const col = i % w;
       const row = Math.floor(i / w);
-      drawAnimatedTileSprite(WaterTile, col * tileSize, row * tileSize, tileSize, Math.floor(Date.now() / 500) % 2, offctx);
+      drawAnimatedTileSprite(WaterTile, col * tileSize, row * tileSize, tileSize, frame, offctx);
     }
     late = Date.now();
   }

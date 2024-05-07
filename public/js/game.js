@@ -106,8 +106,8 @@ export const resetGame = () => {
   listener.onResetGame();
 };
 
-const onOpponentDisconnected = () => {
-  status = { time: Date.now(), text: "Jogador " + data.room.opponentname + " desconectou" };
+const onOpponentDisconnected = (opponentname) => {
+  status = { time: Date.now(), text: "Jogador " + opponentname + " desconectou" };
   resetGame();
 }
 
@@ -119,9 +119,14 @@ const onJoin = (message) => {
 
 const onUpdate = (message) => {
   data = message;
-  myboard = new Board(2, 5, data.player.grid);
-  myhits = new Board(21, 5, data.player.hits, (coords) => net.firing(coords));
-  editor = null;
+  if (!myboard && !myhits) {
+    myboard = new Board(2, 5, data.player.grid);
+    myhits = new Board(21, 5, data.player.hits, (coords) => net.firing(coords));
+    editor = null;
+  }
+
+  myboard.grid = data.player.grid;
+  myhits.grid = data.player.hits;
 
   if (data.room.opponentname) {
     listener.onStart();
