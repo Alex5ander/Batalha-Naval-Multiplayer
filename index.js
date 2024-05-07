@@ -28,13 +28,12 @@ class Player {
    *
    * @param {string} id
    * @param {string} name
-   * @param {number[][]} grid
    * @param {string} opponentid
    */
-  constructor(id, name, grid, opponentid) {
+  constructor(id, name, opponentid) {
     this.id = id;
     this.name = name;
-    this.grid = grid;
+    this.grid = Array.from({ length: 10 }, () => Array(10).fill(0));
     this.hits = Array.from({ length: 10 }, () => Array(10).fill(0));
     this.score = 0;
     this.opponentid = opponentid;
@@ -51,8 +50,23 @@ class Room {
     this.id = Math.floor(Math.random() * 127).toString(16) + Date.now();
     this.winner = false;
     this.turno = player.id;
-    this.players = [player];
+    this.player1 = player;
+    /** @type {Player} player2 */
+    this.player2 = null;
   }
+}
+
+/** 
+ * @param {string} id
+ * @param {Room} room
+ */
+const getPlayerById = (id, room) => {
+  if (room.player1 && room.player1.id == id) {
+    return room.player1;
+  } else if (room.player2 && room.player2.id == id) {
+    return room.player2;
+  }
+  return null;
 }
 
 /**
@@ -62,7 +76,7 @@ class Room {
  * @param {Room} room
  */
 const loadGrid = (socket, data, room) => {
-  const player = room.players.find((e) => e.id == socket.id);
+  const player = getPlayerById(socket.id, room);
   let count = 0;
 
   if (Array.isArray(data.grid) && data.grid.length === 10) {
@@ -104,30 +118,29 @@ const loadGrid = (socket, data, room) => {
   player.grid = data.grid;
   player.pieces = pieces;
 
-  if (room.players.length == 2) {
+  if (room.player1 && room.player2) {
     updateGame(room);
   }
 };
 
 /** @param {Room} room */
 const updateGame = (room) => {
-  const p1 = room.players[0];
-  const p2 = room.players[1];
-  const updateData = (p1, p2) => ({
+  const { player1, player2 } = room;
+  const updateData = (player1, player2) => ({
     player: {
-      name: p1.name,
-      grid: p1.grid,
-      hits: p1.hits,
+      name: player1.name,
+      grid: player1.grid,
+      hits: player1.hits,
     },
     room: {
-      opponentname: p2.name,
-      winner: room.winner === p1.id,
-      turno: room.turno === p1.id,
+      opponentname: player2.name,
+      winner: room.winner === player1.id,
+      turno: room.turno === player1.id,
       end: room.end,
     },
   });
-  io.to(p1.id).emit('update_game', updateData(p1, p2));
-  io.to(p2.id).emit('update_game', updateData(p2, p1));
+  io.to(player1.id).emit('update_game', updateData(player1, player2));
+  io.to(player2.id).emit('update_game', updateData(player2, player1));
 };
 
 /**
@@ -137,8 +150,8 @@ const updateGame = (room) => {
  * @param {Room} room
  */
 const firing = (socket, coords, room) => {
-  const player = room.players.find((e) => e.id === socket.id);
-  const opponent = room.players.find((e) => e.id == player.opponentid);
+  const player = getPlayerById(socket.id, room);
+  const opponent = getPlayerById(player.opponentid, room);
   const targetGrid = opponent.grid;
   if (
     coords.x >= 0 &&
@@ -190,27 +203,23 @@ io.use((socket, next) => {
 })
 
 io.on('connection', (socket) => {
-  let room = game.find((e) => e.players.length === 1);
-  let playname = socket.handshake.auth.name.trim().substring(0, 10);
+  let room = game.find((e) => e.player2 == null);
+  let playername = socket.handshake.auth.name.trim().substring(0, 10);
 
   if (room) {
     socket.join(room.id);
-    room.players.push(new Player(socket.id, playname, [], room.players[0].id));
-    room.players[0].opponentid = room.players[1].id;
+    room.player2 = new Player(socket.id, playername, room.player1.id);
+    room.player1.opponentid = room.player2.id;
     socket.emit('init_config', { awaitPlayer2: false });
   } else {
-    room = new Room(new Player(socket.id, playname, [], null));
+    room = new Room(new Player(socket.id, playername, [], null));
     socket.join(room.id);
     game.push(room);
     socket.emit('init_config', { awaitPlayer2: true });
-    console.log("join");
   }
 
   socket.on('disconnect', () => {
-    const currentRoom = game.find((e) =>
-      e.players.find((p) => socket.id === p.id)
-    );
-
+    const currentRoom = game.find(({ player1, player2 }) => player1.id == socket.id || player2.id == socket.id);
     if (currentRoom) {
       game = game.filter((e) => e.id !== currentRoom.id);
       if (!currentRoom.winner) {

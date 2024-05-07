@@ -7,6 +7,9 @@ import {
   tileSize
 } from './canvas.js';
 
+const HIT = 1;
+const WATERSHOT = 2;
+
 class Board {
   constructor(x, y, grid, onclick = (_) => { }) {
     this.x = x;
@@ -48,11 +51,11 @@ class Board {
         fillRect(x, y, tileSize, tileSize, colors[value]);
       }
 
-      if (value === 2) {
+      if (value === WATERSHOT) {
         fillRect(x, y, tileSize, tileSize, '#0000bc');
       }
 
-      if (value === 1) {
+      if (value === HIT) {
         drawTileSprite(MarkerTile, x, y, tileSize);
       }
     })
