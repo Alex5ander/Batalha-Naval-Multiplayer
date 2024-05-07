@@ -161,8 +161,8 @@ window.addEventListener('resize', resize);
 window.addEventListener('orientationchange', resize);
 resize();
 
-(function loop() {
-  drawBackgroud();
+(function loop(t) {
+  drawBackgroud(t);
 
   if (editor) {
     editor.draw();
@@ -177,7 +177,7 @@ resize();
   }
 
   if (lastPiece) {
-    let alpha = (Math.sin(2 * Math.PI * (((Date.now() / 1000) % 2) / 2)) + 1) / 4;
+    let alpha = (Math.sin(2 * Math.PI * (((t / 1000) % 2) / 2)) + 1) / 4;
     let color = `rgba(255, 255, 255, ${alpha})`;
     fillRect(
       lastPiece.x * tileSize,
@@ -193,8 +193,8 @@ resize();
     drawHUD(data);
   }
 
-  if (Date.now() - status.time <= 5000) {
-    let alpha = 1 - ((Date.now() - status.time) / 5000);
+  if (t - status.time <= 5000) {
+    let alpha = 1 - ((t - status.time) / 5000);
     let color = `rgba(255, 255, 255, ${alpha})`;
     fillText(status.text, canvas.width / 2, canvas.height - 20, tileSize / 2, color);
   }

@@ -172,19 +172,24 @@ const drawGrid = (x, y) => {
   }
 }
 
-let late = Date.now() - 501;
+let late = 0;
 
-const drawBackgroud = () => {
-  if (Date.now() - late > 1000) {
+/** @param {number} t */
+const drawBackgroud = (t) => {
+  if (t == undefined) return;
+  if (late == 0) {
+    late = t - 1000;
+  }
+  if (t - late > 1000) {
     const w = Math.floor(canvas.width / tileSize) + 1;
     const h = Math.floor(canvas.height / tileSize) + 1;
-    const frame = Math.floor(Date.now() / 1000) % 2;
+    const frame = Math.floor(t / 1000) % 2;
     for (let i = 0; i < w * h; i++) {
       const col = i % w;
       const row = Math.floor(i / w);
       drawAnimatedTileSprite(WaterTile, col * tileSize, row * tileSize, tileSize, frame, offctx);
     }
-    late = Date.now();
+    late = t - ((t - late) - 1000);
   }
   ctx.drawImage(offscreencanvas, 0, 0);
 }
