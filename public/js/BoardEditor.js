@@ -11,7 +11,21 @@ class BoardEditor extends Board {
     */
     this.onDrop = (_) => { };
     /** @type {Piece[]} */
-    this.pieces = [];
+    this.pieces = [
+      new Piece(1, 1, 5, 'A'),
+
+      new Piece(1, 3, 3, 'B'),
+      new Piece(1, 5, 3, 'C'),
+
+      new Piece(1, 7, 2, 'D'),
+      new Piece(1, 9, 2, 'E'),
+      new Piece(1, 11, 2, 'F'),
+
+      new Piece(1, 13, 1, 'G'),
+      new Piece(3, 13, 1, 'H'),
+      new Piece(1, 15, 1, 'I'),
+      new Piece(3, 15, 1, 'J')
+    ]
   }
   /** @param {Piece} piece */
   inBoard(piece) {
