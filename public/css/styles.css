@@ -18,7 +18,7 @@ button {
 }
 
 button:disabled {
-  filter: brightness(0.5);
+  opacity: 0.75;
   cursor: not-allowed !important;
 }
 
@@ -70,8 +70,8 @@ canvas {
   transition: 0.2s ease-in-out;
 }
 
-#btn-rotate:hover,
-#btn-shuffle:hover {
+#btn-rotate:not(:disabled):hover,
+#btn-shuffle:not(:disabled):hover {
   background-color: #f0ffc3;
 }
 
@@ -206,7 +206,6 @@ canvas {
 
 #btn-battle:not(:disabled):hover {
   background-color: var(--color-yellow);
-  color: var(--color-black);
 }
 
 .btn-active:not(:disabled):active {
