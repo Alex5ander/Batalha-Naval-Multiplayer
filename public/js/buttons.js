@@ -100,16 +100,19 @@ const reseteUI = () => {
   boardEditorControls.classList.add('hidden');
 }
 
+/** @param {Event} e */
+const onInputName = (e) => {
+  setPlayerName(e.target.value);
+  btnBattle.disabled = e.target.value.length < 3;
+}
+
 btnCancel.addEventListener('click', cancelBattle);
 btnPlay.addEventListener('click', playGame);
 btnShuffle.addEventListener('click', shuffle);
 btnBack.addEventListener('click', resetGame);
 btnBattle.addEventListener('click', battle);
 btnRotatePiece.addEventListener('click', rotatePiece);
-inputPlayerName.addEventListener('input', e => {
-  setPlayerName(e.target.value);
-  btnBattle.disabled = e.target.value.length < 3;
-});
+inputPlayerName.addEventListener('input', onInputName);
 
 listener.onJoin = onJoin;
 listener.onEnd = () => btnBack.classList.remove('hidden');
