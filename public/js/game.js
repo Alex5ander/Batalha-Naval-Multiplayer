@@ -150,8 +150,9 @@ export const battle = (e) => {
   }
 };
 
-function loop(t) {
+function loop() {
   clearRect();
+  let now = Date.now();
 
   if (editor) {
     editor.draw();
@@ -166,7 +167,7 @@ function loop(t) {
   }
 
   if (lastPiece) {
-    let alpha = (Math.sin(2 * Math.PI * (((t / 1000) % 2) / 2)) + 1) / 4;
+    let alpha = (Math.sin(2 * Math.PI * (((now / 1000) % 2) / 2)) + 1) / 4;
     let color = `rgba(255, 255, 255, ${alpha})`;
     fillRect(
       lastPiece.x * tileSize,
@@ -182,8 +183,8 @@ function loop(t) {
     drawHUD(data);
   }
 
-  if (t - status.time <= 5000) {
-    let alpha = 1 - ((t - status.time) / 5000);
+  if (now - status.time <= 5000) {
+    let alpha = 1 - ((now - status.time) / 5000);
     let color = `rgba(255, 255, 255, ${alpha})`;
     fillText(status.text, canvas.width / 2, canvas.height - 20, tileSize / 2, color);
   }
