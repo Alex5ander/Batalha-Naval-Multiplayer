@@ -219,7 +219,7 @@ io.use((socket, next) => {
 
 io.on('connection', (socket) => {
   let room = rooms.find((e) => e.player2 == null);
-  let playername = socket.handshake.auth.name.trim().substring(0, 10);
+  let playername = socket.handshake.auth.name.trim().substring(0, 20);
 
   if (room) {
     socket.join(room.id);
