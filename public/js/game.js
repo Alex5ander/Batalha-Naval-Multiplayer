@@ -204,8 +204,8 @@ const start = () => {
   window.addEventListener('mousemove', mouseevents);
   canvas.addEventListener('mouseup', mouseevents);
 
-  canvas.addEventListener('touchstart', touchevents);
-  canvas.addEventListener('touchmove', touchevents);
+  canvas.addEventListener('touchstart', touchevents, { passive: true });
+  canvas.addEventListener('touchmove', touchevents, { passive: true });
   canvas.addEventListener('touchend', touchevents);
 
   window.addEventListener('resize', resize);

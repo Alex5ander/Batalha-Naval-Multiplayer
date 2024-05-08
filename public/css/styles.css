@@ -10,7 +10,7 @@
 
 html {
   image-rendering: pixelated;
-  background: url(../images/watertile.gif) repeat;
+  background: url(../images/watertile.gif);
 }
 
 * {
