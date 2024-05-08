@@ -9,7 +9,8 @@
 }
 
 html {
-  background-color: var(--color-black);
+  image-rendering: pixelated;
+  background: url(../images/watertile.gif) repeat;
 }
 
 * {
@@ -38,7 +39,6 @@ body {
 #game-area {
   position: fixed;
   text-align: center;
-  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -151,7 +151,11 @@ canvas {
   animation: spinner 1s infinite linear;
 }
 
-.loading {}
+.loading {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+}
 
 #btn-cancelar {
   background-color: var(--color-red);

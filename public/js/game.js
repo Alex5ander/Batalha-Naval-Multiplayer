@@ -12,7 +12,7 @@ import {
   fillRect,
   fillText,
   canvas,
-  drawBackgroud,
+  clearRect,
 } from './canvas.js';
 import { Crosshair, onLoadAssets } from './assets.js';
 
@@ -151,7 +151,7 @@ export const battle = (e) => {
 };
 
 function loop(t) {
-  drawBackgroud(t);
+  clearRect();
 
   if (editor) {
     editor.draw();
@@ -211,7 +211,7 @@ const start = () => {
   window.addEventListener('resize', resize);
   window.addEventListener('orientationchange', resize);
   resize();
-  loop();
+  loop(0);
 }
 
 onLoadAssets(start);
