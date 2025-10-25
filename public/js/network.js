@@ -18,7 +18,9 @@ const network = (name) => {
 
   const disconnect = () => socket.close();
 
-  return { loadGrid, firing, disconnect, connect_error, onOpponentDisconnected, onJoin, onUpdate };
+  const onStart = (callback) => socket.on('start', callback);
+
+  return { loadGrid, firing, disconnect, connect_error, onOpponentDisconnected, onJoin, onUpdate, onStart };
 };
 
 export { network };

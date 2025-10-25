@@ -14,7 +14,7 @@ import {
   canvas,
   clearRect,
 } from './canvas.js';
-import { Crosshair, onLoadAssets } from './assets.js';
+import { Crosshair, loadAssets } from './assets.js';
 
 let playerName = "";
 /** @type {BoardEditor} */
@@ -129,12 +129,12 @@ const onUpdate = (message) => {
   myboard.grid = data.player.grid;
   myhits.grid = data.player.hits;
 
-  if (data.room.opponentname) {
-    listener.onStart();
-  }
-
   if (data.room.end) {
     listener.onEnd();
+    if (data.room.winner) {
+      window.CrazyGames.SDK.game.happytime();
+    }
+    window.CrazyGames.SDK.game.gameplayStop();
   }
 };
 
@@ -147,6 +147,7 @@ export const battle = (e) => {
     net.connect_error(e => { console.log(e); net = null; });
     net.onJoin(onJoin);
     net.onOpponentDisconnected(onOpponentDisconnected);
+    net.onStart(listener.onStart);
   }
 };
 
@@ -199,7 +200,15 @@ function loop() {
   window.requestAnimationFrame(loop);
 }
 
-const start = () => {
+const start = async () => {
+  try {
+    await window.CrazyGames.SDK.init();
+    // await is not mandatory when requesting banners,
+    // but it will allow you to catch errors
+    await window.CrazyGames.SDK.banner.requestResponsiveBanner('banner-container');
+  } catch (e) {
+    console.log("Banner request error", e);
+  }
   listener.onLoadAssets();
   canvas.addEventListener('mousedown', mouseevents);
   window.addEventListener('mousemove', mouseevents);
@@ -215,4 +224,4 @@ const start = () => {
   loop(0);
 }
 
-onLoadAssets(start);
+loadAssets(start);

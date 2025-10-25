@@ -226,12 +226,13 @@ io.on('connection', (socket) => {
     room.player2 = new Player(socket.id, playername, room.player1.id);
     room.player1.opponentid = room.player2.id;
     room.turn = Math.floor(Math.random() * 2) == 0 ? room.player1.id : room.player2.id;
-    socket.emit('join', { awaitPlayer2: false });
+    socket.emit('join');
+    io.to(room.id).emit('start');
   } else {
     room = new Room(new Player(socket.id, playername, [], null));
     socket.join(room.id);
     rooms.push(room);
-    socket.emit('join', { awaitPlayer2: true });
+    socket.emit('join');
   }
 
   socket.on('disconnect', () => onDisconnect(socket, room));

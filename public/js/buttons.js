@@ -58,6 +58,7 @@ const cancelBattle = (e) => {
 
 /** @param {MouseEvent} e */
 const playGame = (e) => {
+  window.CrazyGames.SDK.banner.clearBanner("banner-container");
   play(e);
   editor.onDrop = (allInBoard) => {
     if (allInBoard === true) {
@@ -83,16 +84,10 @@ const shuffle = (e) => {
   btnRotatePiece.disabled = true;
 }
 
-/** @param {{ awaitPlayer2: boolean }} data */
-const onJoin = (data) => {
+const onJoin = () => {
   formBattle.classList.add('hidden');
   boardEditorControls.classList.add('hidden');
-
-  if (data.awaitPlayer2) {
-    awaitcontainer.classList.remove('hidden');
-  } else {
-    awaitcontainer.classList.add('hidden');
-  }
+  awaitcontainer.classList.remove('hidden');
 }
 
 const reseteUI = () => {
@@ -124,6 +119,10 @@ inputPlayerName.addEventListener('input', onInputName);
 
 listener.onJoin = onJoin;
 listener.onEnd = () => btnBack.classList.remove('hidden');
-listener.onStart = () => awaitcontainer.classList.add('hidden');
+listener.onStart = () => {
+  console.log("Game Started");
+  awaitcontainer.classList.add('hidden');
+  window.CrazyGames.SDK.game.gameplayStart();
+}
 listener.onResetGame = reseteUI;
 listener.onLoadAssets = onLoadAssets;
