@@ -202,7 +202,6 @@ function loop() {
 
 const start = async () => {
   try {
-    await window.CrazyGames.SDK.init();
     // await is not mandatory when requesting banners,
     // but it will allow you to catch errors
     await window.CrazyGames.SDK.banner.requestResponsiveBanner('banner-container');
