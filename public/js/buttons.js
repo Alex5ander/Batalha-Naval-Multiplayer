@@ -58,7 +58,7 @@ const cancelBattle = (e) => {
 
 /** @param {MouseEvent} e */
 const playGame = (e) => {
-  // window.CrazyGames.SDK.banner.clearBanner("banner-container");
+  window.CrazyGames.SDK.banner.clearBanner("banner-container");
   play(e);
   editor.onDrop = (allInBoard) => {
     if (allInBoard === true) {
@@ -121,7 +121,7 @@ listener.onJoin = onJoin;
 listener.onEnd = () => btnBack.classList.remove('hidden');
 listener.onStart = () => {
   awaitcontainer.classList.add('hidden');
-  // window.CrazyGames.SDK.game.gameplayStart();
+  window.CrazyGames.SDK.game.gameplayStart();
 }
 listener.onResetGame = reseteUI;
 listener.onLoadAssets = onLoadAssets;

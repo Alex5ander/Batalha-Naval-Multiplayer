@@ -131,10 +131,10 @@ const onUpdate = (message) => {
 
   if (data.room.end) {
     listener.onEnd();
-    // if (data.room.winner) {
-    //   window.CrazyGames.SDK.game.happytime();
-    // }
-    // window.CrazyGames.SDK.game.gameplayStop();
+    if (data.room.winner) {
+      window.CrazyGames.SDK.game.happytime();
+    }
+    window.CrazyGames.SDK.game.gameplayStop();
   }
 };
 
@@ -201,13 +201,13 @@ function loop() {
 }
 
 const start = async () => {
-  // try {
-  //   // await is not mandatory when requesting banners,
-  //   // but it will allow you to catch errors
-  //   await window.CrazyGames.SDK.banner.requestResponsiveBanner('banner-container');
-  // } catch (e) {
-  //   console.log("Banner request error", e);
-  // }
+  try {
+    // await is not mandatory when requesting banners,
+    // but it will allow you to catch errors
+    await window.CrazyGames.SDK.banner.requestResponsiveBanner('banner-container');
+  } catch (e) {
+    console.log("Banner request error", e);
+  }
   listener.onLoadAssets();
   canvas.addEventListener('mousedown', mouseevents);
   window.addEventListener('mousemove', mouseevents);
