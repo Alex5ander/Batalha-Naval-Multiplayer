@@ -131,10 +131,14 @@ const onUpdate = (message) => {
 
   if (data.room.end) {
     listener.onEnd();
-    if (data.room.winner) {
-      window.CrazyGames.SDK.game.happytime();
+    try {
+      if (data.room.winner) {
+        window.CrazyGames.SDK.game.happytime();
+      }
+      window.CrazyGames.SDK.game.gameplayStop();
+    } catch (e) {
+      console.log("CrazyGames SDK gameplayStop error", e);
     }
-    window.CrazyGames.SDK.game.gameplayStop();
   }
 };
 
