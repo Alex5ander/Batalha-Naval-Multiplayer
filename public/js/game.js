@@ -131,14 +131,6 @@ const onUpdate = (message) => {
 
   if (data.room.end) {
     listener.onEnd();
-    try {
-      if (data.room.winner) {
-        window.CrazyGames.SDK.game.happytime();
-      }
-      window.CrazyGames.SDK.game.gameplayStop();
-    } catch (e) {
-      console.log("CrazyGames SDK gameplayStop error", e);
-    }
   }
 };
 
@@ -205,13 +197,6 @@ function loop() {
 }
 
 const start = async () => {
-  try {
-    // await is not mandatory when requesting banners,
-    // but it will allow you to catch errors
-    await window.CrazyGames.SDK.banner.requestResponsiveBanner('banner-container');
-  } catch (e) {
-    console.log("Banner request error", e);
-  }
   listener.onLoadAssets();
   canvas.addEventListener('mousedown', mouseevents);
   window.addEventListener('mousemove', mouseevents);
